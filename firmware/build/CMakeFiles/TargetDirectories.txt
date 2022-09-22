@@ -1,0 +1,7 @@
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/CMakeFiles/edit_cache.dir
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/CMakeFiles/rebuild_cache.dir
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/ws28128-rpi/CMakeFiles/edit_cache.dir
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/ws28128-rpi/CMakeFiles/rebuild_cache.dir
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/ProjectFiles/CMakeFiles/Lannootree_firmware.dir
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/ProjectFiles/CMakeFiles/edit_cache.dir
+/home/joey/Documents/School/2022_2023/ProjectWeek/LannooTree_firmware/build/ProjectFiles/CMakeFiles/rebuild_cache.dir

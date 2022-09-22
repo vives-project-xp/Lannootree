@@ -1,0 +1,3 @@
+[submodule "firmware/ws28128-rpi"]
+	path = firmware/ws28128-rpi
+	url = git@github.com:jazzycamel/ws28128-rpi.git
