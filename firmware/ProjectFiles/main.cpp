@@ -51,7 +51,7 @@ int main(int argc, char** argv) {
   add_sig_handels();
 
   while (running) {
-    ledstrips.channel[0].leds[0] = 0x00200000; // Set first led to RED
+    ledstrips.channel[0].leds[0] = 0x00200000; // Set first led to RED (BGR)
 
     if ((ret = ws2811_render(&ledstrips)) != WS2811_SUCCESS) {
       error_log("ws2811_render fail: %s\n", ws2811_get_return_t_str(ret));
