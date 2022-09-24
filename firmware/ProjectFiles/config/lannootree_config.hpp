@@ -13,8 +13,7 @@
 
 #define GPIO_PIN        18
 #define DMA             10
-#define STRIP_TYPE      WS2811_STRIP_GBR
+#define STRIP_TYPE      WS2811_STRIP_RGB
 
 extern uint8_t running;
 extern std::shared_ptr<Lannootree::communication::Socket> api_socket;
-
