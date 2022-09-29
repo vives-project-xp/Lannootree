@@ -53,6 +53,7 @@ body {
 
     margin: 10px;
     padding: 30px;
+    padding-top: 0px;
     width: 300px;
     opacity: 95%;
 }
@@ -219,5 +220,28 @@ body {
   #img {
     opacity: 100%;
   }
+
+  select {
+    /* // A reset of styles, including removing the default dropdown arrow */
+    /* appearance: none; */
+    /* // Additional resets for further consistency */
+    opacity: 95%;
+    border: none;
+    padding: 0 1em 0 0;
+    margin: 0;
+    width: 90%;
+    font-family: inherit;
+    font-size: inherit;
+    cursor: inherit;
+    line-height: inherit;
+    outline: none;
+    border-radius: 5px;
+    margin-top: 2px;
+  }
+
+  select::-ms-expand {
+    display: none;
+  }
+  
 /* for leaf selection https://www.w3schools.com/howto/howto_custom_select.asp */
 /*radio buttons: https://codepen.io/AbubakerSaeed/pen/MWaEqJP */
