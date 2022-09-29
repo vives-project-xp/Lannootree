@@ -7,3 +7,9 @@ const controller = new Controller();
 const clientAPI = new ClientAPI();
 const firmwareAPI = new FirmwareAPI();
 const assetAPI = new AssetAPI();
+
+
+controller.main();
+clientAPI.main(controller);
+firmwareAPI.main();
+assetAPI.main();
