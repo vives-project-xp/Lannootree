@@ -1,0 +1,16 @@
+{
+  "name": "lanootree-api",
+  "version": "1.0.0",
+  "description": "The api for the Lannootree",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run dev"
+  },
+  "author": "Elektronica-ICT students",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.18.1",
+    "nodemon": "^2.0.20"
+  }
+}

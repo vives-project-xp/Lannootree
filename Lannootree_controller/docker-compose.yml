@@ -1,0 +1,18 @@
+version: "3"
+services:
+  controller:
+    build:
+      context: ./controller-nodejs
+    restart: unless-stopped
+  mosquitto:
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto:/mosquitto/:rw
+    # ports:
+    #   - 1883:1883
+    #   - 9001:9001
+
+    # add user
+    # docker-compose exec mosquitto mosquitto_passwd -b /mosquitto/config/password.txt user password
+    # delete user
+    # docker-compose exec mosquitto mosquitto_passwd -D /mosquitto/config/password.txt user
