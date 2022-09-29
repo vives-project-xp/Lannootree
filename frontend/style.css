@@ -119,7 +119,8 @@ body {
     height: 22px;
     border-radius: 100px;
   
-    background: linear-gradient(to right bottom, hsl(154, 97%, 62%), hsl(225, 97%, 62%));
+    background: linear-gradient(to right bottom, rgb(64, 252, 171), hsl(149, 70%, 94%));
+    /* old color hsl(225, 97%, 62%) */
     position: relative;
   }
   
