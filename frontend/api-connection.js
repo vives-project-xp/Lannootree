@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 
 function websocketClient() {
-  
+
   const ws = new WebSocket('ws://localhost:8080/');
 
   ws.on('open', function open() {
@@ -15,6 +15,8 @@ function websocketClient() {
   ws.send("Here's some text that the server is urgently awaiting!")
 
 }
+
+onload(websocketClient());
 
 
 function stop(){
