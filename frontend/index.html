@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="img/icon.ico">
+    <title>Lannootree</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+</head>
+<body onload="onload()">
+    
+<header id="header">
+<img src="img/banner.png" alt="" width= 300px id="banner">
+</header>
+<div class="wrapper">
+<div class="box">
+
+<h2>Mode:</h2>
+<ul>
+  <label class="rad-label">
+    <input type="radio" class="select_mode" checked="checked" name="mode" id="on">
+    <div class="rad-design"></div>
+    <div class="rad-text">On</div>
+  </label>
+
+  <label class="rad-label">
+    <input type="radio" class="select_mode" name="mode" id="off">
+    <div class="rad-design"></div>
+    <div class="rad-text">Off</div>
+  </label>
+</ul>
+</div>
+
+  <div class="box">
+
+    <h2>Effects:</h2>
+    <ul>
+      <input type="button" value="Load" id="get_effect"><select id="select_effect" name="effect"></select>
+      </label>
+
+    </ul>
+  </div>
+  <div class="box">
+    <h2>Color picker:</h2>
+
+    <p>Pick a color for your panel!</p>
+    <p>Unit: <select id="select_unit" name="unit"></select> Leaf: <select id="select_leaf" name="leaf"></select> Led: <select name="led" id="select_led"></select></p>
+    <input type="color" value="4A4EFC" name="RGB" id="RGB">
+
+  </div>
+</div>
+<div class="wrapper">  
+  <!-- Row 2 -->
+
+  <div class="box">
+    <h2>Upload image:</h2>
+    
+    <p>Upload an image here!</p>
+
+    <p><input type="file"
+      id="upload" name="image"
+      accept="image/png, image/gif" onchange="readURL(this);" required></p>
+    <img id="image" src="#" alt="" />
+    <p><input type="submit" id="submit_img" value="Apply"> <p id="uploadStatus"></p> </p>
+
+    </div>
+
+    <div class="box">
+
+      <h2>Pre-loaded images:</h2>
+      <p>These are already saved on the system</p>
+      <input type="button" value="Load image" id="get_image">
+      <p><img src="" alt="" id="preloaded_img" width="300px"></p>
+      
+      
+    </div>
+
+  </div>
+</div>
+
+<footer id="footer">&copyLannooleaf, Vives</footer>
+
+</body>
+
+<script src="script.js"></script>
+
+</html>
