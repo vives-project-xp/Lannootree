@@ -8,7 +8,6 @@ const clientAPI = new ClientAPI();
 const firmwareAPI = new FirmwareAPI();
 const assetAPI = new AssetAPI();
 
-
 controller._main();
 clientAPI._main(controller);
 firmwareAPI._main();

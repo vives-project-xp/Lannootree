@@ -7,6 +7,10 @@ export default class Controller {
     constructor() {
     }
 
+    _main(){
+
+    }
+    
     stop(){
 
     }
