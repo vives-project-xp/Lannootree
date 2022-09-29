@@ -1,6 +1,13 @@
 <script setup>
 import Title from './components/Title.vue'
-import UserInterface from './components/UserInterface.vue'
+import Stop from './components/Stop.vue';
+import Effects from './components/Effects.vue';
+import Color from './components/Color.vue';
+import Getfiles from './components/Getfiles.vue';
+import Upload from './components/Upload.vue';
+import Camera from './components/Camera.vue';
+// import UserInterface from './components/UserInterface.vue'
+
 </script>
 
 <template>
@@ -13,7 +20,16 @@ import UserInterface from './components/UserInterface.vue'
   </header>
 
   <main>
-    <UserInterface />
+
+    <div class="components">
+    <Stop />
+    <Effects />
+    <Color />
+    <Getfiles />
+    <Upload />
+    <Camera />
+  </div>
+
   </main>
 </template>
 
