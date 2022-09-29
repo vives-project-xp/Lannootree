@@ -3,19 +3,19 @@ import { notify } from '@kyvg/vue3-notification'
 import { ref, computed } from 'vue';
 
 class GridCell {
-  public id: number;
   public active: boolean;
+  public coordinate: { col: number, row: number };
 
   constructor(a: boolean) {
-    this.id = 0;
     this.active = a;
+    this.coordinate = { col: 0, row: 0 };
   }
 };
 
 const grid = ref([
-  [new GridCell(false), new GridCell(false), new GridCell(false)], // Col0
-  [new GridCell(false), new GridCell(true), new GridCell(false)], // Col1
-  [new GridCell(false), new GridCell(false), new GridCell(false)], // Col2
+  [new GridCell(false), new GridCell(false), new GridCell(false)],
+  [new GridCell(false), new GridCell(true), new GridCell(false)],
+  [new GridCell(false), new GridCell(false), new GridCell(false)],
 ]);
 
 const colCount = computed(() => grid.value.length);
@@ -42,9 +42,9 @@ const gridStyle = computed(() => {
 });
 
 const jsonCofig = computed(() => {
-  let config = {
-    panelCount: totalCells.value,
-    grid: grid.value,
+  const config = {
+    panelCount: grid.value.reduce((p, c) => { return p + c.reduce((pp, cc) => { return pp + (cc.active ? 1 : 0) }, 0) }, 0), // Lol
+    cells: [].concat(...grid.value).filter(cell => cell.active) // Nice one liners javascript ;)
   };
 
   return JSON.stringify(config, null, 2);
@@ -54,20 +54,15 @@ const numberToCell = function(n: number) {
   let row = Math.floor((n - 1) / colCount.value);
   let col = n - (row * colCount.value) - 1;
   
-  grid.value[col][row].id = n;
+  grid.value[col][row].coordinate.col = col;
+  grid.value[col][row].coordinate.row = row;
 
-  return {
-    cell: grid.value[col][row],
-    coordinate: {
-      row: row,
-      col: col,
-    },
-  }
+  return grid.value[col][row];
 };
 
 const addCell = function(n: number) {
   let cell = numberToCell(n);
-  cell.cell.active = true;
+  cell.active = true;
 
   if (cell.coordinate.col == 0) {
     let newCol = [];
@@ -106,7 +101,7 @@ const copyToClipboard = function() {
     <div :style="gridStyle">
       <div v-for="i in totalCells" 
           :key="`cel${i}`" 
-          :class="numberToCell(i).cell.active ? 'selceted_grid_item' : 'unselected_grid_item'" 
+          :class="numberToCell(i).active ? 'selceted_grid_item' : 'unselected_grid_item'" 
           @click="addCell(i)"
           > 
       </div>
