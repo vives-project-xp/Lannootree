@@ -7,9 +7,10 @@ export default class Controller {
     constructor() {
     }
 
-    _main(){
+    async _main() {
 
     }
+
     
     stop(){
 
