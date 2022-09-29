@@ -2,9 +2,9 @@
   "name": "lanootree-api",
   "version": "1.0.0",
   "description": "The api for the Lannootree",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "npm run dev"
+    "dev": "node ./src/index.js"
   },
   "author": "Elektronica-ICT students",
   "license": "ISC",
