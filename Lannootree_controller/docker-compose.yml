@@ -5,14 +5,23 @@ services:
       context: ./controller-nodejs
     restart: unless-stopped
   mosquitto:
-    image: eclipse-mosquitto
+    build:
+      context: ./mosquitto
+    restart: unless-stopped
+    # volumes:
+      # - ./mosquitto:/mosquitto
+      # - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - 1883:1883
+      - 9001:9001
+  frontend:
+    image: php:8.0-apache
+    restart: unless-stopped
     volumes:
-      - ./mosquitto:/mosquitto/:rw
-    # ports:
-    #   - 1883:1883
-    #   - 9001:9001
+      - ./frontend:/var/www/html/:ro
+    environment:
+      - CONTROLLER_SERVER = localhost
+    ports:
+      - 8080:80
 
-    # add user
-    # docker-compose exec mosquitto mosquitto_passwd -b /mosquitto/config/password.txt user password
-    # delete user
-    # docker-compose exec mosquitto mosquitto_passwd -D /mosquitto/config/password.txt user
+
