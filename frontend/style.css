@@ -7,7 +7,7 @@
     --primary-color: #333; 
     --secondary-color: #555;
     --third-color: #00bd7e;
-}
+} 
 
 h2{
   color: var(--third-color);
@@ -33,7 +33,6 @@ body {
     font-weight: lighter;
     font-size: 40px;
   }
-}
 
 
 
