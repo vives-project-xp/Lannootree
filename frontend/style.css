@@ -190,6 +190,24 @@ body {
     color: var(--primary-color);
   }
 
+  input[type="submit"] {
+    background-color: rgb(3, 199, 134);
+    border-color: rgb(3, 199, 134);
+    border-style: solid;
+    border-radius: 5px;
+    opacity: 94%;
+    color: var(--font-color);;
+  }
+  input[type="submit"]:hover {
+    opacity: 100%;
+  }
+
+  input[type="submit"]:active {
+    background-color: var(--font-color);
+    border-color: var(--font-color);
+    color: var(--primary-color);
+  }
+
   #preloaded_img {
     opacity: 100%;
   }
