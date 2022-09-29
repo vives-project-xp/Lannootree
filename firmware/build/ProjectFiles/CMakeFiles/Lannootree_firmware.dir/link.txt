@@ -1,1 +1,0 @@
-/usr/bin/g++ -g CMakeFiles/Lannootree_firmware.dir/main.cpp.o CMakeFiles/Lannootree_firmware.dir/__/ws28128-rpi/ws2812-rpi.cpp.o -o Lannootree_firmware 
