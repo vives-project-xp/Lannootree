@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { notify } from '@kyvg/vue3-notification'
 import { ref, computed } from 'vue';
 
 class GridCell {
@@ -24,12 +25,19 @@ const totalCells = computed(() => {
   return rowCount.value * colCount.value;
 });
 
+const boxSize = computed(() => {
+  if (totalCells.value < 32) return '100px';
+  if (totalCells.value < 128) return '50px';
+  return '25px';
+});
+
 const gridStyle = computed(() => {
   return {
     'display' : 'grid',
-    'grid-template-rows' : `repeat(${rowCount.value}, 100px)`,
-    'grid-template-columns' : `repeat(${colCount.value}, 100px)`,
+    'grid-template-rows' : `repeat(${rowCount.value}, ${boxSize.value})`,
+    'grid-template-columns' : `repeat(${colCount.value}, ${boxSize.value})`,
     'grid-gap' : '2px',
+    'grid-area' : 'box',
   };
 });
 
@@ -81,27 +89,48 @@ const addCell = function(n: number) {
     grid.value.push(newCol);
   }
 };
+
+const copyToClipboard = function() {
+  navigator.clipboard.writeText(jsonCofig.value);
+  notify({
+    title: "Copied to clipboard!"
+  })
+}
+
 </script>
 
 <template>
-  <div>
+  <div class="wrapper">
+    <notifications position="bottom right" />
+
     <div :style="gridStyle">
       <div v-for="i in totalCells" 
           :key="`cel${i}`" 
           :class="numberToCell(i).cell.active ? 'selceted_grid_item' : 'unselected_grid_item'" 
           @click="addCell(i)"
           > 
-  
       </div>
     </div>
 
-    <div class="json_display">
-      <pre id="json">{{ jsonCofig }}</pre>
+    <div class="json_display" @click="copyToClipboard">
+        <pre v-highlightjs>
+          <code class="javascript" style="border-radius: 25px">{{ jsonCofig }}</code>
+        </pre>
     </div>
   </div>
 </template>
 
 <style scoped>
+  .wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "box json";
+
+    place-items: center; /* Just center nice and easy :) */
+    
+    height: 90vh;
+  }
+
   .selceted_grid_item {
     width: 100%;
     height: 100%;
@@ -114,12 +143,24 @@ const addCell = function(n: number) {
     height: 100%;
 
     background-color: grey;
+
+    cursor: pointer;
   }
 
   .json_display {
     display: grid;
-    overflow: scroll;
+    grid-area: "json";
+    
+    height: 80%;
+    width: 80%;
+    margin: 10px;
 
-    height: 250px;
+    overflow: scroll;
+    scrollbar-width: none;
+
+    border-radius: 25px;
+
+    cursor: copy;
+    user-select: none;
   }
 </style>

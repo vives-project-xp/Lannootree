@@ -1,14 +1,14 @@
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
 import App from './App.vue'
-import router from './router'
 
-import './assets/main.css'
+import Notifications from '@kyvg/vue3-notification'
 
-const app = createApp(App)
+import VueHighlightJS from 'vue3-highlightjs'
+import 'highlight.js/styles/androidstudio.css'
+import './assets/base.css'
 
-app.use(createPinia())
-app.use(router)
 
-app.mount('#app')
+createApp(App)
+  .use(VueHighlightJS)
+  .use(Notifications)
+  .mount('#app')
