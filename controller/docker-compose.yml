@@ -1,0 +1,13 @@
+version: "3"
+services:
+  controller:
+    build:
+      context: ./controller-nodejs
+    restart: unless-stopped
+  mosquitto:
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto:/mosquitto/:rw
+    ports:
+      - 1883:1883
+      - 9001:9001
