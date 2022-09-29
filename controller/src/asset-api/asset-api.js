@@ -3,7 +3,7 @@ export default class AssetAPI {
     constructor() {
     }
 
-    async main() {
+    async _main() {
         // add code here
     }
 
