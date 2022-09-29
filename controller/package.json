@@ -4,7 +4,8 @@
   "description": "The api for the Lannootree",
   "main": "src/index.js",
   "scripts": {
-    "dev": "node ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "start": "node ./src/index.js"
   },
   "author": "Elektronica-ICT students",
   "license": "ISC",
