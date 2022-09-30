@@ -1,22 +1,20 @@
 <script setup lang="ts">
-import { notify } from '@kyvg/vue3-notification'
 import { ref, computed } from 'vue';
+import CellGrid from './CellGrid.vue';
+import GridCell from '@/assets/GridCell';
+import { notify } from '@kyvg/vue3-notification'
 
-class GridCell {
-  public active: boolean;
-  public coordinate: { col: number, row: number };
-
-  constructor(a: boolean) {
-    this.active = a;
-    this.coordinate = { col: 0, row: 0 };
-  }
-};
+//*--------------------------------------------------------------------- Refs ----------------------------------------------------------------------*//
 
 const grid = ref([
   [new GridCell(false), new GridCell(false), new GridCell(false)],
   [new GridCell(false), new GridCell(true), new GridCell(false)],
   [new GridCell(false), new GridCell(false), new GridCell(false)],
 ]);
+
+//*-------------------------------------------------------------------------------------------------------------------------------------------------*//
+
+//*---------------------------------------------------------------- Computed Values ----------------------------------------------------------------*//
 
 const colCount = computed(() => grid.value.length);
 const rowCount = computed(() => grid.value[0].length);
@@ -44,11 +42,18 @@ const gridStyle = computed(() => {
 const jsonCofig = computed(() => {
   const config = {
     panelCount: grid.value.reduce((p, c) => { return p + c.reduce((pp, cc) => { return pp + (cc.active ? 1 : 0) }, 0) }, 0), // Lol
+    totalLeds: 0,
     cells: [].concat(...grid.value).filter(cell => cell.active) // Nice one liners javascript ;)
   };
 
+  config.totalLeds = config.panelCount * 72;
+
   return JSON.stringify(config, null, 2);
 });
+
+//*-------------------------------------------------------------------------------------------------------------------------------------------------*//
+
+//*-------------------------------------------------------------------- Methods --------------------------------------------------------------------*//
 
 const numberToCell = function(n: number) {  
   let row = Math.floor((n - 1) / colCount.value);
@@ -92,6 +97,8 @@ const copyToClipboard = function() {
   })
 }
 
+//*-------------------------------------------------------------------------------------------------------------------------------------------------*//
+
 </script>
 
 <template>
@@ -99,14 +106,15 @@ const copyToClipboard = function() {
     <notifications position="bottom right" />
 
     <div :style="gridStyle">
-      <div v-for="i in totalCells" 
-          :key="`cel${i}`" 
-          :class="numberToCell(i).active ? 'selceted_grid_item' : 'unselected_grid_item'" 
-          @click="addCell(i)"
-          > 
-      </div>
+      <CellGrid 
+        v-for="i in totalCells" 
+        :key="`cel${i}`" 
+        :cell="numberToCell(i)"
+        @click="addCell(i)"
+        />
     </div>
 
+    <!-- ? Make this an other component maby ? -->
     <div class="json_display" @click="copyToClipboard">
         <pre v-highlightjs>
           <code class="javascript" style="border-radius: 25px">{{ jsonCofig }}</code>
@@ -124,22 +132,6 @@ const copyToClipboard = function() {
     place-items: center; /* Just center nice and easy :) */
     
     height: 90vh;
-  }
-
-  .selceted_grid_item {
-    width: 100%;
-    height: 100%;
-
-    background-color: white;
-  }
-
-  .unselected_grid_item {
-    width: 100%;
-    height: 100%;
-
-    background-color: grey;
-
-    cursor: pointer;
   }
 
   .json_display {
