@@ -1,0 +1,27 @@
+version: "3"
+services:
+  controller:
+    build:
+      context: ./controller-nodejs
+    restart: unless-stopped
+  mosquitto:
+    build:
+      context: ./mosquitto
+    restart: unless-stopped
+    # volumes:
+      # - ./mosquitto:/mosquitto
+      # - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - 1883:1883
+      - 9001:9001
+  frontend:
+    image: php:8.0-apache
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/var/www/html/:ro
+    environment:
+      - CONTROLLER_SERVER = localhost
+    ports:
+      - 8080:80
+
+

@@ -1,39 +1,39 @@
 var backend = "http://172.16.109.194:3000"
 var units = 3; // MOET VIA GET REQUEST (of iets anders) MEEGEDEELD WORDEN 
 
-$("#RGB").on('propertychange input', function(){
-    var JsonData = JSON.stringify({"mode": "color", "unit": $('#select_unit').val(), "leaf": $('#select_leaf').val() , "led": $('#select_led').val() ,"color": $(this).val()});
-    post(JsonData, ""); 
-  });
+// $("#RGB").on('propertychange input', function(){
+//     var JsonData = JSON.stringify({"mode": "color", "unit": $('#select_unit').val(), "leaf": $('#select_leaf').val() , "led": $('#select_led').val() ,"color": $(this).val()});
+//     post(JsonData, ""); 
+//   });
 
-$(".select_mode").click(function() {
-    //   JSON format: effect: 1; mode: on; etc
-    var JsonData = JSON.stringify({"mode": this.id});
-    post(JsonData, ""); 
-});
+// $(".select_mode").click(function() {
+//     //   JSON format: effect: 1; mode: on; etc
+//     var JsonData = JSON.stringify({"mode": this.id});
+//     post(JsonData, ""); 
+// });
 
-$(".select_effect").click(function() {
-    //   JSON format: effect: 1; mode: on; etc
-    var JsonData = JSON.stringify({"mode": "effect", "effect": this.id});
-    post(JsonData, ""); 
-});
+// $(".select_effect").click(function() {
+//     //   JSON format: effect: 1; mode: on; etc
+//     var JsonData = JSON.stringify({"mode": "effect", "effect": this.id});
+//     post(JsonData, ""); 
+// });
 
-function post(data, url) {
+// function post(data, url) {
 
-    let xhr = new XMLHttpRequest();
-    xhr.open("POST", backend + '/' + url);
+//     let xhr = new XMLHttpRequest();
+//     xhr.open("POST", backend + '/' + url);
 
-    xhr.setRequestHeader("Accept", "application/json");
-    xhr.setRequestHeader("Content-Type", "application/json");
+//     xhr.setRequestHeader("Accept", "application/json");
+//     xhr.setRequestHeader("Content-Type", "application/json");
 
-    xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-        console.log(xhr.responseText);
-    }};
+//     xhr.onreadystatechange = function () {
+//     if (xhr.readyState === 4) {
+//         console.log(xhr.responseText);
+//     }};
 
-    xhr.send(data);
+//     xhr.send(data);
     
-}
+// }
 
 // EFFECT PICKER
 let dropdowneffect = $('#select_effect')

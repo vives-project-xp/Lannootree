@@ -1,9 +1,9 @@
-[submodule "firmware/ws28128-rpi"]
-	path = firmware/ws28128-rpi
+[submodule "Lannootree_firmware/ws28128-rpi"]
+	path = Lannootree_firmware/ws28128-rpi
 	url = git@github.com:jazzycamel/ws28128-rpi.git
-[submodule "firmware/testing/unix-domain-socket-cpp"]
-	path = firmware/testing/unix-domain-socket-cpp
+[submodule "Lannootree_firmware/testing/unix-domain-socket-cpp"]
+	path = Lannootree_firmware/testing/unix-domain-socket-cpp
 	url = git@github.com:rightson/unix-domain-socket-cpp.git
-[submodule "firmware/rpi_ws281x"]
-	path = firmware/rpi_ws281x
+[submodule "Lannootree_firmware/rpi_ws281x"]
+	path = Lannootree_firmware/rpi_ws281x
 	url = git@github.com:jgarff/rpi_ws281x.git
