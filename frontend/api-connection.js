@@ -1,5 +1,3 @@
-import WebSocket from 'ws';
-
 function websocketClient() {
 
   const ws = new WebSocket('ws://localhost:8080/');
@@ -8,11 +6,11 @@ function websocketClient() {
     ws.send('something');
   });
 
-  ws.on('message', function message(data) {
-    console.log('received: %s', data);
+  ws.on('message', function incoming(data) {
+    console.log(data);
   });
 
-  ws.send("Here's some text that the server is urgently awaiting!")
+  // ws.send("Here's some text that the server is urgently awaiting!")
 
 }
 

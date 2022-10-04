@@ -5,7 +5,7 @@ export default class ClientAPI {
     // Node.js WebSocket server script
     
     constructor() {  
-}
+    }
      
 
     async _main() {
@@ -20,13 +20,13 @@ export default class ClientAPI {
             });
         });
 
-        // wss.on('connection', function connection(ws) {
-        //   ws.on('message', function message(data) {
-        //     console.log('received: %s', data);
-        //   });
+        wss.on('connection', function connection(ws) {
+          ws.on('message', function message(data) {
+            console.log('received: %s', data);
+            });
         
-        // wss.send('something'); 
-    };
-    
+        wss.send('something'); 
+        });
+    } 
 
 }
