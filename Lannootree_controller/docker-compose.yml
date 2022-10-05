@@ -8,9 +8,9 @@ services:
     build:
       context: ./mosquitto
     restart: unless-stopped
-    # volumes:
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
       # - ./mosquitto:/mosquitto
-      # - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
     ports:
       - 1883:1883
       - 9001:9001
@@ -20,7 +20,7 @@ services:
     volumes:
       - ./frontend:/var/www/html/:ro
     environment:
-      - CONTROLLER_SERVER = localhost
+      - CONTROLLER_SERVER=localhost
     ports:
       - 8080:80
 
