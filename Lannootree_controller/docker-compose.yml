@@ -11,40 +11,77 @@ services:
       - 1883:1883
       - 9001:9001
 
-
-
   traefik:
     image: "traefik:v2.9"
-    container_name: "traefik"
-    command:
-      #- "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
+    # user: "1001:1001"
     ports:
       - "80:80"
       - "443:443"
-      - "3100:8080"
+      # - "3100:8080"
     volumes:
-      - "/traefik:/etc/traefik"
+      - "./traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - 'traefik.enable=true'
+      - "traefik.http.routers.traefik-dashboard.rule=Host(`traefik.vps.arnoschoutteten.be`)"
+      - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
+      - "traefik.http.routers.traefik-dashboard.entrypoints=websecure"
+      - "traefik.http.routers.traefik-dashboard.tls.certresolver=production"
+      - 'traefik.http.routers.traefik-dashboard.middlewares=authelia@docker'
+
+  authelia:
+    image: authelia/authelia
+    restart: unless-stopped
+    user: "1001:1001"
+    volumes:
+      - ./authelia/config:/config
+    environment:
+      TZ: "Australia/Melbourne"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.authelia.rule=Host(`auth.vps.arnoschoutteten.be`)'
+      - 'traefik.http.services.authelia.loadbalancer.server.port=9091'
+      - 'traefik.http.routers.authelia.entryPoints=websecure'
+      - "traefik.http.routers.authelia.tls.certresolver=production"
+      - 'traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.vps.arnoschoutteten.be%2F'
+      - 'traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true'
+      - 'traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
+
 
   whoami:
     image: "traefik/whoami"
-    container_name: "simple-service"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`vps.arnoschoutteten.be`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-  # frontend:
-  #   image: php:8.0-apache
+      - "traefik.http.routers.whoami.rule=Host(`whoami.vps.arnoschoutteten.be`)"
+      - "traefik.http.routers.whoami.entrypoints=websecure"
+      - "traefik.http.routers.whoami.tls.certresolver=production"
+      - 'traefik.http.routers.whoami.middlewares=authelia@docker'
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    environment:
+      - LOGOUT_URL=https://auth.vps.Arnoschoutteten.be/logout
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`vps.arnoschoutteten.be`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls.certresolver=production"
+      - 'traefik.http.routers.frontend.middlewares=authelia@docker'
+
+  # client-api:
+  #   build:
+  #     context: ./client-api
   #   restart: unless-stopped
-  #   volumes:
-  #     - ./frontend:/var/www/html/:ro
-  #   environment:
-  #     - CONTROLLER_SERVER=localhost
-  #   ports:
-  #     - 8080:80
+  #   labels:
+  #     - "traefik.enable=true"
+  #     - "traefik.http.routers.frontend-ws.rule=Host(`vps.arnoschoutteten.be`)"
+  #     - "traefik.http.routers.frontend-ws.entrypoints=websecure"
+  #     - "traefik.http.routers.frontend-ws.tls.certresolver=production"
+  #     - 'traefik.http.routers.frontend-ws.middlewares=authelia@docker'
 
-
+  #     - traefik.http.routers.ws-service-wss.rule=Host(`example.com`)
+  #     - traefik.http.routers.ws-service-wss.entrypoints=wss
+  #     - traefik.http.routers.ws-service-wss.tls=true
+  #     - traefik.http.routers.ws-service-wss.tls.certresolver=dns

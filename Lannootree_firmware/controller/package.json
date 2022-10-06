@@ -4,7 +4,8 @@
   "description": "",
   "main": "controller.js",
   "scripts": {
-    "dev": "nodemon controller.js"
+    "dev": "nodemon controller.js",
+    "start": "node controller.js"
   },
   "keywords": [],
   "author": "",

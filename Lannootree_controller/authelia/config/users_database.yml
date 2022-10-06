@@ -1,0 +1,8 @@
+users:
+    lannootree:
+        password: $argon2id$v=19$m=65536,t=1,p=8$YWJ3SjJRTWdvVEVUZ28xZw$BeD0SoRSVLRoxn1m/StD09S2WEFcjPAUamgQi6KrVgU
+        displayname: Lannoo Tree
+        email: lannootree@lannootree.be
+        groups:
+            - admins
+            - dev

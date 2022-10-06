@@ -17,9 +17,9 @@ global:
 
 # (Optional) Enable API and Dashboard
 # ---
-# api:
-#  dashboard: true  # true by default
-#  insecure: true  # Don't do this in production!
+api:
+ dashboard: true  # true by default
+ insecure: true  # Don't do this in production!
 
 # Entry Points configuration
 # ---
@@ -39,22 +39,22 @@ entryPoints:
 
 # Configure your CertificateResolver here...
 # ---
-# certificatesResolvers:
-#   staging:
-#     acme:
-#       email: your-email@example.com
-#       storage: /etc/traefik/certs/acme.json
-#       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
-#       httpChallenge:
-#         entryPoint: web
-#
-#   production:
-#     acme:
-#       email: your-email@example.com
-#       storage: /etc/traefik/certs/acme.json
-#       caServer: "https://acme-v02.api.letsencrypt.org/directory"
-#       httpChallenge:
-#         entryPoint: web
+certificatesResolvers:
+  staging:
+    acme:
+      email: info@arnoschoutteten.be
+      storage: /etc/traefik/certs/acme.json
+      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      httpChallenge:
+        entryPoint: web
+
+  production:
+    acme:
+      email: info@arnoschoutteten.be
+      storage: /etc/traefik/certs/acme.json
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      httpChallenge:
+        entryPoint: web
 
 # (Optional) Overwrite Default Certificates
 # tls:
