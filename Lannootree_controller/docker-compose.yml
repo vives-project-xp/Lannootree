@@ -71,7 +71,7 @@ services:
       context: ./client-api
     restart: unless-stopped
     environment:
-      - MQTT_URL='mqtt://mqtt:1883'
+      - MQTT_URL='mqtt://vps.arnoschoutteten.be:1883'
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.client-api.rule=Host(`vps.arnoschoutteten.be`) && PathPrefix(`/wss`)"

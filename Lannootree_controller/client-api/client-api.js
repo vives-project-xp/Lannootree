@@ -7,17 +7,18 @@ const client = mqtt.connect('mqtt://vps.arnoschoutteten.be:1883');
 
 client.on('connect', function () {
     console.log("conencted")
+    client.publish('status/client-api', 'Online');
 })
+
 // publish on server
 function onOff(onoff) {
     console.log('onOff');
     client.publish('controller/stop', onoff);
     console.log('peoe');
 }
+
 // client.subscribe('controller/stop', function (err) {
 // })
-   
-
 // client.on('message', function (topic, message) {
 //     // message is Buffer
 //     console.log(message.toString())
