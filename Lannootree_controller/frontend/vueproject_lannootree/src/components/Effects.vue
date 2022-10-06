@@ -16,9 +16,7 @@
     
     <template>
         <div class="container">
-          <h2>Effects:</h2>
-          
-          <v-select :options="effects" />
+          <v-select :options="effects" placeholder="Effects"/>
     </div>
     </template>
     <style scoped>
