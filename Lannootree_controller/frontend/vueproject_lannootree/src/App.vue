@@ -6,6 +6,10 @@ import Color from './components/Color.vue';
 import Getfiles from './components/Getfiles.vue';
 import Upload from './components/Upload.vue';
 import Camera from './components/Camera.vue';
+import Functions from '../src/assets/api-connection.js';
+
+import Logout from './components/Logout.vue';
+import TestButton from './components/TestButton.vue';
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -16,20 +20,21 @@ import Camera from './components/Camera.vue';
 
     <div class="wrapper">
       <Title msg="Lannootree" />
+      <Logout />
     </div>
   </header>
 
   <main>
 
     <div class="components">
-    <Onoff />
+    <Onoff id="onoff"/>
     <Effects />
     <Color />
     <Getfiles />
     <Upload />
     <Camera />
+    <TestButton />
   </div>
-
   </main>
 </template>
 
@@ -48,6 +53,10 @@ header {
     display: flex;
     place-items: center;
     padding-right: calc(var(--section-gap) / 2);
+  }
+
+  main {
+    min-height: 400px;
   }
 
   .logo {

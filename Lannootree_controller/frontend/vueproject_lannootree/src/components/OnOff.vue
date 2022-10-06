@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script>
+<script >
   import Toggle from '@vueform/toggle'
 
   export default {
