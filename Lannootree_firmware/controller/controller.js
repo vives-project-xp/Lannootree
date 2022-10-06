@@ -1,4 +1,33 @@
 import Color from './color.js';
+import mqtt from "mqtt"
+
+const client = mqtt.connect('mqtt://vps.arnoschoutteten.be');
+
+client.on('connect', function () {
+    console.log("connected")
+})
+
+client.subscribe('controller/stop');
+client.publish('controller/stop', "true");
+
+client.on('message', function (topic, message) {
+    console.log(topic)
+    if(topic=="controller/stop") console.log(message);
+    if(topic=="controller/effect") console.log("STOP");
+    // if(topic == "controller/effect") {
+    //     if(message)
+
+
+    // }
+    // if(topic == "controller/asset") {
+        
+    // }
+    // else {
+    //     console.log("Unknown topic")
+    // }
+    //console.log(message.toString())
+    client.end()
+})
 
 export default class Controller {
 
