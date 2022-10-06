@@ -1,1 +1,0 @@
-http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/

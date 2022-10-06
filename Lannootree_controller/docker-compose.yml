@@ -1,27 +1,50 @@
 version: "3"
 services:
-  controller:
-    build:
-      context: ./controller-nodejs
+  mqtt:
+    image: eclipse-mosquitto
     restart: unless-stopped
-  mosquitto:
-    build:
-      context: ./mosquitto
-    restart: unless-stopped
+    user: "1001:1001"
     volumes:
-      - ./mosquitto/config:/mosquitto/config
+      - ./mqtt/config:/mosquitto/config
       # - ./mosquitto:/mosquitto
     ports:
       - 1883:1883
       - 9001:9001
-  frontend:
-    image: php:8.0-apache
-    restart: unless-stopped
-    volumes:
-      - ./frontend:/var/www/html/:ro
-    environment:
-      - CONTROLLER_SERVER=localhost
+
+
+
+  traefik:
+    image: "traefik:v2.9"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
     ports:
-      - 8080:80
+      - "80:80"
+      - "443:443"
+      - "3100:8080"
+    volumes:
+      - "/traefik:/etc/traefik"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+  whoami:
+    image: "traefik/whoami"
+    container_name: "simple-service"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`vps.arnoschoutteten.be`)"
+      - "traefik.http.routers.whoami.entrypoints=web"
+  # frontend:
+  #   image: php:8.0-apache
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./frontend:/var/www/html/:ro
+  #   environment:
+  #     - CONTROLLER_SERVER=localhost
+  #   ports:
+  #     - 8080:80
 
 
