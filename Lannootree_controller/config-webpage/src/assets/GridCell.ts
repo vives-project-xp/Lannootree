@@ -6,6 +6,7 @@ export class GridCell {
   public coordinate: { col: number, row: number };
   public isHead: boolean;
   public canConnect: boolean;
+  public diabled: boolean;
   
   constructor(a: boolean) {
     this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString());
@@ -15,6 +16,7 @@ export class GridCell {
     this.coordinate = { col: 0, row: 0 };
     this.isHead = false;
     this.canConnect = false;
+    this.diabled = false;
   }
 };
 

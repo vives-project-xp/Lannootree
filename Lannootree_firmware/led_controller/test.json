@@ -1,178 +1,54 @@
 {
-  "panelCount": 16,
-  "totalLeds": 1152,
+  "panelCount": 4,
+  "totalLeds": 288,
   "inUseChannels": [
-    "CA1",
     "CA0"
   ],
   "channels": {
-    "CA1": {
-      "ledCount": 576,
-      "head": "762156055293",
-      "cells": [
-        {
-          "uuid": "909351092893",
-          "active": true,
-          "channel": "CA1",
-          "connection": "1485656596791",
-          "coordinate": {
-            "col": 1,
-            "row": 1
-          }
-        },
-        {
-          "uuid": "762156055293",
-          "active": true,
-          "channel": "CA1",
-          "connection": "909351092893",
-          "coordinate": {
-            "col": 1,
-            "row": 2
-          }
-        },
-        {
-          "uuid": "1485656596791",
-          "active": true,
-          "channel": "CA1",
-          "connection": "184539322031",
-          "coordinate": {
-            "col": 2,
-            "row": 1
-          }
-        },
-        {
-          "uuid": "184539322031",
-          "active": true,
-          "channel": "CA1",
-          "connection": "841904694018",
-          "coordinate": {
-            "col": 2,
-            "row": 2
-          }
-        },
-        {
-          "uuid": "337092254914",
-          "active": true,
-          "channel": "CA1",
-          "connection": "826889006424",
-          "coordinate": {
-            "col": 3,
-            "row": 1
-          }
-        },
-        {
-          "uuid": "841904694018",
-          "active": true,
-          "channel": "CA1",
-          "connection": "337092254914",
-          "coordinate": {
-            "col": 3,
-            "row": 2
-          }
-        },
-        {
-          "uuid": "826889006424",
-          "active": true,
-          "channel": "CA1",
-          "connection": "1430457187698",
-          "coordinate": {
-            "col": 4,
-            "row": 1
-          }
-        },
-        {
-          "uuid": "1430457187698",
-          "active": true,
-          "channel": "CA1",
-          "coordinate": {
-            "col": 4,
-            "row": 2
-          }
-        }
-      ]
-    },
     "CA0": {
-      "ledCount": 576,
-      "head": "351271368744",
+      "ledCount": 288,
+      "head": "1603746070332",
       "cells": [
         {
-          "uuid": "1028262647568",
+          "uuid": "521464934126",
           "active": true,
           "channel": "CA0",
-          "connection": "800473241653",
           "coordinate": {
             "col": 1,
-            "row": 3
-          }
+            "row": 1
+          },
+          "diabled": true
         },
         {
-          "uuid": "351271368744",
+          "uuid": "1603746070332",
           "active": true,
           "channel": "CA0",
-          "connection": "1028262647568",
+          "connection": "1605537514600",
           "coordinate": {
             "col": 1,
-            "row": 4
-          }
+            "row": 2
+          },
+          "diabled": true
         },
         {
-          "uuid": "800473241653",
+          "uuid": "1605537514600",
           "active": true,
           "channel": "CA0",
-          "connection": "144809860088",
           "coordinate": {
             "col": 2,
-            "row": 3
-          }
+            "row": 1
+          },
+          "diabled": true
         },
         {
-          "uuid": "144809860088",
+          "uuid": "163467899295",
           "active": true,
           "channel": "CA0",
-          "connection": "668693809313",
           "coordinate": {
             "col": 2,
-            "row": 4
-          }
-        },
-        {
-          "uuid": "435765667701",
-          "active": true,
-          "channel": "CA0",
-          "connection": "941628274095",
-          "coordinate": {
-            "col": 3,
-            "row": 3
-          }
-        },
-        {
-          "uuid": "668693809313",
-          "active": true,
-          "channel": "CA0",
-          "connection": "435765667701",
-          "coordinate": {
-            "col": 3,
-            "row": 4
-          }
-        },
-        {
-          "uuid": "941628274095",
-          "active": true,
-          "channel": "CA0",
-          "connection": "1143431401894",
-          "coordinate": {
-            "col": 4,
-            "row": 3
-          }
-        },
-        {
-          "uuid": "1143431401894",
-          "active": true,
-          "channel": "CA0",
-          "coordinate": {
-            "col": 4,
-            "row": 4
-          }
+            "row": 2
+          },
+          "diabled": true
         }
       ]
     }

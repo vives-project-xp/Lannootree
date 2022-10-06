@@ -15,6 +15,8 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['createConnection', 'connect']);
+
 const channels =[
   {
     name: 'Channel A0',
@@ -52,22 +54,6 @@ const cellStyle = computed(() => {
   return cellStylez;
 });
 
-const connectables = computed(() => {
-  let filtered: Array<GridCell> = ([] as Array<GridCell>).concat(...props.grid)
-  .filter((cell: GridCell) => cell.channel === props.cell.channel)
-  .filter((cell: GridCell) => cell.connection === null);
-
-  let connectables: { direction: string, next: GridCell }[] = [];
-  filtered.forEach((cell: GridCell) => {
-    if (cell.coordinate.col == props.cell.coordinate.col - 1 && cell.coordinate.row == props.cell.coordinate.row) connectables.push({ direction: 'left', next: cell });
-    if (cell.coordinate.col == props.cell.coordinate.col + 1 && cell.coordinate.row == props.cell.coordinate.row) connectables.push({ direction: 'right', next: cell });
-    if (cell.coordinate.row == props.cell.coordinate.row - 1 && cell.coordinate.col == props.cell.coordinate.col) connectables.push({ direction: 'up', next: cell });
-    if (cell.coordinate.row == props.cell.coordinate.row + 1 && cell.coordinate.col == props.cell.coordinate.col) connectables.push({ direction: 'down', next: cell });
-  });
-  
-  return connectables;
-});
-
 const channelHasHead = computed(() => {
   return ([] as GridCell[]).concat(...props.grid)
           .filter(cell => cell.channel === props.cell.channel)
@@ -103,18 +89,19 @@ const changeChannel = function(channel: string) {
 </script>
 
 <template>
-  <div :style="cellStyle">
+  <div :style="cellStyle" :class="!cell.active ? 'cell' : ''">
     <div v-if="props.cell.active" class="dropdown">
       <button class="btn btn-secondary dropdown-toggle button" 
               type="button" 
               id="dropdownMenuButton" 
               data-bs-toggle="dropdown" 
               aria-expanded="false" 
-              :style="cellStyle">
+              :style="cellStyle"
+              :disabled="props.cell.diabled">
         <font-awesome-icon icon="fa-regular fa-list-alt"/>
       </button>
 
-      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton" v-show="!props.cell.diabled">
         <!--* Channel submenu *-->
         <li>
           <a class="dropdown-item" href="#">Channel &raquo;</a>
@@ -133,17 +120,9 @@ const changeChannel = function(channel: string) {
           <a class="dropdown-item" href="#" v-if="!channelHasHead" @click="setHead">
             Use as head
           </a>
-          <a class="dropdown-item" href="#" v-if="props.cell.canConnect && connectables.length > 0">
-            Add connection &raquo;
+          <a class="dropdown-item" href="#" v-if="props.cell.canConnect" @click="emit('createConnection', props.cell)">
+            Add connection
           </a>
-
-          <ul class="dropdown-menu dropdown-menu-dark dropdown-submenu" v-if="channelHasHead && props.cell.canConnect">
-            <li v-for="c in connectables" :key="`con${c.next.uuid}`" @click="addConnection(c.next)">
-              <a class="dropdown-item" href="#">
-                {{ c.direction }}
-              </a>
-            </li>
-          </ul>
         </li>
       </ul>
     </div>
@@ -152,6 +131,10 @@ const changeChannel = function(channel: string) {
 </template>
 
 <style scoped>
+  .cell:hover {
+    transform: scale(0.90, 0.90);
+  }
+
   .dropdown-toggle::after {
     display: none;
   }

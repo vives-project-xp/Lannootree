@@ -13,6 +13,8 @@ const grid: Ref<Grid> = ref([
   [new GridCell(false), new GridCell(false), new GridCell(false)],
 ]);
 
+const currentConnectCell: Ref<GridCell | null> = ref(null);
+
 const colCount = computed(() => grid.value.length);
 const rowCount = computed(() => grid.value[0].length);
 
@@ -129,6 +131,28 @@ const copyToClipboard = function() {
   }
 }
 
+const createConnection = function(ecell: GridCell) {
+  ([] as GridCell[]).concat(...grid.value)
+  .forEach(cell => {
+    // Disable the buttons
+    cell.diabled = true;
+    currentConnectCell.value = ecell;
+    
+    if (cell.channel === ecell.channel) {
+      // Highlight
+      cell.canConnect = true;
+    }
+  });
+}
+
+const addConnection = function(i: number) {
+  let cell = numberToCell(i);
+  if (cell.channel !== currentConnectCell.value?.channel || currentConnectCell.value === null) return;
+
+  currentConnectCell.value.connection = cell;
+
+  // Redo all changes
+}
 </script>
 
 <template>
@@ -141,7 +165,8 @@ const copyToClipboard = function() {
         :key="`cel${i}`" 
         :cell="numberToCell(i)"
         :grid="grid"
-        @click="addCell(i)"
+        @click="numberToCell(i).diabled ? addConnection(i) : addCell(i)"
+        @create-connection="createConnection"
         />
     </div>
 
