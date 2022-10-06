@@ -1,0 +1,26 @@
+services:
+  mqtt:
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto.conf:/mosquitto/config/mosquitto.conf
+    restart: always
+    ports:
+      - 1883:1883
+
+  db:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+
+  mqtt2redis:
+    build: .
+    environment:
+      MQTT_SERVER_ADDRESS: mqtt
+      REDIS_SERVER_ADDRESS: db
+    links:
+      - mqtt
+      - db
+    depends_on:
+      - mqtt
+      - db

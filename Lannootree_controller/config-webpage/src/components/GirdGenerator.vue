@@ -1,20 +1,17 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
 import CellGrid from './CellGrid.vue';
-import GridCell from '@/assets/GridCell';
 import { notify } from '@kyvg/vue3-notification'
+import type JsonConfig from '@/assets/JsonConfig'
+import { GridCell, type Grid } from '@/assets/GridCell'
+import { ref, computed, type Ref, type ComputedRef } from 'vue'
 
-//*--------------------------------------------------------------------- Refs ----------------------------------------------------------------------*//
+const LED_PER_PANEL = 72;
 
-const grid = ref([
-  [new GridCell(false), new GridCell(false), new GridCell(false)],
+const grid: Ref<Grid> = ref([
+  [new GridCell(false) , new GridCell(false), new GridCell(false)],
   [new GridCell(false), new GridCell(true), new GridCell(false)],
   [new GridCell(false), new GridCell(false), new GridCell(false)],
 ]);
-
-//*-------------------------------------------------------------------------------------------------------------------------------------------------*//
-
-//*---------------------------------------------------------------- Computed Values ----------------------------------------------------------------*//
 
 const colCount = computed(() => grid.value.length);
 const rowCount = computed(() => grid.value[0].length);
@@ -23,10 +20,13 @@ const totalCells = computed(() => {
   return rowCount.value * colCount.value;
 });
 
+// Loop over all cells an check if all active cells have been assigned a channel
+const validConfig = computed(() => grid.value.reduce((p, c) => p && c.reduce((pp, cc) => pp && (cc.active ? cc.channel !== null : true), true), true));
+const panelCount = computed(() => grid.value.reduce((p: number, c: GridCell[]) => { return p + c.reduce((pp: number, cc: GridCell) => { return pp + (cc.active ? 1 : 0) }, 0) }, 0));
+
 const boxSize = computed(() => {
   if (totalCells.value < 32) return '100px';
-  if (totalCells.value < 128) return '50px';
-  return '25px';
+  return '50px';
 });
 
 const gridStyle = computed(() => {
@@ -39,21 +39,51 @@ const gridStyle = computed(() => {
   };
 });
 
-const jsonCofig = computed(() => {
-  const config = {
-    panelCount: grid.value.reduce((p, c) => { return p + c.reduce((pp, cc) => { return pp + (cc.active ? 1 : 0) }, 0) }, 0), // Lol
+const jsonConfig: ComputedRef<JsonConfig> = computed(() => {
+  let config: JsonConfig = {
+    panelCount: panelCount.value,
     totalLeds: 0,
-    cells: [].concat(...grid.value).filter(cell => cell.active) // Nice one liners javascript ;)
+    inUseChannels: [],
+    channels: {}
   };
 
   config.totalLeds = config.panelCount * 72;
 
-  return JSON.stringify(config, null, 2);
+  ([] as GridCell[]).concat(...grid.value) // Get all cells in one array
+  .filter(cell => cell.active)  // Filter out inactive ones
+  .forEach((cell: GridCell) => {
+    if (cell.channel === null) return;
+
+    if (config.channels[cell.channel] === undefined) { // Create channel object key if there is none
+      config.channels[cell.channel] = {
+        ledCount: LED_PER_PANEL,
+        head: null,
+        cells: [cell]
+      }
+    } else {
+      config.channels[cell.channel].ledCount += LED_PER_PANEL;
+      config.channels[cell.channel].cells.push(cell);
+    }
+
+    if (cell.isHead) {
+      config.channels[cell.channel].head = cell.uuid;
+    }
+  });
+
+  config.inUseChannels = Object.keys(config.channels);
+
+  let other = (JSON.parse(JSON.stringify(config)) as JsonConfig); // Deep copy of config obj
+  other.inUseChannels.forEach(key => {
+    other.channels[key].cells.forEach((cell: GridCell) => {
+      // Delete keys not needed for firmware an change connection to string
+      delete cell.isHead;
+      delete cell.canConnect;
+      cell.connection = cell.connection?.uuid;
+    })
+  });
+
+  return other;
 });
-
-//*-------------------------------------------------------------------------------------------------------------------------------------------------*//
-
-//*-------------------------------------------------------------------- Methods --------------------------------------------------------------------*//
 
 const numberToCell = function(n: number) {  
   let row = Math.floor((n - 1) / colCount.value);
@@ -90,14 +120,14 @@ const addCell = function(n: number) {
   }
 };
 
-const copyToClipboard = function() {
-  navigator.clipboard.writeText(jsonCofig.value);
-  notify({
-    title: "Copied to clipboard!"
-  })
+const copyToClipboard = function() {  
+  if (validConfig.value) {
+    navigator.clipboard.writeText(JSON.stringify(jsonConfig.value, null, 2));
+    notify({
+      title: "Copied to clipboard!"
+    });
+  }
 }
-
-//*-------------------------------------------------------------------------------------------------------------------------------------------------*//
 
 </script>
 
@@ -110,14 +140,15 @@ const copyToClipboard = function() {
         v-for="i in totalCells" 
         :key="`cel${i}`" 
         :cell="numberToCell(i)"
+        :grid="grid"
         @click="addCell(i)"
         />
     </div>
 
     <!-- ? Make this an other component maby ? -->
-    <div class="json_display" @click="copyToClipboard">
-        <pre v-highlightjs>
-          <code class="javascript" style="border-radius: 25px">{{ jsonCofig }}</code>
+    <div class="json_display" @click="copyToClipboard" :style="validConfig ? { cursor: 'copy' } : { cursor: 'not-allowed' }">
+        <pre v-highlightjs v-auto-animate>
+          <code class="javascript" style="border-radius: 25px">{{ JSON.stringify(jsonConfig, null, 2) }}</code>
         </pre>
     </div>
   </div>
@@ -147,7 +178,6 @@ const copyToClipboard = function() {
 
     border-radius: 25px;
 
-    cursor: copy;
     user-select: none;
   }
 </style>

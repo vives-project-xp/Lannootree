@@ -1,3 +1,2 @@
 add_subdirectory(communication)
-
-include_directories(config/)
+add_subdirectory(controll)

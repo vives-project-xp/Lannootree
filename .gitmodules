@@ -7,3 +7,9 @@
 [submodule "Lannootree_firmware/rpi_ws281x"]
 	path = Lannootree_firmware/rpi_ws281x
 	url = git@github.com:jgarff/rpi_ws281x.git
+[submodule "lannootree_firmware/json"]
+	path = lannootree_firmware/json
+	url = git@github.com:nlohmann/json.git
+[submodule "lannootree_firmware/rpi_ws281x"]
+	path = lannootree_firmware/rpi_ws281x
+	url = git@github.com:jgarff/rpi_ws281x.git

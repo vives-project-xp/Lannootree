@@ -1,15 +1,21 @@
-export default class GridCell {
+export class GridCell {
   public uuid: string;
-  public channel: string;
   public active: boolean;
+  public channel: null | string;
+  public connection: null | string | GridCell;
   public coordinate: { col: number, row: number };
-  public connection: null | GridCell;
-
+  public isHead: boolean;
+  public canConnect: boolean;
+  
   constructor(a: boolean) {
-    this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString()); // Pseudo uuid
-    this.channel = 'Channel';
+    this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString());
     this.active = a;
-    this.coordinate = { col: 0, row: 0 };
+    this.channel = null;
     this.connection = null;
+    this.coordinate = { col: 0, row: 0 };
+    this.isHead = false;
+    this.canConnect = false;
   }
 };
+
+export type Grid = GridCell[][];
