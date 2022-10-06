@@ -6,7 +6,7 @@ const client = mqtt.connect('mqtt://vps.arnoschoutteten.be:1883');
 // const client = mqtt.connect(process.env.MQTT_URL);
 
 client.on('connect', function () {
-    console.log("conencted")
+    console.log("connected")
     client.publish('status/client-api', 'Online');
 })
 
