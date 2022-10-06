@@ -11,7 +11,7 @@
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: #00bd7e;
   transition: 0.4s;
 }
 
@@ -59,7 +59,7 @@ button:hover {
 }
 
 .container {
-  max-width: 100px;
+  max-width: 500px;
   background-color: #333333;
   border-radius: 5px;
   margin: 2px;

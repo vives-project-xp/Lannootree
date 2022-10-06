@@ -7,7 +7,10 @@
     "preview": "vite preview --port 4173"
   },
   "dependencies": {
-    "vue": "^3.2.38"
+    "@vueform/toggle": "^2.1.2",
+    "vue": "^3.2.38",
+    "vue-select": "^4.0.0-beta.5",
+    "vue3-toggle-button": "^1.0.3"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^3.0.3",

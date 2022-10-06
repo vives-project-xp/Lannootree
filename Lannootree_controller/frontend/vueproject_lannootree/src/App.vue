@@ -1,6 +1,6 @@
 <script setup>
 import Title from './components/Title.vue'
-import Stop from './components/Stop.vue';
+import Onoff from './components/OnOff.vue';
 import Effects from './components/Effects.vue';
 import Color from './components/Color.vue';
 import Getfiles from './components/Getfiles.vue';
@@ -22,7 +22,7 @@ import Camera from './components/Camera.vue';
   <main>
 
     <div class="components">
-    <Stop />
+    <Onoff />
     <Effects />
     <Color />
     <Getfiles />
