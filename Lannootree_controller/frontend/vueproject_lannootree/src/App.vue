@@ -8,6 +8,7 @@ import Upload from './components/Upload.vue';
 import Camera from './components/Camera.vue';
 import OnOff from '../src/assets/api-connection.js';
 
+import Logout from './components/Logout.vue';
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -30,6 +31,7 @@ import OnOff from '../src/assets/api-connection.js';
     <Getfiles />
     <Upload />
     <Camera />
+    <Logout />
   </div>
 
   </main>
