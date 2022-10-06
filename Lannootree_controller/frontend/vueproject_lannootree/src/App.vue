@@ -6,6 +6,8 @@ import Color from './components/Color.vue';
 import Getfiles from './components/Getfiles.vue';
 import Upload from './components/Upload.vue';
 import Camera from './components/Camera.vue';
+import Functions from '../src/assets/api-connection.js';
+
 import Logout from './components/Logout.vue';
 import Testbutton from './components/Testbutton.vue';
 // import UserInterface from './components/UserInterface.vue'
