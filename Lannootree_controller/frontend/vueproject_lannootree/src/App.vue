@@ -6,6 +6,7 @@ import Color from './components/Color.vue';
 import Getfiles from './components/Getfiles.vue';
 import Upload from './components/Upload.vue';
 import Camera from './components/Camera.vue';
+import Logout from './components/Logout.vue';
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -28,6 +29,7 @@ import Camera from './components/Camera.vue';
     <Getfiles />
     <Upload />
     <Camera />
+    <Logout />
   </div>
 
   </main>
