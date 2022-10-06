@@ -1,20 +1,19 @@
 function websocketClient() {
 
-  const ws = new WebSocket('ws://localhost:8080/');
+  // const WebSocket = require('ws')
+  const ws = new WebSocket('ws://localhost:8080');
 
-  ws.on('open', function open() {
-    ws.send('something');
-  });
 
-  ws.on('message', function incoming(data) {
-    console.log(data);
-  });
+  ws.addEventListener("open", () => {
+    console.log("we are connected")
+    ws.send("hey, how you doing??");
+  })
 
-  // ws.send("Here's some text that the server is urgently awaiting!")
+};
 
-}
-
-onload(websocketClient());
+window.onload = function() {
+  websocketClient();
+};
 
 
 function stop(){
@@ -40,4 +39,3 @@ function get_effect(){
 function play_effect(){
 
 }
-

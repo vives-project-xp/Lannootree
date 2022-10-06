@@ -14,19 +14,26 @@ export default class ClientAPI {
 
         const wss = new WebSocketServer({ port: 8080 });
 
-        wss.on('connection', function connection(ws) {
-            ws.on('message', function (message) {
-                console.log('test');
+        wss.on('connection', ws => {
+            console.log('connection to new client');
+            
+            ws.on("close", () => {
+                console.log("client has disconnected")
             });
-        });
 
-        wss.on('connection', function connection(ws) {
-          ws.on('message', function message(data) {
-            console.log('received: %s', data);
-            });
-        
-        wss.send('something'); 
+            
         });
+        
+        wss.on("message", data => {
+            console.log('client has sent us: ' + data)
+        })
+        // wss.on('connection', function connection(ws) {
+        //   ws.on('message', function message(data) {
+        //     console.log('received: %s', data);
+        //     });
+        
+        // wss.send('something'); 
+        // });
     } 
 
 }
