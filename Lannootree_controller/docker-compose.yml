@@ -6,18 +6,15 @@ services:
     user: "1001:1001"
     volumes:
       - ./mqtt/config:/mosquitto/config
-      # - ./mosquitto:/mosquitto
     ports:
       - 1883:1883
       - 9001:9001
 
   traefik:
     image: "traefik:v2.9"
-    # user: "1001:1001"
     ports:
       - "80:80"
       - "443:443"
-      # - "3100:8080"
     volumes:
       - "./traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -47,7 +44,6 @@ services:
       - 'traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true'
       - 'traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
 
-
   whoami:
     image: "traefik/whoami"
     labels:
@@ -70,18 +66,15 @@ services:
       - "traefik.http.routers.frontend.tls.certresolver=production"
       - 'traefik.http.routers.frontend.middlewares=authelia@docker'
 
-  # client-api:
-  #   build:
-  #     context: ./client-api
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"
-  #     - "traefik.http.routers.frontend-ws.rule=Host(`vps.arnoschoutteten.be`)"
-  #     - "traefik.http.routers.frontend-ws.entrypoints=websecure"
-  #     - "traefik.http.routers.frontend-ws.tls.certresolver=production"
-  #     - 'traefik.http.routers.frontend-ws.middlewares=authelia@docker'
-
-  #     - traefik.http.routers.ws-service-wss.rule=Host(`example.com`)
-  #     - traefik.http.routers.ws-service-wss.entrypoints=wss
-  #     - traefik.http.routers.ws-service-wss.tls=true
-  #     - traefik.http.routers.ws-service-wss.tls.certresolver=dns
+  client-api:
+    build:
+      context: ./client-api
+    restart: unless-stopped
+    environment:
+      - MQTT_URL='mqtt://vps.arnoschoutteten.be:1883'
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client-api.rule=Host(`vps.arnoschoutteten.be`) && PathPrefix(`/wss`)"
+      - "traefik.http.routers.client-api.entrypoints=websecure"
+      - "traefik.http.routers.client-api.tls.certresolver=production"
+      - 'traefik.http.routers.client-api.middlewares=authelia@docker'
