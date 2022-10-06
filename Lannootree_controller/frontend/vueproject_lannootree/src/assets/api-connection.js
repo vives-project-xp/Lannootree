@@ -1,6 +1,6 @@
 const ws = new WebSocket('ws://localhost:3001');
 
-function websocketClient() {
+export default function websocketClient() {
 
   ws.onopen = (event) => {
     console.log(event)
@@ -11,13 +11,16 @@ function websocketClient() {
   
 };
 
-function stop() {
+export function onOff() {
   ws.on = () => {
-    ws.send("stop");
+    ws.send("on");
   }
 };
 
-function send(){
+document.getElementById("onoff").onclick = onOff();
+
+
+export function send(){
   ws.on = data => {
     ws.send(data);
   }
