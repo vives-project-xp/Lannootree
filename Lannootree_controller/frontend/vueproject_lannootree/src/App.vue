@@ -6,6 +6,8 @@ import Color from './components/Color.vue';
 import Getfiles from './components/Getfiles.vue';
 import Upload from './components/Upload.vue';
 import Camera from './components/Camera.vue';
+import OnOff from '../src/assets/api-connection.js';
+
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -22,7 +24,7 @@ import Camera from './components/Camera.vue';
   <main>
 
     <div class="components">
-    <Onoff />
+    <Onoff id="onoff"/>
     <Effects />
     <Color />
     <Getfiles />

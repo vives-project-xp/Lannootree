@@ -5,20 +5,20 @@ import mqtt from "mqtt"
 const client = mqtt.connect('mqtt://vps.arnoschoutteten.be:1883');
 
 // publish on server
-function publishStop() {
-    console.log('test');
-     
+function onOff(onoff) {
+    console.log('on');
+    client.on('connect', function () {
+        console.log("conencted")
+        client.subscribe('controller/stop', function (err) {
+            if (!err) {
+                client.publish('controller/stop', onoff);
+                console.log('peoe');
+            }
+        })
+    })
 }
    
-client.on('connect', function () {
-    console.log("conencted")
-    client.subscribe('controller/stop', function (err) {
-        if (!err) {
-            client.publish('controller/stop', "false");
-            console.log('peoe');
-        }
-    })
-})
+
 // client.on('message', function (topic, message) {
 //     // message is Buffer
 //     console.log(message.toString())
@@ -34,7 +34,7 @@ wss.on('connection', ws => {
     
     ws.on("message", data => {
         if(data == "stop") {
-            publishStop();
+            onOff();
         }
     });
 
