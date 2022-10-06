@@ -3,20 +3,19 @@
 // mqtt ______________________________________________________________________________________
 import mqtt from "mqtt"
 const client = mqtt.connect('mqtt://vps.arnoschoutteten.be:1883');
+// const client = mqtt.connect(process.env.MQTT_URL);
 
+client.on('connect', function () {
+    console.log("conencted")
+})
 // publish on server
 function onOff(onoff) {
-    console.log('on');
-    client.on('connect', function () {
-        console.log("conencted")
-        client.subscribe('controller/stop', function (err) {
-            if (!err) {
-                client.publish('controller/stop', onoff);
-                console.log('peoe');
-            }
-        })
-    })
+    console.log('onOff');
+    client.publish('controller/stop', onoff);
+    console.log('peoe');
 }
+// client.subscribe('controller/stop', function (err) {
+// })
    
 
 // client.on('message', function (topic, message) {
@@ -33,6 +32,7 @@ wss.on('connection', ws => {
     console.log('connection to new client');
     
     ws.on("message", data => {
+        console.log('Reicieved: ' . data);
         if(data == "stop") {
             onOff();
         }
