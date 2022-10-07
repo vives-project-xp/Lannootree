@@ -11,8 +11,6 @@ client.on('connect', function () {
   client.subscribe('controller/matrixsize');
   client.subscribe('controller/stop');
   client.subscribe('controller/pause');
-  client.subscribe('controller/play');
-  client.subscribe('controller/togglepause');
   client.subscribe('controller/setcolor');
   client.subscribe('controller/effect');
   client.subscribe('controller/asset');
