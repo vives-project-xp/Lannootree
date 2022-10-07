@@ -4,7 +4,8 @@
   "description": "",
   "main": "client-api.js",
   "scripts": {
-    "dev": "nodemon client-api.js"
+    "dev": "nodemon client-api.js",
+    "start": "node client-api.js"
   },
   "keywords": [],
   "author": "",

@@ -6,45 +6,106 @@ services:
     user: "1001:1001"
     volumes:
       - ./mqtt/config:/mosquitto/config
-      # - ./mosquitto:/mosquitto
     ports:
       - 1883:1883
       - 9001:9001
-
-
-
   traefik:
     image: "traefik:v2.9"
-    container_name: "traefik"
-    command:
-      #- "--log.level=DEBUG"
-      - "--api.insecure=true"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
     ports:
       - "80:80"
       - "443:443"
-      - "3100:8080"
     volumes:
-      - "/traefik:/etc/traefik"
+      - "./traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.lannotree.devbitapp.be`) || (Host(`lannotree.devbitapp.be`) && PathPrefix(`/traefik`))' 
+      - 'traefik.http.routers.traefik.priority=100'
+      - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
+      - 'traefik.http.routers.traefik-dashboard.entrypoints=websecure'
+      - 'traefik.http.routers.traefik-dashboard.tls.certresolver=production'
+      - 'traefik.http.routers.traefik-dashboard.middlewares=authelia@docker'
+
+  authelia:
+    image: authelia/authelia
+    restart: unless-stopped
+    user: "1001:1001"
+    volumes:
+      - ./authelia/config:/config
+    environment:
+      TZ: "Australia/Melbourne"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.authelia.rule=Host(`auth.lannotree.devbitapp.be`)'
+      - 'traefik.http.services.authelia.loadbalancer.server.port=9091'
+      - 'traefik.http.routers.authelia.entryPoints=websecure'
+      - 'traefik.http.routers.authelia.tls.certresolver=production'
+      - 'traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.lannotree.devbitapp.be%2F'
+      - 'traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true'
+      - 'traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
 
   whoami:
     image: "traefik/whoami"
-    container_name: "simple-service"
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`vps.arnoschoutteten.be`)"
-      - "traefik.http.routers.whoami.entrypoints=web"
-  # frontend:
-  #   image: php:8.0-apache
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.whoami.rule=Host(`whoami.lannotree.devbitapp.be`) || (Host(`lannotree.devbitapp.be`) && PathPrefix(`/whoami`))'
+      - 'traefik.http.routers.whoami.entrypoints=websecure'
+      - 'traefik.http.routers.whoami.tls.certresolver=production'
+      - 'traefik.http.routers.whoami.middlewares=authelia@docker'
+
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    environment:
+      - LOGOUT_URL=https://auth.lannotree.devbitapp.be/logout
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=Host(`lannotree.devbitapp.be`)'
+      - 'traefik.http.routers.frontend.priority=1'
+      - 'traefik.http.routers.frontend.entrypoints=websecure'
+      - 'traefik.http.routers.frontend.tls.certresolver=production'
+      - 'traefik.http.routers.frontend.middlewares=authelia@docker'
+
+  # config-webpage:
+  #   build:
+  #     context: ./config-webpage
   #   restart: unless-stopped
-  #   volumes:
-  #     - ./frontend:/var/www/html/:ro
-  #   environment:
-  #     - CONTROLLER_SERVER=localhost
-  #   ports:
-  #     - 8080:80
+  #   labels:
+  #     - 'traefik.enable=true'
+  #     - 'traefik.http.routers.client-api.rule=Host(`lannotree.devbitapp.be`) && PathPrefix(`/admin`)'
+  #     - 'traefik.http.routers.client-api.priority=1'
+  #     - 'traefik.http.routers.client-api.entrypoints=websecure'
+  #     - 'traefik.http.routers.client-api.tls.certresolver=production'
+  #     - 'traefik.http.routers.client-api.middlewares=authelia@docker'
 
+  frontend:
+    build:
+      context: ./frontend
+    restart: unless-stopped
+    environment:
+      - LOGOUT_URL=https://auth.lannotree.devbitapp.be/logout
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.frontend.rule=Host(`lannotree.devbitapp.be`)'
+      - 'traefik.http.routers.frontend.priority=1'
+      - 'traefik.http.routers.frontend.entrypoints=websecure'
+      - 'traefik.http.routers.frontend.tls.certresolver=production'
+      - 'traefik.http.routers.frontend.middlewares=authelia@docker'
 
+  client-api:
+    build:
+      context: ./client-api
+    restart: unless-stopped
+    environment:
+      - MQTT_URL='mqtt://lannotree.devbitapp.be:1883'
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.client-api.rule=Host(`lannotree.devbitapp.be`) && PathPrefix(`/wss`)'
+      - "traefik.http.routers.client-api.middlewares=client-api-stripprefix"
+      - "traefik.http.middlewares.client-api-stripprefix.stripprefix.prefixes=/wss"
+      - 'traefik.http.routers.client-api.priority=100'
+      - 'traefik.http.services.client-api.loadbalancer.server.port=80'
+      - 'traefik.http.routers.client-api.entrypoints=websecure'
+      - 'traefik.http.routers.client-api.tls.certresolver=production'
+      - 'traefik.http.routers.client-api.middlewares=authelia@docker'
