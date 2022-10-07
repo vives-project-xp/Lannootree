@@ -18,6 +18,7 @@
     "@fortawesome/vue-fontawesome": "^3.0.1",
     "@kyvg/vue3-notification": "^2.4.1",
     "@vueuse/core": "^9.3.0",
+    "bootstrap": "^5.2.2",
     "vue": "^3.2.38",
     "vue3-highlightjs": "^1.0.5"
   },
