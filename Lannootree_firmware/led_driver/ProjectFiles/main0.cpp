@@ -3,8 +3,8 @@
 #include <lannootree_config.hpp>
 #include <ledstrip_controller.hpp>
 
-uint8_t running = 1;
 using json = nlohmann::json;
+uint8_t running = 1;
 
 static void add_sig_handels(void) {
   struct sigaction act;
