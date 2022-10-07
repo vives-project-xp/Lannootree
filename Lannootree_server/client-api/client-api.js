@@ -12,21 +12,9 @@ client.on('connect', function () {
 
 // publish on server
 function onOff(onoff) {
-<<<<<<< HEAD
-    console.log('on');
-    client.on('connect', function () {
-        console.log("conencted")
-        client.subscribe('controller/stop', function (err) {
-            if (!err) {
-                client.publish('controller/setcolor', JSON.stringify({red: 0, green: 0, blue: 0}));
-            }
-        })
-    })
-=======
     console.log('onOff');
     client.publish('controller/stop', onoff);
     console.log('peoe');
->>>>>>> c58715dc1f2a910b6ee22d437dee6955017ac3de
 }
 
 // client.subscribe('controller/stop', function (err) {
