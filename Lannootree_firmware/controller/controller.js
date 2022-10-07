@@ -25,16 +25,18 @@ client.on('message', function (topic, message) {
     if(topic=="controller/matrixsize") {
         set_matrixsize(JSON.parse(message.toString()).rows, JSON.parse(message.toString()).columns);
     }
+    else if(topic=="controller/pause") {
+        const json_obj = JSON.parse(message.toString());
+        if(json_obj.value == "pause") pause();
+        else if(json_obj.value == "togglepause") togglepause();
+        else if(json_obj.value == "play") play();
+    }
     else if(topic=="controller/stop") stop();
-    else if(topic=="controller/pause") pause();
-    else if(topic=="controller/play") play();
-    else if(topic=="controller/togglepause") togglepause();
     else if(topic=="controller/setcolor") {
         playing_effect = null;
         const json_obj = JSON.parse(message.toString());
         set_color_full(json_obj.red, json_obj.green, json_obj.blue);
         frame_to_ledcontroller();
-
     }
     else if(topic=="controller/effect") {
         const json_obj = JSON.parse(message.toString());
@@ -42,7 +44,7 @@ client.on('message', function (topic, message) {
         play();
     }
     else if(topic=="controller/asset") console.log("ASSET");
-    else console.log("Unknown topic")
+    else console.log("Unknown topic");
 })
 
 // CONTROLLER
@@ -79,6 +81,31 @@ function frame_to_ledcontroller() {
     // ------------------------------------
     // CODE FRAME STUREN NAAR LEDCONTROLLER
 
+    function arrayToJSONObject (arr){
+        //header
+        var keys = arr[0];
+     
+        //vacate keys from main array
+        var newArr = arr.slice(1, arr.length);
+     
+        var formatted = [],
+        data = newArr,
+        cols = keys,
+        l = cols.length;
+        for (var i=0; i<data.length; i++) {
+                var d = data[i],
+                        o = {};
+                for (var j=0; j<l; j++)
+                        o[cols[j]] = d[j];
+                formatted.push(o);
+        }
+        return formatted;
+    }
+
+    
+
+    client.publish('controller/output', JSON.stringify(arrayToJSONObject(ledmatrix)));
+
 
 
     // ------------------------------------
@@ -99,6 +126,7 @@ function frame_to_console() { // DEBUGGING
         frame_console+="\n";
     }
     console.log(frame_console);
+    return frame_console;
 }
 
 function set_color_full(red, green, blue) {
@@ -158,4 +186,4 @@ setInterval(() => {
     else {
         console.log("PAUSED");
     }
-}, 2000);
+}, 200);
