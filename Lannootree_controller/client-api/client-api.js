@@ -11,8 +11,7 @@ function onOff(onoff) {
         console.log("conencted")
         client.subscribe('controller/stop', function (err) {
             if (!err) {
-                client.publish('controller/stop', onoff);
-                console.log('peoe');
+                client.publish('controller/setcolor', JSON.stringify({red: 0, green: 0, blue: 0}));
             }
         })
     })

@@ -11,13 +11,13 @@ export default function websocketClient() {
   
 };
 
-export function onOff() {
+export function effect() {
   ws.on = () => {
-    ws.send("on");
+    ws.send("effect");
   }
 };
 
-document.getElementById("onoff").onclick = onOff();
+// document.getElementById("test") = onOff();
 
 
 export function send(){
@@ -50,22 +50,22 @@ websocketClient();
 
 
 
-function pause(){
-  ws.send("pause")
-}
+// function pause(){
+//   ws.send("pause")
+// }
 
-function get_preprocessed(){
+// function get_preprocessed(){
 
-}
+// }
 
-function play_preprocessed(){
+// function play_preprocessed(){
 
-}
+// }
 
-function get_effect(){
+// function get_effect(){
 
-}
+// }
 
-function play_effect(){
+// function play_effect(){
 
-}
+// }
