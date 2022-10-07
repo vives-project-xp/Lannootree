@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import { GridCell } from '@/assets/GridCell';
+import type { GridCell } from '@/assets/GridCell';
 import { ref, computed, defineProps } from 'vue'
 
 const props = defineProps({
@@ -73,15 +73,14 @@ const addConnection = function (next: GridCell) {
 
 const changeChannel = function(channel: string) {
   let current: GridCell | undefined = ([] as GridCell[]).concat(...props.grid).find(cell => (cell.channel === props.cell.channel && cell.isHead));
-  let next: GridCell | null = props.cell.connection;
-  if (current !== undefined) {
-    while (next) {
-      current.canConnect = false;
-      current.isHead = false;
-      current.connection = null;
-      current = next;
-      next = next.connection;
-    }
+  let next: string | GridCell | null = props.cell.connection;
+  while (next) {
+    if (current === undefined) break;
+    current.canConnect = false;
+    current.isHead = false;
+    current.connection = null;
+    current = next;
+    next = next.connection;
   }
 
   props.cell.channel = channel;
