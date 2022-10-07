@@ -2,7 +2,7 @@ import Color from './color.js';
 import mqtt from "mqtt"
 
 // MQTT
-const client = mqtt.connect('mqtt://vps.arnoschoutteten.be');
+const client = mqtt.connect('mqtt://lannootree.devbitapp.be');
 
 client.on('connect', function () {
   console.log("connected");
