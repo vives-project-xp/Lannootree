@@ -8,8 +8,7 @@ target_include_directories(Lannootree_firmware PUBLIC
 )
 
 target_link_libraries(Lannootree_firmware
-  lannootree
   utils
   ws2811
-  controll
+  lannootree
 )

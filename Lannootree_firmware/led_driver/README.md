@@ -1,11 +1,6 @@
 # Lannootree firmware
 
 ## Setup
-- Pull in submodules if not already pulled in.
-
-  ```bash
-  git submodules update --init
-  ```
 - Install necessary tools
 
   ```bash

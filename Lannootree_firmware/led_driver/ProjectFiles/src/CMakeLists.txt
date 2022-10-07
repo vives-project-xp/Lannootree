@@ -1,3 +1,12 @@
-add_subdirectory(communication)
-add_subdirectory(controll)
-add_subdirectory(Lannootree)
+add_library(lannootree INTERFACE)
+
+target_include_directories(lannootree INTERFACE
+  ${CMAKE_CURRENT_LIST_DIR}/include
+)
+
+target_sources(lannootree INTERFACE
+  ${CMAKE_CURRENT_LIST_DIR}/lannootree.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/led_driver_thread.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/socket_thread.cpp
+)
+

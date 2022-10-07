@@ -8,3 +8,5 @@ All messages incomming from MQTT broker will be put in the redis database.</br>
 ```
 docker compose up
 ```
+
+# This will probably not be used :(

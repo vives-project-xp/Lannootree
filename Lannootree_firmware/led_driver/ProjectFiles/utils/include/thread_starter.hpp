@@ -6,20 +6,23 @@
 
 namespace Lannootree {
 
-  typedef void (*thread_function)(void*);
-
   class ThreadStarter {
 
     public:
+      template <typename Callable, typename... Args>
+      static void add_thread(std::string name, Callable f, Args... args) {
+        auto itr = get()._thread_list.find(name);
+        if (itr == get()._thread_list.end()) {
+          get()._thread_list[name] = std::thread(f, args...);
+        }
+      };
+
+    private:
       static ThreadStarter& get(void) {
         static ThreadStarter instance;
         return instance;
+      
       }
-
-    public:
-      static void add_thread(std::string name, thread_function f);
-      static void add_thread(std::string name, thread_function f, void* args);
-
     public:
       static void join_all(void);
       static void join(std::string name);
