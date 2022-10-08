@@ -2,8 +2,7 @@
 
 namespace Lannootree {
 
-  LedDriverThread::LedDriverThread(json config, bool* running, Queue<Color>* queue)
-  : running(running), queue(queue) {
+  LedDriverThread::LedDriverThread(json& config, Queue<Color>* queue) : queue(queue) {
     bool ca0, ca1, cb0, cb1 = false;
 
     for (std::string c : config["inUseChannels"]) {
@@ -30,11 +29,18 @@ namespace Lannootree {
   }
 
   void LedDriverThread::loop(void) {
-    while (*running) {
-      if (queue->empty()) continue;
-      auto c = queue->pop_blocking();
-      info_log("Received color: " << std::hex << c.to_uint32_t());
+    Color c;
+    
+    while (true) {
+      if (!queue->pop_blocking(c)) {
+        info_log("Queue shut down");
+        break;
+      };
+      
+      info_log("Receive color " << std::hex << c.to_uint32_t());
     }
+
+    info_log("LedDriverThread shuting down");
   }
 
   void LedDriverThread::init_ws2811(ws2811_t* ws, json& config, int dma, int gpio0, int gpio1, std::string chan) {

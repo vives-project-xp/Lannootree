@@ -14,7 +14,7 @@ namespace Lannootree {
   class LannooTree {
 
     public:
-      LannooTree(std::ifstream& f);
+      LannooTree();
       ~LannooTree();
 
     public:
@@ -24,13 +24,10 @@ namespace Lannootree {
     private:
       json config;
       Queue<Color> _color_queue;
-      
-    private:
-      LedDriverThread led_task;
-      SocketThread socket_task;
 
     private:
-      bool _running = true;
+      bool _running;
+      std::condition_variable signal_received;
 
   };
 

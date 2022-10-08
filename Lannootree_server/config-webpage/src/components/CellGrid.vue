@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PropType } from 'vue';
-import type { GridCell } from '@/assets/GridCell';
+import type { Grid, GridCell } from '@/assets/GridCell';
 import { ref, computed, defineProps } from 'vue'
 
 const props = defineProps({
@@ -56,8 +56,8 @@ const cellStyle = computed(() => {
 
 const channelHasHead = computed(() => {
   return ([] as GridCell[]).concat(...props.grid)
-          .filter(cell => cell.channel === props.cell.channel)
-          .reduce((p, c) => p || c.isHead, false);
+          .filter((cell: GridCell) => cell.channel === props.cell.channel)
+          .reduce((p, c) => { return p || (c.isHead !== undefined ? c.isHead : false); }, false);
 });
 
 const setHead = function () {
@@ -79,8 +79,8 @@ const changeChannel = function(channel: string) {
     current.canConnect = false;
     current.isHead = false;
     current.connection = null;
-    current = next;
-    next = next.connection;
+    (current as GridCell) = (next as GridCell);
+    next = (next as GridCell).connection;
   }
 
   props.cell.channel = channel;

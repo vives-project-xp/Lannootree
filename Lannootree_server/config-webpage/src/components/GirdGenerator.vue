@@ -80,7 +80,7 @@ const jsonConfig: ComputedRef<JsonConfig> = computed(() => {
       // Delete keys not needed for firmware an change connection to string
       delete cell.isHead;
       delete cell.canConnect;
-      cell.connection = cell.connection?.uuid;
+      cell.connection = (cell.connection as GridCell).uuid;
     })
   });
 

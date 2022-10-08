@@ -7,6 +7,7 @@ namespace Lannootree {
   class Color {
     
     public:
+      Color() : Color(0, 0, 0) {};
       Color(uint8_t red, uint8_t green, uint8_t blue)
         : red(red), green(green), blue(blue) {};
       

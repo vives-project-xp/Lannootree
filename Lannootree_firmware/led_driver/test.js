@@ -1,6 +1,6 @@
 const net = require('net');
 
-const client = net.createConnection("./build/lannotree.socket");
+const client = net.createConnection("./build/lannootree.socket");
 
 client.on("connect", () => {
   console.log("Connected to socket");
@@ -14,6 +14,13 @@ client.on('error', (err) => {
   console.log(err);
 })
 
-setInterval(() => {
+let i = 0;
+const int = setInterval(() => {
   client.write(Uint8Array.from([0xff, 0x00, 0x00]));
-}, 1000);
+  
+  if (i++ == 10) {
+    client.write('q');
+    client.destroy();
+    clearInterval(int);
+  }
+}, 25);

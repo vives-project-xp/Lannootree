@@ -4,7 +4,6 @@
 #include <thread>
 #include <chrono>
 #include <fstream>
-#include <signal.h>
 #include <iostream>
 
 #include <json.hpp>
@@ -19,12 +18,7 @@
 #define warn_log(...) std::cout << F_YELLOW << "[WARN] " << __VA_ARGS__ << RESET_COLOR << '\n'
 #define error_log(...) std::cerr << F_RED << "[ERROR] " << __VA_ARGS__ << RESET_COLOR << '\n'
 
-
-#define GPIO_PIN        18
-#define DMA             10
 #define STRIP_TYPE      WS2811_STRIP_GRB
-
-extern uint8_t running;
 
 static const char* logo =
 "  _                                   _                  \n"

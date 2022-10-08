@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <queue>
+#include <condition_variable>
 
 namespace Lannootree {
 
@@ -13,46 +14,43 @@ namespace Lannootree {
       ~Queue() {};
 
     public:
-      bool empty(void) {
-        _mtx.lock();
-        bool e = _queue.empty();
-        _mtx.unlock();
-        return e;
-      }
+      bool pop_blocking(T& val) {
+        std::unique_lock<std::mutex> lock(_mtx);
+        
+        while (true) {
+          if (_queue.empty()) {
+            if (_shutdown) return false;
+          } 
+          else break;
+          _can_pop.wait(lock);
+        }
 
-    public:
-      T pop_blocking(void) {
-        _mtx.lock();
-        T val = _queue.front();
+        val = std::move(_queue.front());
         _queue.pop();
-        _mtx.unlock();
-        return val;
+        return true;
       }
 
-      T try_pop(void) {
-        if (!_mtx.try_lock()) return;
-        T val = _queue.front();
-        _queue.pop();
-        _mtx.unlock();
-        return val;
-      }
-
-    public:
       void push_blocking(T val) {
-        _mtx.lock();
-        _queue.push(val);
-        _mtx.unlock();
+        {
+          std::unique_lock<std::mutex> lock(_mtx);
+          _queue.push(val);
+        }
+        _can_pop.notify_one();
       }
 
-      void try_push(T val) {
-        if (!_mtx.try_lock()) return;
-        _queue.push(val);
-        _mtx.unlock();
+      void request_shutdown() {
+        {
+          std::unique_lock<std::mutex> lock(_mtx);
+          _shutdown = true;
+        }
+        _can_pop.notify_all();
       }
 
     private:
+      bool _shutdown = false;
       std::mutex _mtx;
       std::queue<T> _queue;
+      std::condition_variable _can_pop;
 
   };
 

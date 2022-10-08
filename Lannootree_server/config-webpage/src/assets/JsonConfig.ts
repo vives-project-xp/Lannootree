@@ -1,4 +1,4 @@
-import type GridCell from "./GridCell";
+import type { GridCell } from "./GridCell";
 
 export interface Channel {
   ledCount: number;

@@ -4,8 +4,8 @@ export class GridCell {
   public channel: null | string;
   public connection: null | string | GridCell;
   public coordinate: { col: number, row: number };
-  public isHead: boolean;
-  public canConnect: boolean;
+  public isHead?: boolean;
+  public canConnect?: boolean;
   public diabled: boolean;
   
   constructor(a: boolean) {
