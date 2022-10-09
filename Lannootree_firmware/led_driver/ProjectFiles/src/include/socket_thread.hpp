@@ -1,9 +1,11 @@
 #pragma once
 
-#include <unistd.h>
-#include <sys/un.h>
 #include <fcntl.h>
+#include <unistd.h>
+
+#include <sys/un.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 
 #include <i_thread_object.hpp>
 #include <lannootree_config.hpp>

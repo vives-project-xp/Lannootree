@@ -9,7 +9,7 @@ namespace Lannootree {
       *running = false;
     }
 
-    // fcntl(_socket_fd, F_SETFL, O_NONBLOCK);
+    fcntl(_socket_fd, F_SETFL, O_NONBLOCK);
 
     info_log("Initializing socket...");
     struct sockaddr_un serv_addr;
@@ -37,37 +37,52 @@ namespace Lannootree {
 
   void SocketThread::loop(void) {
     struct sockaddr_un cli_addr;
+    socklen_t cli_len = sizeof(cli_addr);
+
     char buffer[1024] = { 0 };
 
-    while (*running) {
-      socklen_t cli_len = sizeof(cli_addr);
-      if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr*) &cli_addr, &cli_len)) == -1) {
-        error_log("Failed to accept socket");
-        continue;
-      }
+    fd_set rfds;
+    struct timeval tv;
+    int select_ret;
 
-      while (true) {
-        int read_status = read(_current_sock_fd, buffer, 1024);
-        if (read_status == -1) {
-          error_log("Failed to read socket");
+    while (*running) {
+      FD_ZERO(&rfds);
+      FD_SET(_socket_fd, &rfds);
+      
+      tv.tv_sec = 1;
+      tv.tv_usec = 0;
+
+      select_ret = select(_socket_fd + 1, &rfds, NULL, NULL, &tv);
+
+      if (select_ret == -1) {
+        error_log("Error in select");
+        continue;
+      } 
+
+      else if (select_ret) {
+        info_log("Accepting incomming connection");
+        if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr*) &cli_addr, &cli_len)) == -1) {
           continue;
         }
 
-        if (read_status == 0) {
-          info_log("Client disconnected");
-          break;
-        } 
+        while (true) {
+          // Read normay returns number of bytes read, but doesn't do a great job at it
+          int read_status = read(_current_sock_fd, buffer, sizeof(buffer));
+          if (read_status == -1) {
+            error_log("Failed to read socket");
+            continue;
+          }
 
-        if (buffer[0] == 'q') {
-          *running = false;
-          break;
+          if (read_status == 0) {
+            info_log("Client disconnected");
+            break;
+          }
+
+          queue->push_blocking(Color(buffer[0], buffer[1], buffer[2])); 
         }
-        else {
-          queue->push_blocking(Color(buffer[0], buffer[1], buffer[2]));
-        }
+
+        close(_current_sock_fd);
       }
-
-      close(_current_sock_fd);
     }
   }
 

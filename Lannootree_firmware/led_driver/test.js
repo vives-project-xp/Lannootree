@@ -14,13 +14,16 @@ client.on('error', (err) => {
   console.log(err);
 })
 
+const Data = new Uint8Array(1024).fill(0xff);
+Data[1023] = 0xa5;
+console.log(Data);
+
 let i = 0;
 const int = setInterval(() => {
-  client.write(Uint8Array.from([0xff, 0x00, 0x00]));
+  client.write(Data);
   
-  if (i++ == 10) {
-    client.write('q');
+  if (i++ == 1000) {
     client.destroy();
     clearInterval(int);
   }
-}, 25);
+}, 1);

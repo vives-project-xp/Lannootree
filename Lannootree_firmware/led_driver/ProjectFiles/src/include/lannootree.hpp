@@ -2,12 +2,18 @@
 
 #include <fstream>
 #include <cstdlib>
+#include <signal.h>
 #include <socket_thread.hpp>
 #include <thread_starter.hpp>
 #include <lannootree_config.hpp>
 #include <led_driver_thread.hpp>
 
 using json = nlohmann::json;
+
+namespace {
+  std::mutex mtx;
+  std::condition_variable shutdown_request;
+}
 
 namespace Lannootree {
 
@@ -19,15 +25,13 @@ namespace Lannootree {
 
     public:
       void start(void);
-      void stop(void) { _running = false; };
 
     private:
       json config;
       Queue<Color> _color_queue;
 
     private:
-      bool _running;
-      std::condition_variable signal_received;
+      bool _running = true;
 
   };
 

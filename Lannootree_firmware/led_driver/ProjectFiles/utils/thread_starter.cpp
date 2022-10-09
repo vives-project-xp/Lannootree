@@ -11,4 +11,15 @@ namespace Lannootree {
     get()._thread_list.erase(itr);    
   }
 
+  void ThreadStarter::join_all(void) {
+    std::vector<std::string> joined_threads;
+
+    for (auto& [name, thread] : get()._thread_list) { 
+      joined_threads.push_back(name);
+      thread.join(); 
+    }
+
+    for (auto name : joined_threads) get()._thread_list.erase(name);
+  }
+
 }

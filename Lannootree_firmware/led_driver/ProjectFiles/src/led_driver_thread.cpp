@@ -37,7 +37,7 @@ namespace Lannootree {
         break;
       };
       
-      info_log("Receive color " << std::hex << c.to_uint32_t());
+      info_log("Received color 0x00" << std::hex << c.to_uint32_t());
     }
 
     info_log("LedDriverThread shuting down");
