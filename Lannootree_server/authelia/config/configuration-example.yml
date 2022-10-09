@@ -1,0 +1,50 @@
+###############################################################
+#                   Authelia configuration                    #
+###############################################################
+
+server:
+  host: 0.0.0.0
+  port: 9091
+log:
+  level: debug
+theme: dark
+jwt_secret: Verry_secret_secret! # Change this!
+totp:
+  issuer: authelia.com
+
+authentication_backend:
+  file:
+    path: /config/users_database.yml
+    password:
+      algorithm: argon2id
+      iterations: 1
+      salt_length: 16
+      parallelism: 8
+      memory: 64
+      
+access_control:
+  default_policy: one_factor
+  rules:
+    - domain: lannootree.devbitapp.be
+      policy: one_factor
+
+session:
+  name: authelia_session
+  secret: Verry_secret_secret! # Change this!
+  expiration: 3600  # 1 hour
+  inactivity: 300  # 5 minutes
+  domain: lannootree.devbitapp.be  # Should match whatever your root protected domain is
+
+regulation:
+  max_retries: 3
+  find_time: 120
+  ban_time: 300
+
+storage:
+  encryption_key: a_very_important_secret # Now required
+  local:
+    path: /config/db.sqlite3
+
+notifier:
+  filesystem:
+    filename: /config/notification.txt

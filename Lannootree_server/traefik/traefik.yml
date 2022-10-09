@@ -42,7 +42,7 @@ entryPoints:
 certificatesResolvers:
   staging:
     acme:
-      email: info@arnoschoutteten.be
+      email: webmaster@lannootree.devbitapp.be
       storage: /etc/traefik/certs/acme.json
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       httpChallenge:
@@ -50,7 +50,7 @@ certificatesResolvers:
 
   production:
     acme:
-      email: info@arnoschoutteten.be
+      email: webmaster@lannootree.devbitapp.be
       storage: /etc/traefik/certs/acme.json
       caServer: "https://acme-v02.api.letsencrypt.org/directory"
       httpChallenge:
