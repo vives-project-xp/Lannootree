@@ -8,7 +8,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git --recursive
 
 ## Docker structure:
 
-- Lannootree_controller:
+- Lannootree_server:
 This is the controller that runs on the public server
     - asset-processor
     - authelia

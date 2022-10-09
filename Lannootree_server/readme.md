@@ -1,14 +1,14 @@
 # Lannootree controller
 
+## installation
+
+
+
 ## Docker
+
 ```
 docker-compose up -d
 ```
-- Frontend httpd
-- controller nodejs for all the logic
-- asset-processor for processing and managing assets
-- mosquitto mqtt server
-
 
 ## mqtt users
 

@@ -34,11 +34,11 @@ access_control:
   default_policy: one_factor
   rules:
     # Rules applied to everyone
-    - domain: lannotree.devbitapp.be
+    - domain: lannootree.devbitapp.be
       policy: one_factor
-    - domain: whoami.lannotree.devbitapp.be
+    - domain: whoami.lannootree.devbitapp.be
       policy: one_factor
-    - domain: traefik.lannotree.devbitapp.be
+    - domain: traefik.lannootree.devbitapp.be
       policy: one_factor
 
 session:
@@ -47,7 +47,7 @@ session:
   secret: wc-pot-session-this-is-a-secret
   expiration: 3600  # 1 hour
   inactivity: 300  # 5 minutes
-  domain: lannotree.devbitapp.be  # Should match whatever your root protected domain is
+  domain: lannootree.devbitapp.be  # Should match whatever your root protected domain is
 
   # redis:
   #   host: redis
