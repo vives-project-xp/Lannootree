@@ -10,6 +10,18 @@ services:
       - 1883:1883
       - 8883:8883
 
+  public_key:
+    image: "nginx:alpine"
+    volumes:
+      - "./mqtt/config/ca_certificates/ca.crt:/usr/share/nginx/html/ca.crt"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.public_key.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
+      - 'traefik.http.routers.public_key.priority=100'
+      - 'traefik.http.routers.public_key.entrypoints=websecure'
+      - 'traefik.http.routers.public_key.tls.certresolver=production'
+      - 'traefik.http.routers.public_key.middlewares=authelia@docker'
+
   traefik:
     image: "traefik:v2.9"
     ports:
