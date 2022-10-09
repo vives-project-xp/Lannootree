@@ -2,8 +2,22 @@
 
 // mqtt ______________________________________________________________________________________
 import mqtt from "mqtt"
-const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
-// const client = mqtt.connect(process.env.MQTT_URL);
+import Certificate from './certificate.js'
+import * as fs from 'fs';
+
+
+Certificate.download(); // download public key for authenticating the mqtt broker over SSL-TLS
+var caFile = fs.readFileSync("ca.crt");
+
+var options={
+    clientId:"clientapi",
+    port:8883,
+    host:'lannootree.devbitapp.be',
+    protocol:'mqtts',
+    rejectUnauthorized : true,
+    ca:caFile 
+  }
+const client = mqtt.connect(options);
 
 client.on('connect', function () {
     console.log("connected")
