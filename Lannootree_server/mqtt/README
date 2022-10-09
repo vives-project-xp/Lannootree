@@ -10,6 +10,9 @@
 - server.ca: public key for server TLS
 - server.key: Private key for mqtt server TLS
 
+All the files need to be generated, the ca.crt needs to be shared with the clients.
+It can be downloaded to the clients via [this link](https://lannootree.devbitapp.be/ca.crt)
+
 ### Generating using script
 
 Run the script [generate_certs.sh](mqtt/config/ca_certificate/generate_certs.sh) in mqtt/config/ca_certificate
@@ -27,6 +30,10 @@ Important: The Common Name needs to be the domain name!
 ### Generating manually
 
 [guide](http://www.steves-internet-guide.com/mosquitto-tls/)
+
+```
+sudo apt install opensssl -y
+```
 
 First create a key pair for the CA
 ```
@@ -50,32 +57,3 @@ openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out s
 ```
 ## client certificates
 
-Place your SSL/TLS server keys and certificates in this directory.
-
-This directory should only be readable by the mosquitto user.
-
-* = usqed by mosquitto 
-
-* ca.crt: This is the crt for the server and client to add as trusted
-ca.key: This file is used when creating new server or client certificates.
-* server.crt
-server.crs
-* server.key
-
-First create a key pair for the CA
-    openssl genrsa -out ca.key 2048
-
-Now Create a certificate for the CA using the CA key that we created in step 1
-    openssl req -new -x509 -days 1826 -key ca.key -out ca.crt
-
-Now we create a server key pair that will be used by the broker
-    openssl genrsa -out server.key 2048
-
-Now we create a certificate request .csr. When filling out the form the common name is important and is usually the domain name of the server.
-    openssl req -new -out server.csr -key server.key
-
-Now we use the CA key to verify and sign the server certificate. This creates the server.crt file
-    openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 360
-
-
-http://www.steves-internet-guide.com/mosquitto-tls/

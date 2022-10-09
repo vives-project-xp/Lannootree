@@ -12,7 +12,8 @@
 
 ### MQTT certificates
 
-generate certificates explained [here](mqtt/README.md)
+Mosquitto needs certificates for SSL-TLS and for each client to connect securely.
+Follow [this guide](mqtt/README.md) in the mqtt directory.
 
 ### asset processor
 
