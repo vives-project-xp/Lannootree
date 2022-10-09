@@ -41,7 +41,7 @@ openssl genrsa -out ca.key 2048
 ```
 Now Create a certificate for the CA using the CA key that we created in step 1
 ```
-openssl req -new -x509 -days 1826 -key ca.key -out ca.crt
+openssl req -new -x509 -days 3650 -key ca.key -out ca.crt
 ```
 Now we create a server key pair that will be used by the broker
 ```
@@ -53,7 +53,8 @@ openssl req -new -out server.csr -key server.key
 ```
 Now we use the CA key to verify and sign the server certificate. This creates the server.crt file
 ```
-openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 1826
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 3650
 ```
-## client certificates
+## client certificates (certs)
 
+[guide](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)

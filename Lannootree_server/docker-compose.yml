@@ -20,7 +20,6 @@ services:
       - 'traefik.http.routers.public_key.priority=100'
       - 'traefik.http.routers.public_key.entrypoints=websecure'
       - 'traefik.http.routers.public_key.tls.certresolver=production'
-      - 'traefik.http.routers.public_key.middlewares=authelia@docker'
 
   traefik:
     image: "traefik:v2.9"
