@@ -40,3 +40,8 @@ This runs on the raspberry pi and makes connection to the main controller
     - controller gets commands from mqtt
     - controller requests assets from processor via mqtt
     - controller connects to led-driver via unix socket
+
+## installation
+
+- [Server](Lannootree_server/README.md)
+- [Firmware](Lannootree_firmware/README.md)
