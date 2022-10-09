@@ -8,7 +8,7 @@ services:
       - ./mqtt/config:/mosquitto/config
     ports:
       - 1883:1883
-      - 9001:9001
+      - 8883:8883
 
   traefik:
     image: "traefik:v2.9"

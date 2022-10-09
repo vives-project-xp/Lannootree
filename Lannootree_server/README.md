@@ -1,6 +1,6 @@
 # Lannootree controller
 
-## installation
+## Configuration
 
 ### authelia
 
@@ -14,14 +14,15 @@
 
 generate certificates explained [here](mqtt/README.md)
 
-### Deploy alml containers
+### asset processor
+
+This is a seperate docker-compose file. Because it can run on a differtent server with more power.
+
+## Deploy all containers
 
 ```
 docker-compose up -d
 ```
-### asset processor
-
-This is a seperate docker-compose file. Because it can run on a differtent server with more power.
 
 
 ## mqtt users
