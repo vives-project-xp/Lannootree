@@ -1,3 +1,4 @@
 # *.crt
 # *.key
 certs2/
+*.pwd2
