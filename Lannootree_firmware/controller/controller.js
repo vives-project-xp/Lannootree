@@ -15,7 +15,6 @@ client.on('connect', function () {
   client.subscribe('controller/effect');
   client.subscribe('controller/asset');
   
-
   client.publish('controller/matrixsize', JSON.stringify({"rows": 5,"columns": 5}));  // DEBUGGING
 })
 
@@ -117,8 +116,7 @@ function frame_to_console() { // DEBUGGING
   for(var i = 0; i < ledmatrix.length; i++) {
     for(var j = 0; j < ledmatrix[i].length; j++) {
       if(ledmatrix[i][j] instanceof Color) {
-        var rgb = ledmatrix[i][j].get_color();
-        frame_console+=`(${rgb[0]},${rgb[1]},${rgb[2]})` 
+        frame_console+=`(${ledmatrix[i][j].red()},${ledmatrix[i][j].green()},${ledmatrix[i][j].blue()})` 
       }
     }
     frame_console+="\n";

@@ -19,7 +19,15 @@ export default class Color {
     }
   }
 
-  get_color() {
-    return [this.red, this.green, this.blue];
+  red() {
+    return this.red;
+  }
+
+  green() {
+    return this.green;
+  }
+
+  blue() {
+    return this.blue;
   }
 }
