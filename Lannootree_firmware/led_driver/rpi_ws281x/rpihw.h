@@ -28,8 +28,8 @@
  */
 
 
-#ifndef __RPIHW_H__
-#define __RPIHW_H__
+#ifndef RPIHW_H__
+#define RPIHW_H__
 
 #include <stdint.h>
 
@@ -49,4 +49,4 @@ typedef struct {
 const rpi_hw_t *rpi_hw_detect(void);
 
 
-#endif /* __RPIHW_H__ */
+#endif /* RPIHW_H__ */

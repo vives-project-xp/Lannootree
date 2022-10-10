@@ -11,4 +11,5 @@ target_link_libraries(Lannootree_firmware
   utils
   ws2811
   lannootree
+  Threads::Threads
 )

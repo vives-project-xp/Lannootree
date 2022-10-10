@@ -28,8 +28,8 @@
  */
 
 
-#ifndef __WS2811_H__
-#define __WS2811_H__
+#ifndef WS2811_H__
+#define WS2811_H__
 
 #ifdef __cplusplus
 extern "C" {
@@ -130,4 +130,4 @@ void ws2811_set_custom_gamma_factor(ws2811_t *ws2811, double gamma_factor);     
 }
 #endif
 
-#endif /* __WS2811_H__ */
+#endif /* WS2811_H__ */

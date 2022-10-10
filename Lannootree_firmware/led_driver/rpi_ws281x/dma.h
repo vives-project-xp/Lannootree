@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef __DMA_H__
-#define __DMA_H__
+#ifndef DMA_H__
+#define DMA_H__
 
 #include <stdint.h>
 
@@ -124,4 +124,4 @@ typedef struct
 
 uint32_t dmanum_to_offset(int dmanum);
 
-#endif /* __DMA_H__ */
+#endif /* DMA_H__ */

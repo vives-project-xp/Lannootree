@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef __CLK_H__
-#define __CLK_H__
+#ifndef CLK_H__
+#define CLK_H__
 
 #include <stdint.h>
 
@@ -63,4 +63,4 @@ typedef struct {
 #define CM_PWM_OFFSET                            (0x001010a0)
 
 
-#endif /* __CLK_H__ */
+#endif /* CLK_H__ */

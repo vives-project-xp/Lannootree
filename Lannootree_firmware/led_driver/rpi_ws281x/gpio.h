@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef __GPIO_H__
-#define __GPIO_H__
+#ifndef GPIO_H__
+#define GPIO_H__
 
 #include <stdint.h>
 
@@ -106,4 +106,4 @@ static inline void gpio_output_set(volatile gpio_t *gpio, uint8_t pin, uint8_t o
     gpio->fsel[regnum] |= ((function & 0x7) << offset);
 }
 
-#endif /* __GPIO_H__ */
+#endif /* GPIO_H__ */

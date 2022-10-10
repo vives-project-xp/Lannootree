@@ -21,7 +21,7 @@
 
 #define STRIP_TYPE      WS2811_STRIP_GRB      
 
-#define JSON_FILE_PATH ""
+#define JSON_FILE_PATH "@JSON_FILE_PATH@"
 
 static const char* logo =
 "  _                                   _                  \n"
@@ -38,4 +38,4 @@ static const char* logo =
 "      |_| |_|_|  |_| |_| |_|\\_/\\_/ \\__,_|_|  \\___|       \n"
 "                                                         \n"
 "                                                         \n"
-"                       VERSION[1.1]                       \n";
+"                       VERSION[@Lannootree_firmware_VERSION_MAJOR@.@Lannootree_firmware_VERSION_MINOR@]                       \n";

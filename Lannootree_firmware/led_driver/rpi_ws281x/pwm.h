@@ -27,8 +27,8 @@
  *
  */
 
-#ifndef __PWM_H__
-#define __PWM_H__
+#ifndef PWM_H__
+#define PWM_H__
 
 #include <stdint.h>
 
@@ -120,4 +120,4 @@ typedef struct
 int pwm_pin_alt(int chan, int pinnum);
 
 
-#endif /* __PWM_H__ */
+#endif /* PWM_H__ */

@@ -22,7 +22,7 @@ namespace Lannootree {
       virtual void loop(void);
 
     private:
-      std::string _socket_path = "lannootree.socket";
+      std::string _socket_path = "./dev/lannootree.socket";
 
     private:
       int _socket_fd = 0;

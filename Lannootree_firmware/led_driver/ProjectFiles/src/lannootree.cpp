@@ -19,7 +19,7 @@ namespace Lannootree {
     signal(SIGTERM, handel);
 
     info_log("Reading config file...");
-    std::ifstream f("../test.json");
+    std::ifstream f(JSON_FILE_PATH);
     config = json::parse(f);
     info_log("Cleaning up...");
     f.close();

@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef __PCM_H__
-#define __PCM_H__
+#ifndef PCM_H__
+#define PCM_H__
 
 #include <stdint.h>
 
@@ -156,4 +156,4 @@ typedef struct
 int pcm_pin_alt(int pcmfun, int pinnum);
 
 
-#endif /* __PCM_H__ */
+#endif /* PCM_H__ */

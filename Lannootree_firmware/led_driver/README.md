@@ -12,29 +12,18 @@
   ```bash
   mkdir build
   cd build
-  cmake -D BUILD_SHARED=ON -D BUILD_TEST=OFF ..
+  cmake -D BUILD_SHARED=ON -D BUILD_TEST=OFF -D JSON_FILE_PATH=/path/to/config.json ..
 
   make -j4
   ```
 
 - Executable binary will be in the build/ProjectFiles/ directory
 
-## Mqtt Server
+## Or use docker image
+
+The application in the docker container makes a Unix socket in /lannootree/dev/ directory.
+This need to be binded to a volume so it can be accessed.
 
 ```bash
-docker run --name mosquitto -p 1883:1883 -p 9001:9001 -v ~/mosquitto.conf:/mosquitto/config/mosquitto.conf eclipse-mosquitto
+docker build -v "$(pwd)/dev/":/lannootree/dev/  .
 ```
-
-## Mqtt c++ library
-
-https://github.com/eclipse/paho.mqtt.cpp
-
-## Redis docker
-
-```bash
-docker run --name redis -p 6379:6379 redis
-```
-
-## Redis c++ library
-
-https://github.com/sewenew/redis-plus-plus
