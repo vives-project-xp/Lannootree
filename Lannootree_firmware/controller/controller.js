@@ -1,21 +1,8 @@
 import Color from './color.js';
-import Certificate from './certificate.js'
-import * as fs from 'fs';
 import mqtt from "mqtt"
 
 // MQTT
-Certificate.download(); // download public key for authenticating the mqtt broker over SSL-TLS
-var caFile = fs.readFileSync("ca.crt");
-
-var options={
-  clientId:"firmwarecontroller",
-  port:8883,
-  host:'lannootree.devbitapp.be',
-  protocol:'mqtts',
-  rejectUnauthorized : true,
-  ca:caFile 
-}
-const client = mqtt.connect(options);
+const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 client.on('connect', function () {
   console.log("connected");
