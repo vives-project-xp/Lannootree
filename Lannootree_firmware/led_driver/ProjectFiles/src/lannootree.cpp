@@ -4,7 +4,7 @@ namespace Lannootree {
 
   LannooTree::LannooTree() { start(); }
 
-  LannooTree::~LannooTree(){}
+  LannooTree::~LannooTree() { }
 
   void LannooTree::start(void) {
     log(logo);

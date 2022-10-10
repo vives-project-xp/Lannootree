@@ -32,15 +32,10 @@ namespace Lannootree {
     Color c;
     
     while (true) {
-      if (!queue->pop_blocking(c)) {
-        info_log("Queue shut down");
-        break;
-      };
-      
+      if (!queue->pop(c)) break;
+
       info_log("Received color 0x00" << std::hex << c.to_uint32_t());
     }
-
-    info_log("LedDriverThread shuting down");
   }
 
   void LedDriverThread::init_ws2811(ws2811_t* ws, json& config, int dma, int gpio0, int gpio1, std::string chan) {

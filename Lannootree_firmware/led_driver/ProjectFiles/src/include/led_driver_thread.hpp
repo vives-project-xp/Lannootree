@@ -24,6 +24,9 @@ namespace Lannootree {
       Queue<Color>* queue;
       std::vector<ws2811_t*> _controllers;
 
+    // Make this this object only movable and not copyable so no extra heap allocations are needed
+    // No realy necessary here.
+
     public:
       /** @brief LedDriverThread is not copyable */
       LedDriverThread(const LedDriverThread&) = delete;

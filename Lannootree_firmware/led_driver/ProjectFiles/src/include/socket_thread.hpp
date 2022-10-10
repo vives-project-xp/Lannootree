@@ -32,6 +32,7 @@ namespace Lannootree {
       bool* running = nullptr;
       Queue<Color>* queue = nullptr; 
 
+    // Make this this object only movable and not copyable because where encapsulating a socket.
     public:
       /** @brief SocketThread is not copyable */
       SocketThread(const SocketThread&) = delete;

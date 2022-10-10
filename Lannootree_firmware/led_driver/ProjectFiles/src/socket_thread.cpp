@@ -78,7 +78,7 @@ namespace Lannootree {
             break;
           }
 
-          queue->push_blocking(Color(buffer[0], buffer[1], buffer[2])); 
+          queue->push(Color(buffer[0], buffer[1], buffer[2])); 
         }
 
         close(_current_sock_fd);

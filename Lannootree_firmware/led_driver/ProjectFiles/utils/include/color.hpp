@@ -14,6 +14,12 @@ namespace Lannootree {
       ~Color() {};
 
     public:
+      /**
+       * @brief Returns uint32_t reprensentation of color.
+       * 
+       * In color format RGB, where each byte represents the respective color.
+       *
+       */
       uint32_t to_uint32_t(void) {
         return 0U | ((uint32_t) red) << 16 | ((uint32_t) green) << 8 | ((uint32_t) blue);
       }
