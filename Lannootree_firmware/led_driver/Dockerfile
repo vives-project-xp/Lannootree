@@ -30,6 +30,5 @@ RUN mkdir ./dev/
 COPY --from=builder /lannootree/build/rpi_ws281x/libws2811.so /usr/lib/libws2811.so
 COPY --from=builder /lannootree/build/ProjectFiles/Lannootree_firmware .
 COPY --from=builder /lannootree/config.json .
-COPY --from=builder /lannootree/ProjectFiles/utils/include/lannootree_config.hpp .
 
 CMD ./Lannootree_firmware

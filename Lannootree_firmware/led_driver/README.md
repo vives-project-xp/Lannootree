@@ -25,5 +25,6 @@ The application in the docker container makes a Unix socket in /lannootree/dev/ 
 This need to be binded to a volume so it can be accessed.
 
 ```bash
-docker build -v "$(pwd)/dev/":/lannootree/dev/  .
+docker build lannootee:latest  .
+docker run -v "$(pwd)/dev/":/lannootree/dev/ lannootree
 ```
