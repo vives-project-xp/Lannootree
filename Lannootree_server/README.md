@@ -1,6 +1,6 @@
-# Lannootree controller
+# Lannootree server
 
-## Configuration
+## Configuration before install
 
 ### authelia
 

@@ -1,10 +1,10 @@
 /* Auto Generated Header built by version.py - DO NOT MODIFY */
 
-#ifndef @HEADERDEF@__
-#define @HEADERDEF@__
+#ifndef V@HEADERDEF@__
+#define V@HEADERDEF@__
 
 #define VERSION_MAJOR @VERSION_MAJOR@
 #define VERSION_MINOR @VERSION_MINOR@
 #define VERSION_MICRO @VERSION_MICRO@
                 
-#endif /* @HEADERDEF@__ */
+#endif /* V@HEADERDEF@__ */

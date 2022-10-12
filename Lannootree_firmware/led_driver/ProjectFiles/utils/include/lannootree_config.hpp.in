@@ -14,11 +14,20 @@
 #include <color.hpp>
 #include <terminal_colors.hpp>
 
-#define log(...) std::cout << __VA_ARGS__ << std::endl
-#define info_log(...) std::cout << "[INFO] " << __VA_ARGS__ << std::endl
-#define warn_log(...) std::cout << F_YELLOW << "[WARN] " << __VA_ARGS__ << RESET_COLOR << std::endl
-#define error_log(...) std::cerr << F_RED << "[ERROR] " << __VA_ARGS__ << RESET_COLOR << std::endl
+#ifndef DISABLE_LOG
+  #define log(...) std::cout << __VA_ARGS__ << std::endl
+  #define info_log(...) std::cout << "[INFO] " << __VA_ARGS__ << std::endl
+  #define warn_log(...) std::cout << F_YELLOW << "[WARN] " << __VA_ARGS__ << RESET_COLOR << std::endl
+  #define error_log(...) std::cerr << F_RED << "[ERROR] " << __VA_ARGS__ << RESET_COLOR << std::endl
+#else
+  #define log(...)
+  #define info_log(...)
+  #define warn_log(...)
+  // Todo: maby write errors to a log file instead
+  #define error_log(...)
+#endif
 
+#define PANEL_LED_COUNT 72
 #define STRIP_TYPE      WS2811_STRIP_GRB      
 
 #define JSON_FILE_PATH "@JSON_FILE_PATH@"

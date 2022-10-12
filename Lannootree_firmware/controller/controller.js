@@ -4,9 +4,14 @@ import RandomEach from './effects/random_each.js';
 import RandomFull from './effects/random_full.js';
 
 import mqtt from "mqtt"
+import net from "net"
+import { serialize } from 'v8';
 
 // MQTT
 const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+
+// Socket client
+const socket = net.createConnection("/var/run/lannootree.socket");
 
 client.on('connect', function () {
   console.log("connected");
@@ -26,25 +31,31 @@ client.on('message', function (topic, message) {
   if(topic=="controller/matrixsize") {
     set_matrixsize(JSON.parse(message.toString()).rows, JSON.parse(message.toString()).columns);
   }
+
   else if(topic=="controller/pause") {
     const json_obj = JSON.parse(message.toString());
     if(json_obj.value == "pause") pause();
     else if(json_obj.value == "togglepause") togglepause();
     else if(json_obj.value == "play") play();
   }
+
   else if(topic=="controller/stop") stop();
+  
   else if(topic=="controller/setcolor") {
     playing_effect = null;
     const json_obj = JSON.parse(message.toString());
     set_color_full(json_obj.red, json_obj.green, json_obj.blue);
     frame_to_ledcontroller();
   }
+
   else if(topic=="controller/effect") {
     const json_obj = JSON.parse(message.toString());
     playing_effect = json_obj.effect_id;
     play_effect();
   }
+
   else if(topic=="controller/asset") console.log("ASSET");
+
   else console.log("Unknown topic");
 })
 
@@ -60,13 +71,17 @@ function set_matrixsize(rows, columns) {
   pause();
   if(!isNaN(rows) && !isNaN(columns)) {
     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
+    
+    const offcolor = new Color(0,0,0);
     for(var i = 0; i < ledmatrix.length; i++) {
       for(var j = 0; j < ledmatrix[i].length; j++) {
         ledmatrix[i][j] = new Color(0,0,0);
       }
     }
+
     console.log(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`);
   }
+  
   if(playing_effect != null) play();
 }
 
@@ -99,7 +114,18 @@ function frame_to_console() { // DEBUGGING
     frame_console+="\n";
   }
   console.log(frame_console);
-  return frame_console;
+  return frame_console;/**
+  * Write data to socket
+  */
+ function frame_to_controller() {
+   let serializedData = [];
+ 
+   [].concat(...ledmatrix).forEach(color => {
+     serializedData.concat(color.get_color());
+   });
+ 
+   socket.write(Uint8Array.from(serializedData));
+ }
 }
 
 function set_color_full(red, green, blue) {
@@ -112,6 +138,19 @@ function set_color_full(red, green, blue) {
       }
     }
   }
+}
+
+/**
+ * Write data to socket
+ */
+function frame_to_controller() {
+  let serializedData = [];
+
+  [].concat(...ledmatrix).forEach(color => {
+    serializedData.concat(color.get_color());
+  });
+
+  socket.write(Uint8Array.from(serializedData));
 }
 
 var playing_effect = null;
