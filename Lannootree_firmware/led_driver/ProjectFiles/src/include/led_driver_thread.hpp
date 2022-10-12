@@ -1,5 +1,6 @@
 #pragma once
 
+#include <matrix.hpp>
 #include <i_thread_object.hpp>
 #include <lannootree_config.hpp>
 
@@ -10,22 +11,20 @@ namespace Lannootree {
   class LedDriverThread : public IThreadObject {
 
     public:
-      LedDriverThread(json& config, Queue<Color>* queue);
+      LedDriverThread(json& config, Matrix< std::tuple<uint, uint32_t*> >* matrix);
       ~LedDriverThread();
 
     private:
       virtual void loop(void);
 
     private:
-      /** @brief Initialize the ws2811 structure */
-      void init_ws2811(ws2811_t* ws, json& config, int dma, int gpio0, int gpio1, std::string chan);
+      void initialize_memory(json& config);
+      ws2811_t* create_ws2811(json& config, int dma, int gpio1, int gpio2, std::string channel);
 
     private:
-      Queue<Color>* queue;
+      Matrix< std::tuple<uint, uint32_t*> >* _matrix;
       std::vector<ws2811_t*> _controllers;
-
-    // Make this this object only movable and not copyable so no extra heap allocations are needed
-    // No realy necessary here.
+      std::unordered_map<std::string, uint32_t*> _channel_mem;
 
     public:
       /** @brief LedDriverThread is not copyable */
@@ -41,13 +40,14 @@ namespace Lannootree {
 
       /** @brief LedDriverThread is movable */
       LedDriverThread& operator=(LedDriverThread&& other) {
-        queue = other.queue;
-        other.queue = nullptr;
-        
+        _channel_mem = std::move(other._channel_mem);
         _controllers = std::move(other._controllers);
         
         return *this;
       };
+
+      // Make this this object only movable and not copyable so no extra heap allocations are needed
+      // No realy necessary here.
       
   };
 

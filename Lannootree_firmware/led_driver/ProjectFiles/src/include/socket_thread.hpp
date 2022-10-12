@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 
+#include <matrix.hpp>
 #include <i_thread_object.hpp>
 #include <lannootree_config.hpp>
 
@@ -15,7 +16,7 @@ namespace Lannootree {
   class SocketThread : public IThreadObject {
 
     public:
-      SocketThread(bool* running, Queue<Color>* queue);
+      SocketThread(bool* running, Matrix< std::tuple<uint, uint32_t*> >* _matrix);
       ~SocketThread();
 
     private:
@@ -30,7 +31,7 @@ namespace Lannootree {
 
     private:
       bool* running = nullptr;
-      Queue<Color>* queue = nullptr; 
+      Matrix< std::tuple<uint, uint32_t*> >* _matrix = nullptr;
 
     // Make this this object only movable and not copyable because where encapsulating a socket.
     public:
@@ -50,14 +51,14 @@ namespace Lannootree {
         _socket_fd = other._socket_fd;
         _current_sock_fd = other._current_sock_fd;
         running = other.running;
-        queue = other.queue;
         _socket_path = other._socket_path;
+        _matrix = other._matrix;
 
         other._socket_fd = 0;
         other._current_sock_fd = 0;
         other.running = nullptr;
-        other.queue = nullptr;
         other._socket_path = "";
+        other._matrix = nullptr;
 
         return *this;
       }

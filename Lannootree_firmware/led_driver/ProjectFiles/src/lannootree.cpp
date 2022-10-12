@@ -1,10 +1,19 @@
 #include <lannootree.hpp>
 
+namespace { // Used for signal handeling
+  std::mutex mtx;
+  std::condition_variable shutdown_request;
+}
+
 namespace Lannootree {
 
-  LannooTree::LannooTree() { start(); }
+  LannooTree::LannooTree() {
+    start();
+  }
 
-  LannooTree::~LannooTree() { }
+  LannooTree::~LannooTree() {
+    delete _matrix_mapping;
+  }
 
   void LannooTree::start(void) {
     log(logo);
@@ -24,19 +33,17 @@ namespace Lannootree {
     info_log("Cleaning up...");
     f.close();
 
+    _matrix_mapping = new Matrix < std::tuple<uint, uint32_t*> > (config["dimentions"]["col"], config["dimentions"]["row"]);
+
     info_log("Creating threads...");
     // Pass in thread object to thread starter, thread starter will delete heap memory
-    ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, &_color_queue));
-    ThreadStarter::add_thread("Socket", new SocketThread(&_running, &_color_queue));
+    ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping));
+    ThreadStarter::add_thread("Socket", new SocketThread( & _running, _matrix_mapping));
 
     std::unique_lock lock(mtx);
     shutdown_request.wait(lock);
 
     _running = false;
-    
-    info_log("Requesting shutdown...");
-    // Notify threads blocking on queue program is shutting down
-    _color_queue.request_shutdown();
 
     info_log("Waiting for threads to join...");
     ThreadStarter::join_all();
