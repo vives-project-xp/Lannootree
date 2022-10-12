@@ -17,7 +17,7 @@ Follow [this guide](mqtt/README.md) in the mqtt directory.
 
 ### asset processor
 
-This is a seperate docker-compose file. Because it can run on a differtent server with more power.
+This is a seperate docker-compose file. Because it can run on a different server with more power.
 
 ## Deploy all containers
 
