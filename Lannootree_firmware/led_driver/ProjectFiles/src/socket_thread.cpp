@@ -2,7 +2,7 @@
 
 namespace Lannootree {
 
-  SocketThread::SocketThread(bool* running, Queue<Color>* queue): running(running), queue(queue)  {
+  SocketThread::SocketThread(bool* running, Matrix< std::tuple<uint, uint32_t*> >* matrix) : running(running), _matrix(matrix)  {
     info_log("Creating socket...");
     if ((_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
       error_log("Failed to create socket");
@@ -39,35 +39,34 @@ namespace Lannootree {
     struct sockaddr_un cli_addr;
     socklen_t cli_len = sizeof(cli_addr);
 
-    char buffer[1024] = { 0 };
+    char * buffer = new char[5000 * 3];
 
     fd_set rfds;
     struct timeval tv;
     int select_ret;
 
-    while (*running) {
-      FD_ZERO(&rfds);
-      FD_SET(_socket_fd, &rfds);
-      
+    auto[width, height] = _matrix -> dimention();
+    int max_read = (width * height) * 3;
+
+    while ( * running) {
+      FD_ZERO( & rfds);
+      FD_SET(_socket_fd, & rfds);
+
       tv.tv_sec = 1;
       tv.tv_usec = 0;
 
-      select_ret = select(_socket_fd + 1, &rfds, NULL, NULL, &tv);
+      select_ret = select(_socket_fd + 1, & rfds, NULL, NULL, & tv);
 
       if (select_ret == -1) {
         error_log("Error in select");
         continue;
-      } 
-
-      else if (select_ret) {
+      } else if (select_ret) {
         info_log("Accepting incomming connection");
-        if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr*) &cli_addr, &cli_len)) == -1) {
-          continue;
-        }
+        if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr * ) & cli_addr, & cli_len)) == -1) continue;
 
         while (true) {
-          // Read normay returns number of bytes read, but doesn't do a great job at it
-          int read_status = read(_current_sock_fd, buffer, sizeof(buffer));
+          int read_status = read(_current_sock_fd, buffer, max_read);
+
           if (read_status == -1) {
             error_log("Failed to read socket");
             continue;
@@ -78,12 +77,29 @@ namespace Lannootree {
             break;
           }
 
-          queue->push(Color(buffer[0], buffer[1], buffer[2])); 
+          auto[width, height] = _matrix -> dimention();
+
+          for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+              int red_index = 3 * (width * row + col);
+              int green_index = red_index + 1;
+              int blue_index = green_index + 1;
+              
+              Color c(buffer[red_index], buffer[green_index], buffer[blue_index]);
+
+              auto [offset, data] = _matrix -> get_value(col, row);
+              data[offset] = c.to_uint32_t();
+
+              info_log("Adding color ")
+            }
+          }
         }
 
         close(_current_sock_fd);
       }
     }
+
+    delete buffer;
   }
 
 }

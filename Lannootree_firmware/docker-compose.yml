@@ -1,6 +1,15 @@
 version: "3"
 services:
+  led_driver:
+    build: 
+      context: ./led_driver
+    restart: unless-stopped
+    volumes:
+      - /var/run/:/lannootree/dev
+
   frontend:
     build:
       context: ./controller
     restart: unless-stopped
+    depends_on:
+      - led_driver

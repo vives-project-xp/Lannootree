@@ -1,6 +1,10 @@
 {
   "panelCount": 4,
   "totalLeds": 288,
+  "dimentions": {
+    "col": 2,
+    "row": 2
+  },
   "inUseChannels": [
     "CA0"
   ],
@@ -34,6 +38,7 @@
           "uuid": "1605537514600",
           "active": true,
           "channel": "CA0",
+          "connection": "163467899295",
           "coordinate": {
             "col": 2,
             "row": 1
@@ -44,6 +49,7 @@
           "uuid": "163467899295",
           "active": true,
           "channel": "CA0",
+          "connection": "521464934126",
           "coordinate": {
             "col": 2,
             "row": 2

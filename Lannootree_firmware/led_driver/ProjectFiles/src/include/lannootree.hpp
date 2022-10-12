@@ -3,17 +3,14 @@
 #include <fstream>
 #include <cstdlib>
 #include <signal.h>
+
+#include <matrix.hpp>
 #include <socket_thread.hpp>
 #include <thread_starter.hpp>
 #include <lannootree_config.hpp>
 #include <led_driver_thread.hpp>
 
 using json = nlohmann::json;
-
-namespace {
-  std::mutex mtx;
-  std::condition_variable shutdown_request;
-}
 
 namespace Lannootree {
 
@@ -28,7 +25,7 @@ namespace Lannootree {
 
     private:
       json config;
-      Queue<Color> _color_queue;
+      Matrix < std::tuple<uint, uint32_t*> > * _matrix_mapping;
 
     private:
       bool _running = true;

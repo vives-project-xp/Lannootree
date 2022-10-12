@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+#include <iostream>
 #include <stdint.h>
 
 namespace Lannootree {
@@ -7,9 +9,12 @@ namespace Lannootree {
   class Color {
     
     public:
-      Color() : Color(0, 0, 0) {};
-      Color(uint8_t red, uint8_t green, uint8_t blue)
-        : red(red), green(green), blue(blue) {};
+      Color() {};
+      Color(uint8_t red, uint8_t green, uint8_t blue) {
+        color[1] = red;
+        color[2] = green;
+        color[3] = blue;
+      };
       
       ~Color() {};
 
@@ -21,13 +26,31 @@ namespace Lannootree {
        *
        */
       uint32_t to_uint32_t(void) {
-        return 0U | ((uint32_t) red) << 16 | ((uint32_t) green) << 8 | ((uint32_t) blue);
+        return 0U | ((uint32_t)(color[0] << 24) | (uint32_t)(color[1] << 16) | (uint32_t)(color[2] << 8) | (uint32_t)color[3]);
+      }
+
+      /**
+       * @brief Helper function to convert uint32_t to Color class
+       * 
+       * @return Color 
+       */
+      static Color uint32_to_color(uint32_t val) {
+        uint8_t r, g, b;
+        r = (val >> 16) & 0xff;
+        g = (val >> 8) & 0xff;
+        b = (val) & 0xff;
+
+        return Color(r, g, b);
+      }
+
+    public:
+      friend std::ostream& operator<<(std::ostream& os, const Color& c) {
+        os << "RGB(" << std::to_string(c.color[1]) << ", " << std::to_string(c.color[2]) << ", " << std::to_string(c.color[3]) << ")";
+        return os;
       }
 
     private:
-      uint8_t red;
-      uint8_t green;
-      uint8_t blue;
+      uint8_t color[4] = {0};
 
   };
   
