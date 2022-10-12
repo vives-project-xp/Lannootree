@@ -1,4 +1,8 @@
 import Color from './color.js';
+import EffectManager from "./effect_manager.js";
+import RandomEach from './effects/random_each.js';
+import RandomFull from './effects/random_full.js';
+
 import mqtt from "mqtt"
 
 // MQTT
@@ -38,7 +42,7 @@ client.on('message', function (topic, message) {
   else if(topic=="controller/effect") {
     const json_obj = JSON.parse(message.toString());
     playing_effect = json_obj.effect_id;
-    play();
+    play_effect();
   }
   else if(topic=="controller/asset") console.log("ASSET");
   else console.log("Unknown topic");
@@ -46,16 +50,19 @@ client.on('message', function (topic, message) {
 
 // CONTROLLER
 
+const manager = new EffectManager();
+const random_each = new RandomEach(ledmatrix);
+const random_full = new RandomFull(ledmatrix);
+
 var ledmatrix = [];
 
 function set_matrixsize(rows, columns) {
   pause();
   if(!isNaN(rows) && !isNaN(columns)) {
     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
-    const offcolor = new Color(0,0,0);
     for(var i = 0; i < ledmatrix.length; i++) {
       for(var j = 0; j < ledmatrix[i].length; j++) {
-        ledmatrix[i][j] = offcolor;
+        ledmatrix[i][j] = new Color(0,0,0);
       }
     }
     console.log(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`);
@@ -78,46 +85,16 @@ function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
 
-  function arrayToJSONObject (arr){
-    //header
-    var keys = arr[0];
-   
-    //vacate keys from main array
-    var newArr = arr.slice(1, arr.length);
-   
-    var formatted = [],
-    data = newArr,
-    cols = keys,
-    l = cols.length;
-    for (var i=0; i<data.length; i++) {
-        var d = data[i],
-            o = {};
-        for (var j=0; j<l; j++)
-            o[cols[j]] = d[j];
-        formatted.push(o);
-    }
-    return formatted;
-  }
-
-  
-
-  client.publish('controller/output', JSON.stringify(arrayToJSONObject(ledmatrix)));
-
-
 
   // ------------------------------------
-  
-  
-  frame_to_console(); // DEBUGGING
+  frame_to_console(ledmatrix); // DEBUGGING
 }
 
 function frame_to_console() { // DEBUGGING
   var frame_console = "";
   for(var i = 0; i < ledmatrix.length; i++) {
     for(var j = 0; j < ledmatrix[i].length; j++) {
-      if(ledmatrix[i][j] instanceof Color) {
-        frame_console+=`(${ledmatrix[i][j].red()},${ledmatrix[i][j].green()},${ledmatrix[i][j].blue()})` 
-      }
+      frame_console+=`(${ledmatrix[i][j].get_red()},${ledmatrix[i][j].get_green()},${ledmatrix[i][j].get_blue()})` 
     }
     frame_console+="\n";
   }
@@ -139,23 +116,15 @@ function set_color_full(red, green, blue) {
 
 var playing_effect = null;
 
-var effect1_counter = 0;
-var effect2_counter = 0;
-var effect3_counter = 0;
-var effect4_counter = 0;
-
 function play_effect() {
+  play();
   if(playing_effect == "effect1") {     //RANDOM KLEUREN (VOLLEDIG PANEEL)
-    set_color_full(Math.floor(Math.random()*256), Math.floor(Math.random()*256), Math.floor(Math.random()*256));
-    console.log("EFFECT1")
+    random_each.set_ledmatrix(ledmatrix);
+    manager.set_effect(random_each);
   }
   else if(playing_effect == "effect2") {  //RANDOM KLEUREN (IEDERE LED APART)
-    for(var i = 0; i < ledmatrix.length; i++) {
-      for(var j = 0; j < ledmatrix[i].length; j++) {
-        ledmatrix[i][j].set_color(Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256));
-      }
-    }
-    console.log("EFFECT2")
+    random_full.set_ledmatrix(ledmatrix);
+    manager.set_effect(random_full);
   }
   else {
     pause();
@@ -175,7 +144,7 @@ function stop(){
 setInterval(() => {
   if(!ispaused) {
     if(playing_effect != null) {
-      play_effect();
+      manager.run();
       frame_to_ledcontroller();
     }
   }
