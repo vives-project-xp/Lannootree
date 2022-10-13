@@ -5,16 +5,15 @@ export default function websocketClient() {
   ws.onopen = (event) => {
     console.log(event)
     console.log("we are connected")
-    ws.send("stop");
+    // ws.send("stop");
 
   }   
   
 };
 
-export function effect() {
-  ws.on = () => {
-    ws.send("effect");
-  }
+export function Color() {
+  // ws.send("effect");
+  console.log('test');
 };
 
 // document.getElementById("test") = onOff();

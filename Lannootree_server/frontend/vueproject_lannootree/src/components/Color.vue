@@ -3,6 +3,7 @@
 </template>
 
 <script setup>
+import {Color} from "@/assets/api-connection.js"
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 function updateColor (eventData) {
