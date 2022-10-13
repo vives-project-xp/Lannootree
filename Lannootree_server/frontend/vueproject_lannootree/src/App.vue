@@ -2,16 +2,13 @@
 
 // import Websocket from '../src/assets/api-connection.js';
 import Title from './components/Title.vue'
-import Onoff from './components/OnOff.vue';
+import Pause from './components/Pause.vue';
 import Effects from './components/Effects.vue';
 import Color from './components/Color.vue';
-import Getfiles from './components/Getfiles.vue';
-import Upload from './components/Upload.vue';
-import Camera from './components/Camera.vue';
 // import {effect} from '@/src/assets/api-connection.js';
 
 import Logout from './components/Logout.vue';
-// import Testbutton from './components/Testbutton.vue';
+import Assets from './components/Assets.vue';
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -29,13 +26,11 @@ import Logout from './components/Logout.vue';
   <main>
 
     <div class="components">
-    <Onoff />
+    <Pause />
     <Effects />
+    <Assets />
     <Color />
-    <Getfiles />
-    <Upload />
-    <Camera />
-    <Testbutton />
+    
   </div>
   </main>
 </template>

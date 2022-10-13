@@ -1,16 +1,20 @@
-<script>
-    export default {
-      data() {
-        return {
-          count: 0
-        }
-      }
-    }
-    </script>
+<template>
+	<ColorPicker @color-change="updateColor"/>
+</template>
 
-    
-    <template>
-      <div class="container">
-      <button @click="count++">Color: {{ count }}</button>
-    </div>
-    </template>
+<script setup>
+import { ColorPicker } from 'vue-accessible-color-picker'
+
+function updateColor (eventData) {
+ 	console.log(eventData)
+ }
+
+</script>
+<style scoped>
+:deep() {
+background-color: #333;
+color: #00bd7e;
+border-radius: 5px;
+/* --vacp-focus-color: #123; */
+}
+</style>
