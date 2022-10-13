@@ -64,3 +64,20 @@ button:hover {
   border-radius: 5px;
   margin: 2px;
 }
+
+a.linkbutton {
+  color: #f2f2f2;
+  opacity: 94%;
+  background-color: hsla(160, 100%, 37%, 1);
+  border-style: none;
+  border-radius: 5px;
+  margin-inline: 2px;
+}
+
+
+a.linkbutton:hover {
+
+  opacity: 100%;
+  border-style: none;
+  border-radius: 5px;
+}
