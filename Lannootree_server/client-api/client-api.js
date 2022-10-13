@@ -3,8 +3,8 @@
 // mqtt ______________________________________________________________________________________
 import mqtt from "mqtt"
 
-const client = mqtt.connect('mqtt://localhost:1883');
-// const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+// const client = mqtt.connect('mqtt://localhost:1883');
+const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 client.on('connect', function () {
     console.log("mqtt connected")
