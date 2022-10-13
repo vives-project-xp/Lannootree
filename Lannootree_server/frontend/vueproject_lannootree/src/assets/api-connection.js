@@ -3,8 +3,7 @@ const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
 var websocketactive = false; 
 export default function websocketClient() {
 
-  ws.onopen = (event) => {
-    console.log(event)
+  ws.onopen = () => {
     console.log("we are connected to mqtt")
     websocketactive = true
   }   
