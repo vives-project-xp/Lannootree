@@ -7,7 +7,7 @@ services:
     volumes:
       - /var/run/:/lannootree/dev
 
-  frontend:
+  controller:
     build:
       context: ./controller
     restart: unless-stopped
