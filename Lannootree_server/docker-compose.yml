@@ -2,7 +2,7 @@ version: "3"
 services:
   mqtt:
     image: eclipse-mosquitto
-    restart: unless-stopped
+    restart: always
     user: "1001:1001"
     volumes:
       - ./mqtt/config:/mosquitto/config
@@ -40,7 +40,7 @@ services:
 
   authelia:
     image: authelia/authelia
-    restart: unless-stopped
+    restart: always
     user: "1001:1001"
     volumes:
       - ./authelia/config:/config
@@ -68,7 +68,7 @@ services:
   frontend:
     build:
       context: ./frontend
-    restart: unless-stopped
+    restart: always
     environment:
       - LOGOUT_URL=https://auth.lannootree.devbitapp.be/logout
     labels:
@@ -82,7 +82,7 @@ services:
   config-webpage:
     build:
       context: ./config-webpage
-    restart: unless-stopped
+    restart: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.config-webpage.rule=Host(`admin.lannootree.devbitapp.be`)'
@@ -94,7 +94,7 @@ services:
   client-api:
     build:
       context: ./client-api
-    restart: unless-stopped
+    restart: always
     environment:
       - MQTT_URL='mqtt://lannootree.devbitapp.be:1883'
     volumes:

@@ -31,8 +31,10 @@ import Assets from './components/Assets.vue';
     <Pause />
     <Effects />
     <Assets />
-    <Color />
     
+  </div>
+  <div class="componentsrow2">
+    <Color />
   </div>
   </main>
 </template>

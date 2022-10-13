@@ -8,10 +8,24 @@ import net from "net"
 import { serialize } from 'v8';
 
 // MQTT
-const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+var caFile = fs.readFileSync("ca.crt");
+var options={
+  clientId:"firmwarecontroller",
+  port:8883,
+  host:'lannootree.devbitapp.be',
+  protocol:'mqtts',
+  rejectUnauthorized : true,
+  ca:caFile,
+    will: {
+        topic: "status/controller",
+        payload: "Offline",
+        retain: true
+    }
+}
+const client = mqtt.connect(options);
 
 // Socket client
-//const socket = net.createConnection("/var/run/lannootree.socket");
+const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
 
 client.on('connect', function () {
   console.log("mqtt connected");
@@ -45,6 +59,7 @@ client.on('message', function (topic, message) {
     const json_obj = JSON.parse(message.toString());
     playing_effect = json_obj.effect_id;
     play_effect();
+    sendOnChange();
   }
 
   else if(topic=="controller/asset") console.log("ASSET");
@@ -149,13 +164,17 @@ function stop(){
 }
 
 function frame_to_ledcontroller() {
-  // let serializedData = [];
+  // ------------------------------------
+  // CODE FRAME STUREN NAAR LEDCONTROLLER
+  let serializedData = [];
 
-  // [].concat(...ledmatrix).forEach(color => {
-  //   serializedData.concat(color.get_color());
-  // });
+    [].concat(...ledmatrix).forEach(color => {
+      serializedData.concat(...color.get_color());
+    });
 
-  // socket.write(Uint8Array.from(serializedData));
+  socket.write(Uint8Array.from(serializedData));
+
+  // ------------------------------------
 
   frame_to_console(); // DEBUGGING
 }
