@@ -7,8 +7,24 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
+import * as fs from 'fs';
+
 // MQTT
-const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+var caFile = fs.readFileSync("ca.crt");
+var options={
+  clientId:"firmwarecontroller",
+  port:8883,
+  host:'lannootree.devbitapp.be',
+  protocol:'mqtts',
+  rejectUnauthorized : true,
+  ca:caFile,
+    will: {
+        topic: "status/client-api",
+        payload: "Offline",
+        retain: true
+    }
+}
+const client = mqtt.connect(options);
 
 // Socket client
 const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
