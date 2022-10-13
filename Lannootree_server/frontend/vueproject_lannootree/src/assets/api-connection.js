@@ -1,5 +1,5 @@
-// const ws = new WebSocket('ws://localhost:3001');
-const ws = new WebSocket('wss://lannootree.devbitapp.be:3001');
+const ws = new WebSocket('ws://localhost:3001');
+// const ws = new WebSocket('wss://lannootree.devbitapp.be:3001');
 
 export default function websocketClient() {
 
@@ -11,6 +11,13 @@ export default function websocketClient() {
   }   
   
 };
+
+
+export function Pause(notPaused) {
+  ws.send(notPaused);
+  console.log(notPaused);
+};
+
 
 export function Color() {
   ws.send("effect");
