@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+// const ws = new WebSocket('ws://localhost:3001');
+>>>>>>> 5cdb07fdc903f69e3549c642e9684c0c0d2f5d53
 const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
 
 export default function websocketClient() {
