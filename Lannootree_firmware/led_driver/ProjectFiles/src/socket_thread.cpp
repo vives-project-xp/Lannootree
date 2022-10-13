@@ -97,9 +97,12 @@ namespace Lannootree {
               Color c(buffer[red_index], buffer[green_index], buffer[blue_index]);
 
               auto [offset, data] = _matrix -> get_value(col, row);
-              data[offset] = c.to_uint32_t();
+              
+              for (int i = 0; i < 72; i++) {
+                data[offset + i] = c.to_uint32_t();
+              }
 
-              info_log("Adding color ")
+              info_log("Adding color " << c);
             }
           }
         }
