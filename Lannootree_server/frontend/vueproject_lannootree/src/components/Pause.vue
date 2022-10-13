@@ -1,12 +1,15 @@
 <template>
   <div>
-    <Toggle v-model="notPaused" on-label="Pause" off-label="Play" @click="Pause(notPaused)"/>
+    <Toggle v-model="notPaused" on-label="Pause" off-label="Play" @click="Pausing()"/>
   </div>
 </template>
 
 <script >
+import { Pause } from "@/assets/api-connection.js"
 
-  import { Pause } from "@/assets/api-connection.js"
+  function Pausing() {
+	  Pause(notPaused)
+ }
   import Toggle from '@vueform/toggle'
 
   export default {

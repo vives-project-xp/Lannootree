@@ -8,7 +8,7 @@ export default {
   methods: {
     stop() {
       console.log("stop")
-      // <Stop />
+      <Stop/>
     }
   }
 }
