@@ -35,7 +35,6 @@ import Logout from './components/Logout.vue';
     <Getfiles />
     <Upload />
     <Camera />
-    <Testbutton />
   </div>
   </main>
 </template>
