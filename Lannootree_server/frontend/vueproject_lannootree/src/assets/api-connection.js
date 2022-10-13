@@ -1,30 +1,48 @@
 const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
 
+var websocketactive = false; 
 export default function websocketClient() {
 
   ws.onopen = (event) => {
     console.log(event)
     console.log("we are connected to mqtt")
-    // ws.send("Hello from from client.");
+    websocketactive = true
   }   
 };
 websocketClient();
 
 
 export function Pause(notPaused) {
-  ws.send(JSON.stringify({"pause": notPaused}));
-  console.log(notPaused);
+  if(websocketactive == true) {
+
+    ws.send(JSON.stringify({"pause": notPaused}));
+    console.log(notPaused);
+
+  }
 };
 
 export function Stop() {
-  ws.onopen = () => ws.send(JSON.stringify({"stop": true}));
-  console.log("stop!")
+  if(websocketactive == true) {
+
+    ws.send(JSON.stringify({"stop": true}));
+    console.log("stop!")
+
+  }
+  
 };
 
-Stop();
-export function Color() {
- 
+
+
+export function Color(selectedColor) {
+  if(websocketactive == true) {
+    
+    // console.log(selectedColor);
+    ws.send(JSON.stringify({"Color": selectedColor}));
+
+  }
+  
 };
+
 
 export function Effects(selectedEffect) {
   ws.onopen = () => ws.send("{stop: " + selectedEffect + "}");

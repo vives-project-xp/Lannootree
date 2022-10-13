@@ -1,7 +1,8 @@
 <script>
-  import { Stop } from '@/assets/api-connection.js';
+import { Stop } from '@/assets/api-connection.js';
+
 </script>
-    
+
 <template>
-  <button @click="Stop" >Stop</button>
+	<button @click="stop">Stop</button>
 </template>

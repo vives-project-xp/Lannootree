@@ -16,7 +16,7 @@ namespace Lannootree {
   class SocketThread : public IThreadObject {
 
     public:
-      SocketThread(bool* running, Matrix< std::tuple<uint, uint32_t*> >* _matrix);
+      SocketThread(volatile bool* running, Matrix< std::tuple<uint, uint32_t*> >* _matrix);
       ~SocketThread();
 
     private:
@@ -30,7 +30,7 @@ namespace Lannootree {
       int _current_sock_fd = 0;
 
     private:
-      bool* running = nullptr;
+      volatile bool* running = nullptr;
       Matrix< std::tuple<uint, uint32_t*> >* _matrix = nullptr;
 
     // Make this this object only movable and not copyable because where encapsulating a socket.
