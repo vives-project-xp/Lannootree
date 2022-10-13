@@ -1,5 +1,5 @@
 <template>
-	<ColorPicker @color-change="updateColor" :visible-formats="['rgb']" />
+	<ColorPicker @color-change="updateColor" :visible-formats="['rgb']" alpha-channel="hide"/>
 </template>
 
 <script setup>
