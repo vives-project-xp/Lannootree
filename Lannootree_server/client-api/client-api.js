@@ -34,8 +34,8 @@ function onOff(onoff) {
 import { WebSocketServer } from 'ws';
 const websocket = new WebSocketServer({ port: 3001 });
 
-wss.on('connection', (ws, req) => {
-    console.log('Websocket connection from: ' . req.headers['x-forwarded-for']);
+websocket.on('connection', (ws, req) => {
+    console.log('Websocket connection from: ' + req.headers['x-forwarded-for']);
 
     ws.on("message", data => {
         console.log('Reicieved: ' . data.Tostring());
@@ -46,7 +46,7 @@ wss.on('connection', (ws, req) => {
 
 
     ws.on("close", () => {
-        console.log("client has disconnected")
+        console.log("Websocket client disconnected")
     });
     
 });
