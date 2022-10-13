@@ -29,9 +29,9 @@ function onOff(onoff) {
 import { WebSocketServer } from 'ws';
 const wss = new WebSocketServer({ port: 3001 });
 
-wss.on('connection', ws => {
-    console.log('connection to new client');
-    
+wss.on('connection', (ws, req) => {
+    console.log('Websocket connection from: ' . req.headers['x-forwarded-for']);
+
     ws.on("message", data => {
         console.log('Reicieved: ' . data);
         if(data == "stop") {
