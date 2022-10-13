@@ -98,9 +98,13 @@ function togglepause() {
 function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
-
   let serializedData = [];
 
+<<<<<<< HEAD
+  let serializedData = [];
+
+=======
+>>>>>>> ed5568c (Adding local changes)
   [].concat(...ledmatrix).forEach(color => {
     serializedData.concat(color.get_color());
   });
