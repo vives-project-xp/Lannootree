@@ -17,18 +17,22 @@ RUN mkdir build &&\
     cmake -D JSON_FILE_PATH=${JSON_FILE_PATH} -D CMAKE_BUILD_TYPE=Release -D BUILD_SHARED=ON -D BUILD_TEST=OFF .. &&\
     make -j4
 
-FROM alpine:latest
+CMD ./build/ProjectFiles/Lannootree_firmware
 
-WORKDIR /lannootree
+# FROM alpine:latest
 
-RUN apk add --no-cache libgcc
-RUN apk add --no-cache libstdc++
-RUN apk add --no-cache libc6-compat
+# WORKDIR /lannootree
 
-RUN mkdir ./dev/
+# RUN apk add --no-cache libgcc
+# RUN apk add --no-cache libstdc++
+# RUN apk add --no-cache libc6-compat
 
-COPY --from=builder /lannootree/build/rpi_ws281x/libws2811.so /usr/lib/libws2811.so
-COPY --from=builder /lannootree/build/ProjectFiles/Lannootree_firmware .
-COPY --from=builder /lannootree/config.json .
+# RUN mkdir ./dev/
 
-CMD ./Lannootree_firmware
+
+# COPY --from=builder /lannootree/build/rpi_ws281x/libws2811.so /usr/lib/libws2811.so
+# COPY --from=builder /lannootree/build/ProjectFiles/Lannootree_firmware .
+# COPY --from=builder /lannootree/config.json .
+# RUN ls
+
+# CMD ./Lannootree_firmware
