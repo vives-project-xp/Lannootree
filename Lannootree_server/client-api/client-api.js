@@ -57,8 +57,8 @@ function effect(effect_id) {
 import { WebSocketServer } from 'ws';
 const websocket = new WebSocketServer({ port: 3001 });
 
-// wss.on('connection', (ws, req) => {
-//     console.log('Websocket connection from: ' . req.headers['x-forwarded-for']);
+websocket.on('connection', (ws, req) => {
+    console.log('Websocket connection from: ' + req.headers['x-forwarded-for']);
 
 //     ws.on("message", data => {
 //         console.log('Reicieved: ' . data.Tostring());
@@ -68,10 +68,10 @@ const websocket = new WebSocketServer({ port: 3001 });
 //     });
 
 
-//     ws.on("close", () => {
-//         console.log("client has disconnected")
-//     });
+    ws.on("close", () => {
+        console.log("Websocket client disconnected")
+    });
     
-// });
+});
 
 // mqtt publish /AbortController

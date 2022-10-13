@@ -14,7 +14,7 @@ const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 const socket = net.createConnection("/var/run/lannootree.socket");
 
 client.on('connect', function () {
-  console.log("connected");
+  console.log("mqtt connected");
   client.publish('status/controller', 'Online');
   
   client.subscribe('controller/matrixsize');

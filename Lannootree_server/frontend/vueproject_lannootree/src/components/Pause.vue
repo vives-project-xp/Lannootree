@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Toggle v-model="isOn" on-label="On" off-label="Off" />
+    <Toggle v-model="notPaused" on-label="ᵖᵃᵘˢᵉ" off-label="ᵖˡᵃʸ" />
   </div>
 </template>
 
@@ -13,7 +13,7 @@
     },
     data() {
       return {
-        isOn: true
+        notPaused: true
       }
     }
   }
