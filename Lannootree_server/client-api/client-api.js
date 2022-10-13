@@ -7,8 +7,8 @@ websocket.on('connection', (ws, req) => {
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
 
     ws.on("message", data => {
-        console.log('Reicieved: ' . data);
         try {
+            console.log(JSON.parse(data));
             data = JSON.parse(data)
             if(data.hasOwnProperty('stop')) {stop();}
             if(data.hasOwnProperty('pause')) {pause()}
@@ -34,16 +34,14 @@ websocket.on('connection', (ws, req) => {
 import mqtt from "mqtt"
 import * as fs from 'fs';
 
-// var caFile = fs.readFileSync("ca.crt");
+var caFile = fs.readFileSync("ca.crt");
 var options={
   clientId:"firmwarecontroller",
-  port:1883,
-//   port:8883,
+  port:8883,
   host:'lannootree.devbitapp.be',
-  protocol:'mqtt',
-//   protocol:'mqtts',
-//   rejectUnauthorized : true,
-//   ca:cert,
+  protocol:'mqtts',
+  rejectUnauthorized : true,
+  ca:caFile,
     will: {
         topic: "status/client-api",
         payload: "Offline",
@@ -90,7 +88,7 @@ client.on('message', function (topic, message) {
             break;
     }
     // message is Buffer
-    console.log(message.toString())
+    // console.log(message.toString())
 })
          
 // Sending updates_________________________________________
