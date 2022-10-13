@@ -98,7 +98,6 @@ function togglepause() {
 function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
-
   let serializedData = [];
 
   [].concat(...ledmatrix).forEach(color => {
