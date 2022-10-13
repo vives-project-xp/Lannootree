@@ -11,7 +11,7 @@ import { serialize } from 'v8';
 const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 // Socket client
-//const socket = net.createConnection("/var/run/lannootree.socket");
+const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
 
 client.on('connect', function () {
   console.log("mqtt connected");
@@ -45,6 +45,7 @@ client.on('message', function (topic, message) {
     const json_obj = JSON.parse(message.toString());
     playing_effect = json_obj.effect_id;
     play_effect();
+    sendOnChange();
   }
 
   else if(topic=="controller/asset") console.log("ASSET");
@@ -149,13 +150,14 @@ function stop(){
 }
 
 function frame_to_ledcontroller() {
+  // ------------------------------------
+  // CODE FRAME STUREN NAAR LEDCONTROLLER
   // let serializedData = [];
 
-  // [].concat(...ledmatrix).forEach(color => {
-  //   serializedData.concat(color.get_color());
-  // });
 
   // socket.write(Uint8Array.from(serializedData));
+
+  // ------------------------------------
 
   frame_to_console(); // DEBUGGING
 }
