@@ -7,24 +7,8 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-import * as fs from 'fs';
-
 // MQTT
-var caFile = fs.readFileSync("ca.crt");
-var options={
-  clientId:"firmwarecontroller",
-  port:8883,
-  host:'lannootree.devbitapp.be',
-  protocol:'mqtts',
-  rejectUnauthorized : true,
-  ca:caFile,
-    will: {
-        topic: "status/controller",
-        payload: "Offline",
-        retain: true
-    }
-}
-const client = mqtt.connect(options);
+const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 // Socket client
 const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
@@ -168,13 +152,10 @@ function stop(){
 function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
-  let serializedData = [];
+  // let serializedData = [];
 
-    [].concat(...ledmatrix).forEach(color => {
-      serializedData.concat(...color.get_color());
-    });
 
-  socket.write(Uint8Array.from(serializedData));
+  // socket.write(Uint8Array.from(serializedData));
 
   // ------------------------------------
 
