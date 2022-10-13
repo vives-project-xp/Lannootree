@@ -1,5 +1,5 @@
 <template>
-	<ColorPicker @color-change="updateColor"/>
+	<ColorPicker @color-change="updateColor" :visible-formats="['rgb']" />
 </template>
 
 <script setup>
@@ -16,6 +16,7 @@ function updateColor (eventData) {
 background-color: #333;
 color: #00bd7e;
 border-radius: 5px;
-/* --vacp-focus-color: #123; */
+--vacp-border-color: #333;
+--vacp-border-width:1px;
 }
 </style>
