@@ -7,7 +7,8 @@ import {Color} from "@/assets/api-connection.js"
 import { ColorPicker } from 'vue-accessible-color-picker'
 
 function updateColor (eventData) {
- 	console.log(eventData)
+ 	// console.log(eventData)
+	Color(eventData.cssColor);
  }
 
 </script>
