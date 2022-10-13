@@ -23,7 +23,7 @@ export function Pause(notPaused) {
 
 export function Stop() {
   if(websocketactive == true) {
-    
+
     ws.send(JSON.stringify({"stop": true}));
     console.log("stop!")
 
@@ -36,7 +36,7 @@ export function Stop() {
 export function Color(selectedColor) {
   if(websocketactive == true) {
     
-    console.log(selectedColor);
+    // console.log(selectedColor);
     ws.send(JSON.stringify({"Color": selectedColor}));
 
   }
