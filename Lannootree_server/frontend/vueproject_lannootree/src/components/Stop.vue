@@ -15,5 +15,5 @@ export default {
 </script>
 
 <template>
-	<button @click="stop">Stop</button>
+	<button @click="Stop">Stop</button>
 </template>
