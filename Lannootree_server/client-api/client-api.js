@@ -127,7 +127,7 @@ function asset(asset_id) {
 
 function setcolor(color) {
     console.log(`setcolor: (${color[0]},${color[1]},${color[2]})`);
-    client.publish('controller/setcolor', JSON.stringify({"red": color[0], "green": color[1], "blue": color[2]}));
+    client.publish('controller/setcolor', JSON.stringify({"red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
 }
 
 
