@@ -7,8 +7,6 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-import * as fs from 'fs';
-
 // MQTT
 var caFile = fs.readFileSync("ca.crt");
 var options={
