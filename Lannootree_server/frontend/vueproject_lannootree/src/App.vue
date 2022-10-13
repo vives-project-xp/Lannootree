@@ -1,6 +1,7 @@
 <script setup>
 
 // import Websocket from '../src/assets/api-connection.js';
+import Stop from './components/Stop.vue';
 import Title from './components/Title.vue'
 import Pause from './components/Pause.vue';
 import Effects from './components/Effects.vue';
@@ -9,7 +10,6 @@ import Color from './components/Color.vue';
 
 import Logout from './components/Logout.vue';
 import Assets from './components/Assets.vue';
-import Stop from './components/Stop.vue';
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -27,7 +27,7 @@ import Stop from './components/Stop.vue';
   <main>
 
     <div class="components">
-    <Stop/>
+    <Stop />
     <Pause />
     <Effects />
     <Assets />

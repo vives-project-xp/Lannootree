@@ -12,12 +12,14 @@
       }
     }
     
+    import { Effects } from '@/assets/api-connection.js';
+
     </script>
     
     <template>
         <div class="container">
-          <v-select :options="effects" placeholder="Effects"/>
-    </div>
+          <v-select :value="effects" placeholder="Effects" @change="Effects()"/>
+        </div>
     </template>
     <style scoped>
       .container{

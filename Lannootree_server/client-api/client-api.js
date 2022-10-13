@@ -34,7 +34,13 @@ websocket.on('connection', (ws, req) => {
 import mqtt from "mqtt"
 import * as fs from 'fs';
 
+<<<<<<< HEAD
 var caFile = fs.readFileSync("ca.crt");
+=======
+// const client = mqtt.connect('mqtt://localhost:1883');
+// const client = mqtt.connect('mqtt://lannootree.devbitapp.be:wss');
+// var caFile = fs.readFileSync("ca.crt");
+>>>>>>> 8ad093a5bbe83bfa1f705224fef0a147ee4e1bf5
 var options={
   clientId:"firmwarecontroller",
   port:8883,
