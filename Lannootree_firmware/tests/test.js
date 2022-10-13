@@ -41,14 +41,14 @@ const matrix = new Array(2 * 3)
 // console.log(Uint8Array.from([].concat(...matrix)));
 
 let i = 0;
-console.time("60 fps");
+console.time("240 fps");
 const interval2 = setInterval(() => {
   client.write(Uint8Array.from([].concat(...matrix)));
 
-  if (i++ > 60) {
-    console.timeEnd("60 fps");
+  if (i++ > 240) {
+    console.timeEnd("240 fps");
     clearInterval(interval2);
     client.destroy();
   }
-}, 16);
+}, 4);
 

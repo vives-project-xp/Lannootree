@@ -2,8 +2,8 @@
   "panelCount": 4,
   "totalLeds": 288,
   "dimentions": {
-    "col": 2,
-    "row": 2
+    "col": 18,
+    "row": 18
   },
   "inUseChannels": [
     "CA0"
