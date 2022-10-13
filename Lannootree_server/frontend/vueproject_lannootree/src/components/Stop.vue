@@ -1,5 +1,5 @@
 <script>
-import { effect } from '../assets/api-connection.js';
+// import { effect } from '../assets/api-connection.js';
 
     export default {
       data() {
@@ -10,5 +10,5 @@ import { effect } from '../assets/api-connection.js';
     </script>
     
     <template>
-      <button @click="effect"><h2>TEST</h2></button>
+      <button>Stop</button>
     </template>

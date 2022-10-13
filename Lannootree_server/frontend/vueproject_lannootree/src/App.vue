@@ -9,6 +9,7 @@ import Color from './components/Color.vue';
 
 import Logout from './components/Logout.vue';
 import Assets from './components/Assets.vue';
+import Stop from './components/Stop.vue';
 // import UserInterface from './components/UserInterface.vue'
 
 </script>
@@ -26,6 +27,7 @@ import Assets from './components/Assets.vue';
   <main>
 
     <div class="components">
+    <Stop/>
     <Pause />
     <Effects />
     <Assets />
