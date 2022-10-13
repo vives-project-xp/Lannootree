@@ -12,6 +12,13 @@ export default function websocketClient() {
   
 };
 
+
+export function Pause(notPaused) {
+  ws.send(notPaused);
+  console.log(notPaused);
+};
+
+
 export function Color() {
   ws.send("effect");
   console.log('test');

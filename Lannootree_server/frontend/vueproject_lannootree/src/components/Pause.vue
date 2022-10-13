@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Toggle v-model="notPaused" on-label="ᵖᵃᵘˢᵉ" off-label="ᵖˡᵃʸ" />
+    <Toggle v-model="notPaused" on-label="Pause" off-label="Play" @click="Pause(notPaused)"/>
   </div>
 </template>
 
