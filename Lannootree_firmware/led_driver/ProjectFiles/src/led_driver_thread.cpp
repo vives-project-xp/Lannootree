@@ -74,15 +74,13 @@ namespace Lannootree
         _controllers[0]->channel[0].leds[i] = _channel_mem["CA0"][i];
       }
 
-      info_log("Updating");
-
       if ((ret = ws2811_render(_controllers.at(0))) != WS2811_SUCCESS)
       {
         std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
         error_log("Failed to render " << error);
       }
 
-      info_log("Updated");
+      std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
   }
 
@@ -156,6 +154,7 @@ namespace Lannootree
     auto instance = new ws2811_t;
     instance->freq = WS2811_TARGET_FREQ;
     instance->dmanum = dma;
+    instance->render_wait_time = 10;
     instance->channel[0] = {
         .gpionum = gpio1,
         .invert = 0,
