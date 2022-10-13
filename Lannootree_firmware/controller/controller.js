@@ -72,7 +72,6 @@ function set_matrixsize(rows, columns) {
   if(!isNaN(rows) && !isNaN(columns)) {
     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
     
-    const offcolor = new Color(0,0,0);
     for(var i = 0; i < ledmatrix.length; i++) {
       for(var j = 0; j < ledmatrix[i].length; j++) {
         ledmatrix[i][j] = new Color(0,0,0);
@@ -100,8 +99,16 @@ function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
 
+  let serializedData = [];
+
+  [].concat(...ledmatrix).forEach(color => {
+    serializedData.concat(color.get_color());
+  });
+
+  socket.write(Uint8Array.from(serializedData));
 
   // ------------------------------------
+
   frame_to_console(ledmatrix); // DEBUGGING
 }
 
@@ -114,18 +121,7 @@ function frame_to_console() { // DEBUGGING
     frame_console+="\n";
   }
   console.log(frame_console);
-  return frame_console;/**
-  * Write data to socket
-  */
- function frame_to_controller() {
-   let serializedData = [];
- 
-   [].concat(...ledmatrix).forEach(color => {
-     serializedData.concat(color.get_color());
-   });
- 
-   socket.write(Uint8Array.from(serializedData));
- }
+  return frame_console;
 }
 
 function set_color_full(red, green, blue) {
@@ -138,19 +134,6 @@ function set_color_full(red, green, blue) {
       }
     }
   }
-}
-
-/**
- * Write data to socket
- */
-function frame_to_controller() {
-  let serializedData = [];
-
-  [].concat(...ledmatrix).forEach(color => {
-    serializedData.concat(color.get_color());
-  });
-
-  socket.write(Uint8Array.from(serializedData));
 }
 
 var playing_effect = null;
