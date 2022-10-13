@@ -2,7 +2,7 @@
 
 namespace Lannootree {
 
-  SocketThread::SocketThread(bool* running, Matrix< std::tuple<uint, uint32_t*> >* matrix) : running(running), _matrix(matrix)  {
+  SocketThread::SocketThread(volatile bool* running, Matrix< std::tuple<uint, uint32_t*> >* matrix) : running(running), _matrix(matrix)  {
     info_log("Creating socket...");
     if ((_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
       error_log("Failed to create socket");
@@ -39,7 +39,6 @@ namespace Lannootree {
     struct sockaddr_un cli_addr;
     socklen_t cli_len = sizeof(cli_addr);
 
-    char * buffer = new char[5000 * 3];
 
     fd_set rfds;
     struct timeval tv;
@@ -47,8 +46,9 @@ namespace Lannootree {
 
     auto[width, height] = _matrix -> dimention();
     int max_read = (width * height) * 3;
+    char * buffer = new char[max_read];
 
-    while ( * running) {
+    while (* running) {
       FD_ZERO( & rfds);
       FD_SET(_socket_fd, & rfds);
 
@@ -87,10 +87,14 @@ namespace Lannootree {
               
               Color c(buffer[red_index], buffer[green_index], buffer[blue_index]);
 
-              auto [offset, data] = _matrix -> get_value(col, row);
-              data[offset] = c.to_uint32_t();
+              auto offset = std::get<0>(_matrix -> get_value(col, row));
+              info_log("adding color to mem offset " << offset);
+              auto memory = std::get<1>(_matrix->get_value(col, row));
+              info_log("Memory: " << memory);
 
-              info_log("Adding color ")
+              uint32_t color = c.to_uint32_t();
+
+              for (int i = 0; i < 72; i++) memory[offset + i] = color;
             }
           }
         }

@@ -37,8 +37,8 @@ namespace Lannootree {
 
     info_log("Creating threads...");
     // Pass in thread object to thread starter, thread starter will delete heap memory
-    ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping));
-    ThreadStarter::add_thread("Socket", new SocketThread( & _running, _matrix_mapping));
+    ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping, &_running));
+    ThreadStarter::add_thread("Socket", new SocketThread(&_running, _matrix_mapping));
 
     std::unique_lock lock(mtx);
     shutdown_request.wait(lock);
