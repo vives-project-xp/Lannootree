@@ -7,6 +7,7 @@ websocket.on('connection', (ws, req) => {
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
 
     ws.on("message", data => {
+        console.log("new msg from ws");
         try {
             console.log(JSON.parse(data));
             data = JSON.parse(data)
@@ -15,12 +16,14 @@ websocket.on('connection', (ws, req) => {
             if(data.hasOwnProperty('play')) {play()}
             if(data.hasOwnProperty('effect')) {effect(data.effect)}
             if(data.hasOwnProperty('asset')) {asset(data.asset)}
-            if(data.hasOwnProperty('color')) {setcolor(data.color[0], data.color[1], data.color[2]);}
+            if(data.hasOwnProperty('Color')) {
+                setcolor(parseColor(data.Color));
+            }
         } 
         catch (error) { 
             console.log("ERROR: Websocket data invalid"); 
         }
-
+        
     });
     
     
@@ -122,7 +125,20 @@ function asset(asset_id) {
     client.publish('controller/asset', JSON.stringify({"asset_id": asset_id}));
 }
 
-function setcolor(red, green, blue) {
-    console.log(`setcolor: (${red},${green},${blue})`);
-    client.publish('controller/setcolor', JSON.stringify({"red": red, "green": green, "blue": blue}));
+function setcolor(color) {
+    console.log(`setcolor: (${color[0]},${color[1]},${color[2]})`);
+    client.publish('controller/setcolor', JSON.stringify({"red": color[0], "green": color[1], "blue": color[2]}));
+}
+
+
+function parseColor(input) {
+    let output = input.substring(4)
+    output = output.split(' ')
+
+    output[0] = output[0].split('.')[0]
+    output[1] = output[1].split('.')[0]
+    output[2] = output[2].split('.')[0]
+    output[2] = output[2].split(')')[0]
+
+    return output;
 }
