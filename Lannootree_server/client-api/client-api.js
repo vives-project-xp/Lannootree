@@ -6,9 +6,14 @@ import mqtt from "mqtt"
 const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 client.on('connect', function () {
-    console.log("connected")
+    console.log("mqtt connected")
     client.publish('status/client-api', 'Online');
 })
+
+client.on("connect", () => {
+    // ws.send("stop");
+});
+
 
 // publish on server
 function onOff(onoff) {
@@ -27,13 +32,13 @@ function onOff(onoff) {
 
 // websocket _________________________________________________________________________________
 import { WebSocketServer } from 'ws';
-const wss = new WebSocketServer({ port: 3001 });
+const websocket = new WebSocketServer({ port: 3001 });
 
 wss.on('connection', (ws, req) => {
     console.log('Websocket connection from: ' . req.headers['x-forwarded-for']);
 
     ws.on("message", data => {
-        console.log('Reicieved: ' . data);
+        console.log('Reicieved: ' . data.Tostring());
         if(data == "stop") {
             onOff();
         }
@@ -45,10 +50,5 @@ wss.on('connection', (ws, req) => {
     });
     
 });
-
-wss.on("connection", ws => {
-    ws.send("stop");
-});
-
 
 // mqtt publish /AbortController

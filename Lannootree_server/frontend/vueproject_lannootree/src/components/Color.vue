@@ -1,4 +1,5 @@
 <script>
+  import {Color} from "@/assets/api-connection.js"
     export default {
       data() {
         return {
@@ -11,6 +12,6 @@
     
     <template>
       <div class="container">
-      <button @click="count++">Color: {{ count }}</button>
+      <button v-on:click="Color">Color</button>
     </div>
     </template>
