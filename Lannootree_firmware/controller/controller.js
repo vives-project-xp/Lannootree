@@ -19,7 +19,7 @@ var options={
   rejectUnauthorized : true,
   ca:caFile,
     will: {
-        topic: "status/client-api",
+        topic: "status/controller",
         payload: "Offline",
         retain: true
     }
