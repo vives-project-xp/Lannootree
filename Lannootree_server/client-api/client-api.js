@@ -9,7 +9,7 @@ websocket.on('connection', (ws, req) => {
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
 
     ws.on("message", data => {
-        console.log('Reicieved: ' . data.Tostring());
+        console.log('Reicieved: ' . data);
         try {
             data = JSON.parse(data)
             if(data.hasOwnProperty('stop')) {stop();}
@@ -32,19 +32,70 @@ websocket.on('connection', (ws, req) => {
     
 });
 
-// mqtt ______________________________________________________________________________________
+// MQTT ______________________________________________________________________________________
 import mqtt from "mqtt"
+import * as fs from 'fs';
 
-// const client = mqtt.connect('mqtt://localhost:1883');
-const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+// var caFile = fs.readFileSync("ca.crt");
+var options={
+  clientId:"firmwarecontroller",
+  port:1883,
+//   port:8883,
+  host:'lannootree.devbitapp.be',
+  protocol:'mqtt',
+//   protocol:'mqtts',
+//   rejectUnauthorized : true,
+//   ca:cert,
+    will: {
+        topic: "status/client-api",
+        payload: "Offline",
+        retain: true
+    }
+}
+const client = mqtt.connect(options);
 
 client.on('connect', function () {
     console.log("mqtt connected")
     client.publish('status/client-api', 'Online', {retain: true});
+
+    client.subscribe('controller/#', function (err) {
+        if (err) {
+            console.log("ERROR: Can't subscribe to toppic controller/#");
+        }
+    })
 })
 
-// Sending updates_________________________________________
+// other MQTT___________________________________________________________________________________________
+var statusJSON;
+var contentJSON;
 
+client.on('message', function (topic, message) {
+    switch (topic) {
+        case "controller/status":
+            try {
+                statusJSON = JSON.parse(message)
+            } 
+            catch (error) { 
+                console.log("ERROR: MQTT statusJSON invalid"); 
+            }
+            break;
+        case "controller/content":
+            try {
+                contentJSON = JSON.parse(message)
+            } 
+            catch (error) { 
+                console.log("ERROR: MQTT contentJSON invalid"); 
+            }
+            break;
+            
+        default:
+            break;
+    }
+    // message is Buffer
+    console.log(message.toString())
+})
+         
+// Sending updates_________________________________________
 function stop() {
     console.log('stop');
     client.publish('controller/stop', JSON.stringify({"value": "stop"}));
@@ -79,43 +130,3 @@ function setcolor(red, green, blue) {
     console.log(`setcolor: (${red},${green},${blue})`);
     client.publish('controller/setcolor', JSON.stringify({"red": red, "green": green, "blue": blue}));
 }
-
-// other MQTT___________________________________________________________________________________________
-var statusJSON;
-
-client.subscribe('controller/status/json', function (err) {
-    console.log("ERROR: Can't subscribe to toppic controller/status/json");
-})
-
-client.on('message', function (topic, message) {
-    switch (topic) {
-        case "controller/status/json":
-            try {
-                statusJSON = JSON.parse(message)
-            } 
-            catch (error) { 
-                console.log("ERROR: MQTT statusJSON invalid"); 
-            }
-            break;
-    
-        default:
-            break;
-    }
-    // message is Buffer
-    console.log(message.toString())
-})
-
-
-// will: a message that will sent by the broker automatically when the client disconnect badly. The format is:
-// topic: the topic to publish
-// payload: the message to publish
-// qos: the QoS
-// retain: the retain flag
-// properties: properties of will by MQTT 5.0:
-// willDelayInterval: representing the Will Delay Interval in seconds number,
-// payloadFormatIndicator: Will Message is UTF-8 Encoded Character Data or not boolean,
-// messageExpiryInterval: value is the lifetime of the Will Message in seconds and is sent as the Publication Expiry Interval when the Server publishes the Will Message number,
-// contentType: describing the content of the Will Message string,
-// responseTopic: String which is used as the Topic Name for a response message string,
-// correlationData: The Correlation Data is used by the sender of the Request Message to identify which request the Response Message is for when it is received binary,
-// userProperties: The User Property is allowed to appear multiple times to represent multiple name, value pairs object
