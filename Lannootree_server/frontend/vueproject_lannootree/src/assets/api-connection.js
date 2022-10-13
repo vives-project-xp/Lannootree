@@ -1,18 +1,26 @@
-const ws = new WebSocket('ws://localhost:3001');
+// const ws = new WebSocket('ws://localhost:3001');
+const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
 
 export default function websocketClient() {
 
   ws.onopen = (event) => {
     console.log(event)
-    console.log("we are connected")
+    console.log("we are connected to mqtt")
     // ws.send("stop");
 
   }   
   
 };
 
+
+export function Pause(notPaused) {
+  ws.send(notPaused);
+  console.log(notPaused);
+};
+
+
 export function Color() {
-  // ws.send("effect");
+  ws.send("effect");
   console.log('test');
 };
 
@@ -26,10 +34,13 @@ export function send(){
 
 }
 
-
 send();
-stop();
+// stop();
 websocketClient();
+
+ws.onopen = function () {
+  ws.send("Hi, from the client."); // this works
+};
 
 // sendMessage();
 
@@ -37,17 +48,10 @@ websocketClient();
 //   console.log('client has sent us: ' + data)
 // })
 
-// ws.onopen = function () {
-//   ws.send("Hi, from the client."); // this works
-//   alert("Connection opened...");
-// };
 
 // ws.onmessage = function (event) {
 //       alert("Message received..." + event.data);
 // };
-
-
-
 
 // function pause(){
 //   ws.send("pause")

@@ -1,15 +1,14 @@
 <script>
+// import { effect } from '../assets/api-connection.js';
+
     export default {
       data() {
         return {
-          count: 0
         }
       }
     }
     </script>
     
     <template>
-        <div class="container">
-      <button @click="count++">Upload: {{ count }}</button>
-    </div>
+      <button>Stop</button>
     </template>
