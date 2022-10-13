@@ -3,6 +3,7 @@
 // mqtt ______________________________________________________________________________________
 import mqtt from "mqtt"
 
+// const client = mqtt.connect('mqtt://localhost:1883');
 const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 client.on('connect', function () {
@@ -59,12 +60,12 @@ const websocket = new WebSocketServer({ port: 3001 });
 websocket.on('connection', (ws, req) => {
     console.log('Websocket connection from: ' + req.headers['x-forwarded-for']);
 
-    ws.on("message", data => {
-        console.log('Reicieved: ' . data.Tostring());
-        if(data == "stop") {
-            stop();
-        }
-    });
+//     ws.on("message", data => {
+//         console.log('Reicieved: ' . data.Tostring());
+//         if(data == "stop") {
+//             stop();
+//         }
+//     });
 
 
     ws.on("close", () => {
