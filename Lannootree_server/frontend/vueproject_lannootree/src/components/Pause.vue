@@ -5,6 +5,8 @@
 </template>
 
 <script >
+
+  import { Pause } from "@/assets/api-connection.js"
   import Toggle from '@vueform/toggle'
 
   export default {
