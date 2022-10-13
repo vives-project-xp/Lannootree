@@ -11,7 +11,7 @@ namespace Lannootree {
   class LedDriverThread : public IThreadObject {
 
     public:
-      LedDriverThread(json& config, Matrix< std::tuple<uint, uint32_t*> >* matrix);
+      LedDriverThread(json& config, Matrix< std::tuple<uint, uint32_t*> >* matrix, volatile bool* running);
       ~LedDriverThread();
 
     private:
@@ -22,8 +22,9 @@ namespace Lannootree {
       ws2811_t* create_ws2811(json& config, int dma, int gpio1, int gpio2, std::string channel);
 
     private:
-      Matrix< std::tuple<uint, uint32_t*> >* _matrix;
+      volatile bool* _running;
       std::vector<ws2811_t*> _controllers;
+      Matrix< std::tuple<uint, uint32_t*> >* _matrix;
       std::unordered_map<std::string, uint32_t*> _channel_mem;
 
     public:
@@ -40,9 +41,14 @@ namespace Lannootree {
 
       /** @brief LedDriverThread is movable */
       LedDriverThread& operator=(LedDriverThread&& other) {
-        _channel_mem = std::move(other._channel_mem);
+        _running = other._running;
         _controllers = std::move(other._controllers);
+        _matrix = other._matrix;
+        _channel_mem = std::move(other._channel_mem);
         
+        other._matrix = nullptr;
+        other._running = nullptr;
+
         return *this;
       };
 

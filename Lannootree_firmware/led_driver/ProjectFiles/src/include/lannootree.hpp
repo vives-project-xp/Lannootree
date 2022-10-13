@@ -28,7 +28,7 @@ namespace Lannootree {
       Matrix < std::tuple<uint, uint32_t*> > * _matrix_mapping;
 
     private:
-      bool _running = true;
+      volatile bool _running = true;
 
   };
 

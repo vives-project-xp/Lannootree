@@ -3,7 +3,7 @@
 namespace Lannootree
 {
 
-  LedDriverThread::LedDriverThread(json &config, Matrix<std::tuple<uint, uint32_t *>> *matrix) : _matrix(matrix)
+  LedDriverThread::LedDriverThread(json &config, Matrix<std::tuple<uint, uint32_t *>> *matrix, volatile bool *running) : _running(running), _matrix(matrix)
   {
     initialize_memory(config);
 
@@ -24,7 +24,20 @@ namespace Lannootree
       while (true) {
         auto coordinate = current["coordinate"];
 
-        _matrix->set_value((int) coordinate["col"], (int) coordinate["row"], std::make_tuple((offset * PANEL_LED_COUNT), (_channel_mem.at(channel))));
+        info_log("Adding panel");
+        // Note to self: don't use auto it will remove the reference and will get the value as value
+        // auto t_offset = std::get<0>(_matrix->get_value((int) coordinate["col"], (int) coordinate["row"]));
+        // auto t_mem = std::get<1>(_matrix->get_value((int) coordinate["col"], (int) coordinate["row"]));
+
+        info_log("Col: " << coordinate["col"] << " Row: " << coordinate["row"]);
+
+        std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint)(offset * PANEL_LED_COUNT);
+        std::get<1>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint32_t*)(_channel_mem.at(current["channel"]));
+
+        info_log(current["channel"] << " Memory address: " << _channel_mem.at(current["channel"]));
+
+        info_log("Offset in matrix: " << std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)));
+        info_log("Memory in matrix: " << std::get<1>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)));
 
         if (!current.contains("connection")) break;
 
@@ -52,11 +65,22 @@ namespace Lannootree
 
   void LedDriverThread::loop(void)
   {
+    int ret;
 
-    while (true)
+    while (*_running)
     {
+      for (int i = 0; i < 72 * 4; i++)
+      {
+        _controllers[0]->channel[0].leds[i] = _channel_mem["CA0"][i];
+      }
 
-      std::this_thread::sleep_for(std::chrono::seconds(1));
+      if ((ret = ws2811_render(_controllers.at(0))) != WS2811_SUCCESS)
+      {
+        std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
+        error_log("Failed to render " << error);
+      }
+
+      std::this_thread::sleep_for(std::chrono::milliseconds(16));
     }
   }
 
@@ -80,7 +104,7 @@ namespace Lannootree
     {
       // Creation of led controll blocks
       _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
-      _controllers.push_back(create_ws2811(config, 11, 0, 0, "CB"));
+      _controllers.push_back(create_ws2811(config, 11, 9, 10, "CB"));
 
       // Creation of led buffers
       if (_controllers.at(0)->channel[0].count)
@@ -101,15 +125,17 @@ namespace Lannootree
       // Creation of led control block
       _controllers.push_back(create_ws2811(config, 10, 18, 19, isChannelA ? "CA" : "CB"));
 
-      info_log(config["inUseChannels"].dump());
-      info_log((config["inUseChannels"].find("CA0") != config["inUseChannels"].end() ? "Found it" : "Did no find it"));
-      info_log((isChannelA ? "Using channel a" : "Not using channel A"));
+      info_log((isChannelA ? "Using channel A" : "Not using channel A"));
 
       // Creation of led buffers
-      if (_controllers.at(0)->channel[0].count)
+      if (_controllers.at(0)->channel[0].count > 0)
+      {
+        info_log("Created memory");
+        info_log("GPIO: " << _controllers.at(0)->channel[0].gpionum);
         _channel_mem[isChannelA ? "CA0" : "CB0"] = new uint32_t[_controllers.at(0)->channel[0].count];
+      }
 
-      if (_controllers.at(0)->channel[1].count)
+      if (_controllers.at(0)->channel[1].count > 0)
         _channel_mem[isChannelA ? "CA1" : "CB1"] = new uint32_t[_controllers.at(0)->channel[1].count];
     }
 
@@ -128,6 +154,7 @@ namespace Lannootree
     auto instance = new ws2811_t;
     instance->freq = WS2811_TARGET_FREQ;
     instance->dmanum = dma;
+    instance->render_wait_time = 10;
     instance->channel[0] = {
         .gpionum = gpio1,
         .invert = 0,

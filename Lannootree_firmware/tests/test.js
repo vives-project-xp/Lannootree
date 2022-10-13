@@ -1,6 +1,7 @@
 const net = require('net');
 
-const client = net.createConnection("/var/run/lannootree.socket");
+// const client = net.createConnection("/var/run/lannootree.socket");
+const client = net.createConnection("../led_driver/build/dev/lannootree.socket");
 
 client.on("connect", () => {
   console.log("Connected to socket");

@@ -1239,23 +1239,27 @@ ws2811_return_t  ws2811_render(ws2811_t *ws2811)
         }
     }
 
+    printf("Waiting for dma to finish\n");
     // Wait for any previous DMA operation to complete.
     if ((ret = ws2811_wait(ws2811)) != WS2811_SUCCESS)
     {
         return ret;
     }
+    printf("Done: wait time = %i\n", ws2811->render_wait_time);
 
     if (ws2811->render_wait_time != 0) {
         const uint64_t current_timestamp = get_microsecond_timestamp();
         uint64_t time_diff = current_timestamp - previous_timestamp;
 
         if (ws2811->render_wait_time > time_diff) {
+            printf("Sleeping for %i uS", ws2811->render_wait_time - time_diff);
             usleep(ws2811->render_wait_time - time_diff);
         }
     }
 
     if (driver_mode != SPI)
     {
+        printf("Stating dma\n");
         dma_start(ws2811);
     }
     else
