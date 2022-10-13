@@ -48,21 +48,21 @@ namespace Lannootree {
     int max_read = (width * height) * 3;
     char * buffer = new char[max_read];
 
-    while (* running) {
-      FD_ZERO( & rfds);
-      FD_SET(_socket_fd, & rfds);
+    while (*running) {
+      FD_ZERO(&rfds);
+      FD_SET(_socket_fd, &rfds);
 
       tv.tv_sec = 1;
       tv.tv_usec = 0;
 
-      select_ret = select(_socket_fd + 1, & rfds, NULL, NULL, & tv);
+      select_ret = select(_socket_fd + 1, &rfds, NULL, NULL, &tv);
 
       if (select_ret == -1) {
         error_log("Error in select");
         continue;
       } else if (select_ret) {
         info_log("Accepting incomming connection");
-        if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr * ) & cli_addr, & cli_len)) == -1) continue;
+        if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr* ) & cli_addr, & cli_len)) == -1) continue;
 
         while (true) {
           int read_status = read(_current_sock_fd, buffer, max_read);
@@ -78,6 +78,15 @@ namespace Lannootree {
           }
 
           auto[width, height] = _matrix -> dimention();
+
+          /**
+           * @brief Values to skip
+           * 
+           * (1, 1) (1, 5) (1, 8)
+           * (5, 1) (5, 5) (5, 8)
+           * (8, 1) (8, 5) (8, 8)
+           * 
+           */
 
           for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
@@ -95,6 +104,7 @@ namespace Lannootree {
               uint32_t color = c.to_uint32_t();
 
               for (int i = 0; i < 72; i++) memory[offset + i] = color;
+              
             }
           }
         }

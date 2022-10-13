@@ -4,7 +4,7 @@
     export default {
       data() {
         return {
-          effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"]
+          assets:["chrismas-tree.gif", "cat.gif", "lannootree-logo.png"]
         }
       },
       components: {
@@ -12,18 +12,16 @@
       }
     }
     
-    import { Effects } from '@/assets/api-connection.js';
-
     </script>
     
     <template>
         <div class="container">
-          <v-select :value="effects" placeholder="Effects" @change="Effects()"/>
-        </div>
+          <v-select :options="assets" placeholder="Assets"/>
+    </div>
     </template>
     <style scoped>
       .container{
-        width: 200px;
+        width: 250px;
       }
       :deep() {
         --vs-controls-color: #00bd7e;

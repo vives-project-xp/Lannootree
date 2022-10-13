@@ -85,29 +85,11 @@ services:
     restart: unless-stopped
     labels:
       - 'traefik.enable=true'
-      # - 'traefik.http.routers.config-webpage.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/admin/`)'
       - 'traefik.http.routers.config-webpage.rule=Host(`admin.lannootree.devbitapp.be`)'
       - 'traefik.http.routers.config-webpage.priority=100'
       - 'traefik.http.routers.config-webpage.entrypoints=websecure'
       - 'traefik.http.routers.config-webpage.tls.certresolver=production'
-      # - "traefik.http.middlewares.config-webpage-stripprefix.stripprefix.prefixes=/admin"
-      # - "traefik.http.middlewares.config-webpage-stripprefix.stripprefix.forceslash=false"
-      # - 'traefik.http.routers.config-webpage.middlewares=authelia@docker,config-webpage-stripprefix'
       - 'traefik.http.routers.config-webpage.middlewares=authelia@docker'
-
-  frontend:
-    build:
-      context: ./frontend
-    restart: unless-stopped
-    environment:
-      - LOGOUT_URL=https://auth.lannootree.devbitapp.be/logout
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.frontend.rule=Host(`lannootree.devbitapp.be`)'
-      - 'traefik.http.routers.frontend.priority=1'
-      - 'traefik.http.routers.frontend.entrypoints=websecure'
-      - 'traefik.http.routers.frontend.tls.certresolver=production'
-      - 'traefik.http.routers.frontend.middlewares=authelia@docker'
 
   client-api:
     build:
@@ -115,13 +97,15 @@ services:
     restart: unless-stopped
     environment:
       - MQTT_URL='mqtt://lannootree.devbitapp.be:1883'
+    volumes:
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.client-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/wss`)'
       - "traefik.http.routers.client-api.middlewares=client-api-stripprefix"
       - "traefik.http.middlewares.client-api-stripprefix.stripprefix.prefixes=/wss"
       - 'traefik.http.routers.client-api.priority=100'
-      - 'traefik.http.services.client-api.loadbalancer.server.port=80'
+      - 'traefik.http.services.client-api.loadbalancer.server.port=3001'
       - 'traefik.http.routers.client-api.entrypoints=websecure'
       - 'traefik.http.routers.client-api.tls.certresolver=production'
-      - 'traefik.http.routers.client-api.middlewares=authelia@docker'
+      # - 'traefik.http.routers.client-api.middlewares=authelia@docker'

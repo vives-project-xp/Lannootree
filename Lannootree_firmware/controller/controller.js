@@ -1,9 +1,9 @@
 import Color from './color.js';
 import EffectManager from "./effect_manager.js";
-import RandomEach from './effects/random_each.js';
-import RandomFull from './effects/random_full.js';
 
-import mqtt from "mqtt"
+import mqtt from "mqtt";
+import fs from "fs";
+
 import net from "net"
 import { serialize } from 'v8';
 
@@ -11,28 +11,18 @@ import { serialize } from 'v8';
 const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 // Socket client
-const socket = net.createConnection("/var/run/lannootree.socket");
+//const socket = net.createConnection("/var/run/lannootree.socket");
 
 client.on('connect', function () {
-  console.log("connected");
-  client.publish('status/controller', 'Online');
-  
-  client.subscribe('controller/matrixsize');
-  client.subscribe('controller/stop');
-  client.subscribe('controller/pause');
-  client.subscribe('controller/setcolor');
-  client.subscribe('controller/effect');
-  client.subscribe('controller/asset');
-  
-  client.publish('controller/matrixsize', JSON.stringify({"rows": 5,"columns": 5}));  // DEBUGGING
+  console.log("mqtt connected");
+  client.publish('status/controller', 'Online', {retain: true});
+  client.subscribe('controller/#');
+  sendContent();
 })
 
 client.on('message', function (topic, message) {
-  if(topic=="controller/matrixsize") {
-    set_matrixsize(JSON.parse(message.toString()).rows, JSON.parse(message.toString()).columns);
-  }
 
-  else if(topic=="controller/pause") {
+  if(topic=="controller/pause") {
     const json_obj = JSON.parse(message.toString());
     if(json_obj.value == "pause") pause();
     else if(json_obj.value == "togglepause") togglepause();
@@ -62,17 +52,20 @@ client.on('message', function (topic, message) {
 // CONTROLLER
 
 const manager = new EffectManager();
-const random_each = new RandomEach(ledmatrix);
-const random_full = new RandomFull(ledmatrix);
 
 var ledmatrix = [];
+
+fs.readFile('../config.json', (err, data) => {
+  if (err) throw err;
+  let json_data = JSON.parse(data);
+  set_matrixsize(json_data.dimentions.row,json_data.dimentions.col);
+});
 
 function set_matrixsize(rows, columns) {
   pause();
   if(!isNaN(rows) && !isNaN(columns)) {
     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
     
-    const offcolor = new Color(0,0,0);
     for(var i = 0; i < ledmatrix.length; i++) {
       for(var j = 0; j < ledmatrix[i].length; j++) {
         ledmatrix[i][j] = new Color(0,0,0);
@@ -83,6 +76,39 @@ function set_matrixsize(rows, columns) {
   }
   
   if(playing_effect != null) play();
+}
+
+function sendContent() {
+  let obj = new Object();
+  let matrix_obj = new Object();
+  let matrixsize = get_matrixsize();
+  matrix_obj.rows = matrixsize[0];
+  matrix_obj.cols = matrixsize[1];
+  obj.matrix = matrix_obj;
+  let effect_obj = manager.get_effects();
+  obj.effects = effect_obj;
+  obj.assets = "NONE";
+  console.log(JSON.stringify(obj));
+  client.publish('controller/content', JSON.stringify(obj));
+}
+
+function sendOnChange() {
+  let obj = new Object();
+  let matrix_obj = new Object();
+  let matrixsize = get_matrixsize();
+  matrix_obj.rows = matrixsize[0];
+  matrix_obj.cols = matrixsize[1];
+  obj.matrix = matrix_obj;
+
+  client.publish('controller/status', JSON.stringify(obj));
+}
+
+
+function get_matrixsize() {
+  let rows = 0;
+  let cols = ledmatrix[0].length;
+  for(var i = 0; i < ledmatrix.length; i++) rows++;
+  return [rows, cols];
 }
 
 var ispaused = true;
@@ -99,10 +125,17 @@ function togglepause() {
 function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
+  // let serializedData = [];
 
+  // [].concat(...ledmatrix).forEach(color => {
+  //   serializedData.concat(color.get_color());
+  // });
+
+  // socket.write(Uint8Array.from(serializedData));
 
   // ------------------------------------
-  frame_to_console(ledmatrix); // DEBUGGING
+
+  frame_to_console(); // DEBUGGING
 }
 
 function frame_to_console() { // DEBUGGING
@@ -114,18 +147,7 @@ function frame_to_console() { // DEBUGGING
     frame_console+="\n";
   }
   console.log(frame_console);
-  return frame_console;/**
-  * Write data to socket
-  */
- function frame_to_controller() {
-   let serializedData = [];
- 
-   [].concat(...ledmatrix).forEach(color => {
-     serializedData.concat(color.get_color());
-   });
- 
-   socket.write(Uint8Array.from(serializedData));
- }
+  return frame_console;
 }
 
 function set_color_full(red, green, blue) {
@@ -140,30 +162,15 @@ function set_color_full(red, green, blue) {
   }
 }
 
-/**
- * Write data to socket
- */
-function frame_to_controller() {
-  let serializedData = [];
-
-  [].concat(...ledmatrix).forEach(color => {
-    serializedData.concat(color.get_color());
-  });
-
-  socket.write(Uint8Array.from(serializedData));
-}
-
 var playing_effect = null;
 
 function play_effect() {
   play();
   if(playing_effect == "effect1") {     //RANDOM KLEUREN (VOLLEDIG PANEEL)
-    random_each.set_ledmatrix(ledmatrix);
-    manager.set_effect(random_each);
+    manager.set_effect("random_each", ledmatrix);
   }
   else if(playing_effect == "effect2") {  //RANDOM KLEUREN (IEDERE LED APART)
-    random_full.set_ledmatrix(ledmatrix);
-    manager.set_effect(random_full);
+    manager.set_effect("random_full", ledmatrix);
   }
   else {
     pause();
@@ -183,11 +190,12 @@ function stop(){
 setInterval(() => {
   if(!ispaused) {
     if(playing_effect != null) {
-      manager.run();
+      ledmatrix = manager.run();
       frame_to_ledcontroller();
     }
   }
   else {
     console.log("PAUSED");
+    //sendOnChange();
   }
 }, 200);

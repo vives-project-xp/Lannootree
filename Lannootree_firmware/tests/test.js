@@ -34,7 +34,7 @@ const matrix = new Array(2 * 3)
   .fill(0)
   .map(e => new Array(2 * 3)
     .fill(0)
-    .map(e => Math.floor(Math.random() * 255))
+    .map(e => Math.floor(Math.random() * 256))
   );
 
 // console.log(matrix);

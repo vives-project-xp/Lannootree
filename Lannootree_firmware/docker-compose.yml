@@ -13,7 +13,7 @@ services:
       - /dev/gpiomem:/dev/gpiomem
       - /proc/cpuinfo:/proc/cpuinfo
 
-  frontend:
+  controller:
     build:
       context: ./controller
     restart: unless-stopped
