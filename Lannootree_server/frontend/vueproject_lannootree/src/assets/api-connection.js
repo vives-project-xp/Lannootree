@@ -1,5 +1,5 @@
 // const ws = new WebSocket('ws://localhost:3001');
-const ws = new WebSocket('wss://lannootree.devbitapp.be:3001');
+const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
 
 export default function websocketClient() {
 
