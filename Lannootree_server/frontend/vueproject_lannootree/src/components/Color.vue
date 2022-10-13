@@ -15,7 +15,7 @@ function updateColor (eventData) {
 :deep() {
 background-color: #333;
 color: #00bd7e;
-border-radius: 5px;
+border-radius: 3px;
 --vacp-border-color: #333;
 --vacp-border-width:1px;
 }
