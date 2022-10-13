@@ -152,10 +152,13 @@ function stop(){
 function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
-  // let serializedData = [];
+  let serializedData = [];
 
+    [].concat(...ledmatrix).forEach(color => {
+      serializedData.concat(...color.get_color());
+    });
 
-  // socket.write(Uint8Array.from(serializedData));
+  socket.write(Uint8Array.from(serializedData));
 
   // ------------------------------------
 
