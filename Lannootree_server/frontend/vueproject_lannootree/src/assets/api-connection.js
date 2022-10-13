@@ -12,10 +12,8 @@ export default function websocketClient() {
 };
 
 export function Color() {
-  
-  ws.send("effect");
+  // ws.send("effect");
   console.log('test');
-  
 };
 
 // document.getElementById("test") = onOff();
