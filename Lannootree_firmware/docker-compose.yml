@@ -1,11 +1,17 @@
 version: "3"
 services:
   led_driver:
-    build: 
-      context: ./led_driver
+    command: --privileged
+    image: led_driver:latest
+    # build: 
+    #   context: ./led_driver
     restart: unless-stopped
     volumes:
       - /var/run/:/lannootree/dev
+      - /dev/mem:/dev/mem
+      - /dev/vcio:/dev/vcio
+      - /dev/gpiomem:/dev/gpiomem
+      - /proc/cpuinfo:/proc/cpuinfo
 
   controller:
     build:

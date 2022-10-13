@@ -1,14 +1,7 @@
 <script>
-// import { effect } from '../assets/api-connection.js';
-
-    export default {
-      data() {
-        return {
-        }
-      }
-    }
-    </script>
+  import { Stop } from '@/assets/api-connection.js';
+</script>
     
-    <template>
-      <button>Stop</button>
-    </template>
+<template>
+  <button @click="Stop" >Stop</button>
+</template>

@@ -3,6 +3,7 @@
 #include <mutex>
 #include <tuple>
 #include <iostream>
+#include <condition_variable>
 
 namespace Lannootree {
 
@@ -30,7 +31,6 @@ namespace Lannootree {
        * @return T& 
        */
       T& get_value(uint col, uint row) {
-        std::unique_lock<std::mutex> lock(_mtx);
         if (col > _width || row > _height) throw ":(";
         return _data[_width * row + col];
       };
@@ -43,7 +43,6 @@ namespace Lannootree {
        * @param val 
        */
       void set_value(uint col, uint row, const T& val) {
-        std::unique_lock<std::mutex> lock(_mtx);
         _data[_width * row + col] = val;
       }
 
@@ -54,7 +53,6 @@ namespace Lannootree {
        * @return std::tuple<uint, uint> 
        */
       std::tuple<uint, uint> dimention(void) {
-        std::unique_lock<std::mutex> lock(_mtx);
         return std::make_tuple(_width, _height);
       }
 
@@ -76,7 +74,6 @@ namespace Lannootree {
       uint _height = 0;
 
     private:
-      std::mutex _mtx;
       T* _data = nullptr;
 
   };

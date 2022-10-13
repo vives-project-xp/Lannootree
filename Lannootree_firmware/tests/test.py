@@ -1,7 +1,7 @@
 import socket
 import time
 
-SOCKET_PATH = "/var/run/lannootree.socket"
+SOCKET_PATH = "./dev/lannootree.socket"
 data = [0xff] * 5000 * 3 # 5000 Leds RGB
 
 with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:

@@ -1,4 +1,3 @@
-// const ws = new WebSocket('ws://localhost:3001');
 const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
 
 export default function websocketClient() {
@@ -6,41 +5,45 @@ export default function websocketClient() {
   ws.onopen = (event) => {
     console.log(event)
     console.log("we are connected to mqtt")
-    // ws.send("stop");
-
+    // ws.send("Hello from from client.");
   }   
-  
 };
+websocketClient();
 
 
 export function Pause(notPaused) {
-  ws.send(notPaused);
+  ws.send(JSON.stringify({"pause": notPaused}));
   console.log(notPaused);
 };
 
+export function Stop() {
+  ws.onopen = () => ws.send(JSON.stringify({"stop": true}));
+  console.log("stop!")
+};
 
+Stop();
 export function Color() {
-  ws.send("effect");
-  console.log('test');
+ 
+};
+
+export function Effects(selectedEffect) {
+  ws.onopen = () => ws.send("{stop: " + selectedEffect + "}");
+
+ 
 };
 
 // document.getElementById("test") = onOff();
 
 
-export function send(){
-  ws.on = data => {
-    ws.send(data);
-  }
+// export function send(){
+//   ws.on = data => {
+//     ws.send(data);
+//   }
 
-}
+// }
 
-send();
-// stop();
-websocketClient();
-
-ws.onopen = function () {
-  ws.send("Hi, from the client."); // this works
-};
+// send();
+// Stop();
 
 // sendMessage();
 
@@ -48,10 +51,6 @@ ws.onopen = function () {
 //   console.log('client has sent us: ' + data)
 // })
 
-
-// ws.onmessage = function (event) {
-//       alert("Message received..." + event.data);
-// };
 
 // function pause(){
 //   ws.send("pause")
