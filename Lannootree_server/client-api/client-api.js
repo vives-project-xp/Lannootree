@@ -3,7 +3,8 @@
 // mqtt ______________________________________________________________________________________
 import mqtt from "mqtt"
 
-const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+const client = mqtt.connect('mqtt://localhost:1883');
+// const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
 
 client.on('connect', function () {
     console.log("mqtt connected")
@@ -56,21 +57,21 @@ function effect(effect_id) {
 import { WebSocketServer } from 'ws';
 const websocket = new WebSocketServer({ port: 3001 });
 
-wss.on('connection', (ws, req) => {
-    console.log('Websocket connection from: ' . req.headers['x-forwarded-for']);
+// wss.on('connection', (ws, req) => {
+//     console.log('Websocket connection from: ' . req.headers['x-forwarded-for']);
 
-    ws.on("message", data => {
-        console.log('Reicieved: ' . data.Tostring());
-        if(data == "stop") {
-            stop();
-        }
-    });
+//     ws.on("message", data => {
+//         console.log('Reicieved: ' . data.Tostring());
+//         if(data == "stop") {
+//             stop();
+//         }
+//     });
 
 
-    ws.on("close", () => {
-        console.log("client has disconnected")
-    });
+//     ws.on("close", () => {
+//         console.log("client has disconnected")
+//     });
     
-});
+// });
 
 // mqtt publish /AbortController
