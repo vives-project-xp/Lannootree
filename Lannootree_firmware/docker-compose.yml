@@ -1,5 +1,12 @@
 version: "3"
 services:
+  cert_downloader:
+    image: curlimages/curl
+    command: "curl https://lannootree.devbitapp.be/ca.crt --output /ca.crt/ca.crt"
+    user: 1001:1001
+    volumes:
+      - ./ca.crt:/ca.crt
+
   led_driver:
     command: --privileged
     image: led_driver:latest
@@ -19,6 +26,7 @@ services:
     restart: always
     volumes:
       - ./config.json:/config.json
-      - ./ca.crt:/app/ca.crt
-    # depends_on:
-    #   - led_driver
+      - ./ca.crt/ca.crt:/app/ca.crt
+    depends_on:
+      - cert_downloader
+      - led_driver

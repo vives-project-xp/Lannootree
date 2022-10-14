@@ -79,18 +79,6 @@ services:
       - 'traefik.http.routers.frontend.tls.certresolver=production'
       - 'traefik.http.routers.frontend.middlewares=authelia@docker'
 
-  config-webpage:
-    build:
-      context: ./config-webpage
-    restart: always
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.config-webpage.rule=Host(`admin.lannootree.devbitapp.be`)'
-      - 'traefik.http.routers.config-webpage.priority=100'
-      - 'traefik.http.routers.config-webpage.entrypoints=websecure'
-      - 'traefik.http.routers.config-webpage.tls.certresolver=production'
-      - 'traefik.http.routers.config-webpage.middlewares=authelia@docker'
-
   client-api:
     build:
       context: ./client-api
@@ -109,3 +97,15 @@ services:
       - 'traefik.http.routers.client-api.entrypoints=websecure'
       - 'traefik.http.routers.client-api.tls.certresolver=production'
       - 'traefik.http.routers.client-api.middlewares=authelia@docker'
+
+  config-webpage:
+    build:
+      context: ./config-webpage
+    restart: always
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.config-webpage.rule=Host(`admin.lannootree.devbitapp.be`)'
+      - 'traefik.http.routers.config-webpage.priority=100'
+      - 'traefik.http.routers.config-webpage.entrypoints=websecure'
+      - 'traefik.http.routers.config-webpage.tls.certresolver=production'
+      - 'traefik.http.routers.config-webpage.middlewares=authelia@docker'
