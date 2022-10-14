@@ -19,5 +19,6 @@ services:
     restart: always
     volumes:
       - ./config.json:/config.json
+      - ./ca.crt:/app/ca.crt
     # depends_on:
     #   - led_driver

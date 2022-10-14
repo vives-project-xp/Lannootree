@@ -11,7 +11,23 @@ import { serialize } from 'v8';
 // const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
 
 // MQTT
-const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
+
+// MQTT
+var caFile = fs.readFileSync("ca.crt");
+var options={
+  clientId:"controller" + Math.random().toString(16).substring(2, 8),
+  port:8883,
+  host:'lannootree.devbitapp.be',
+  protocol:'mqtts',
+  rejectUnauthorized : true,
+  ca:caFile,
+  will: {
+      topic: "status/controller",
+      payload: "Offline",
+      retain: true
+  }
+}
+const client = mqtt.connect(options);
 
 client.on('connect', function () {
   console.log("mqtt connected");
@@ -218,6 +234,6 @@ setInterval(() => {
     }
   }
   else {
-    console.log("PAUSED");
+    // console.log("PAUSED");
   }
 }, 200);

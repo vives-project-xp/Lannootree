@@ -39,7 +39,7 @@ import * as fs from 'fs';
 
 var caFile = fs.readFileSync("ca.crt");
 var options={
-  clientId:"firmwarecontroller",
+  clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
   port:8883,
   host:'lannootree.devbitapp.be',
   protocol:'mqtts',
