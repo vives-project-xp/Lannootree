@@ -1,8 +1,9 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+
 import App from './App.vue'
 
 import Notifications from '@kyvg/vue3-notification'
-
 
 import VueHighlightJS from 'vue3-highlightjs'
 import 'highlight.js/styles/androidstudio.css'
@@ -25,4 +26,5 @@ createApp(App)
   .use(autoAnimatePlugin)
   .use(Notifications)
   .use(VueHighlightJS)
+  .use(createPinia())
   .mount('#app')
