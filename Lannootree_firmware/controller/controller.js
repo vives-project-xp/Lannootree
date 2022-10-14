@@ -7,10 +7,12 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-// Socket client
-// const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
+const debug = false;
+const leddriver_connection = false;
 
-// MQTT
+// Socket client
+const socket = 0;
+if(leddriver_connection) socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
 
 // MQTT
 var caFile = fs.readFileSync("ca.crt");
@@ -30,7 +32,7 @@ var options={
 const client = mqtt.connect(options);
 
 client.on('connect', function () {
-  console.log("mqtt connected");
+  logging("INFO: mqtt connected", false);
   client.publish('status/controller', 'Online', {retain: true});
   client.subscribe('controller/#');
   sendContent();
@@ -64,9 +66,9 @@ client.on('message', function (topic, message) {
     sendOnChange();
   }
 
-  else if(topic=="controller/asset") console.log("ASSET");
+  else if(topic=="controller/asset") logging("ASSET", true);
 
-  else console.log("Unknown topic");
+  else logging("Unknown topic", true);
 })
 
 // CONTROLLER
@@ -96,7 +98,7 @@ function set_matrixsize(rows, columns) {
       }
     }
 
-    console.log(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`);
+    logging(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`, true);
   }
   
   if(playing_effect != null) play();
@@ -112,8 +114,6 @@ function sendContent() {
   let effect_obj = manager.get_effects();
   obj.effects = effect_obj;
   obj.assets = "NONE";
-  // console.log(JSON.stringify(obj));
-
   client.publish('controller/content', JSON.stringify(obj));
 }
 
@@ -136,7 +136,6 @@ function sendOnChange() {
   client.publish('controller/status', JSON.stringify(obj));
 }
 
-// @jens de lijn in comment cracht de boel. dit omdat deze functie uitvoert voor dat fs klaar is met het uitlezen van config.json
 function get_matrixsize() {
   let rows = 0;
   let cols = 0;
@@ -170,22 +169,17 @@ function stop(){
 }
 
 function frame_to_ledcontroller() {
-  // ------------------------------------
-  // CODE FRAME STUREN NAAR LEDCONTROLLER
-  let serializedData = [];
-
-  [].concat(...ledmatrix).forEach(color => {
-    serializedData.push(...color.get_color());
-  });
-
-  // socket.write(Uint8Array.from(serializedData));
-
-  // ------------------------------------
-
-  frame_to_console(); // DEBUGGING
+  if(leddriver_connection) {
+    let serializedData = [];
+    [].concat(...ledmatrix).forEach(color => {
+      serializedData.push(...color.get_color());
+    });
+    socket.write(Uint8Array.from(serializedData));
+  }
+  frame_to_console();
 }
 
-function frame_to_console() { // DEBUGGING
+function frame_to_console() {
   var frame_console = "";
   for(var i = 0; i < ledmatrix.length; i++) {
     for(var j = 0; j < ledmatrix[i].length; j++) {
@@ -193,7 +187,7 @@ function frame_to_console() { // DEBUGGING
     }
     frame_console+="\n";
   }
-  // console.log(frame_console);
+  logging(frame_console, true);
   return frame_console;
 }
 
@@ -211,7 +205,7 @@ function set_color_full(red, green, blue) {
 
 function play_effect() {
   play();
-  if(playing_effect == "effect1") {     //RANDOM KLEUREN (VOLLEDIG PANEEL)
+  if(playing_effect == "effect1") {       //RANDOM KLEUREN (VOLLEDIG PANEEL)
     manager.set_effect("random_each", ledmatrix);
   }
   else if(playing_effect == "effect2") {  //RANDOM KLEUREN (IEDERE LED APART)
@@ -234,6 +228,16 @@ setInterval(() => {
     }
   }
   else {
-    // console.log("PAUSED");
+    logging("PAUSED", true);
   }
 }, 200);
+
+function logging(message, msgdebug){
+  if (!msgdebug) {
+    console.log(message);
+    client.publish('logs/controller', message);
+  }
+  else if(msgdebug && debug) {
+    console.log(message);
+  }
+}
