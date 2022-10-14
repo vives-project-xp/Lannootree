@@ -123,9 +123,11 @@ function sendOnChange() {
 // @jens de lijn in comment cracht de boel. dit omdat deze functie uitvoert voor dat fs klaar is met het uitlezen van config.json
 function get_matrixsize() {
   let rows = 0;
-  // let cols = ledmatrix[0].length;
   let cols = 0;
-  for(var i = 0; i < ledmatrix.length; i++) rows++;
+  if(ledmatrix.length != 0) {
+    cols = ledmatrix[0].length;
+    for(var i = 0; i < ledmatrix.length; i++) rows++;
+  }
   return [rows, cols];
 }
 
