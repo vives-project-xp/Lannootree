@@ -35,7 +35,7 @@ client.on('connect', function () {
   logging("INFO: mqtt connected", false);
   client.publish('status/controller', 'Online', {retain: true});
   client.subscribe('controller/#');
-  sendContent();
+  sendStatus();
 })
 
 client.on('message', function (topic, message) {
@@ -53,7 +53,7 @@ client.on('message', function (topic, message) {
     playing_effect = null;
     const json_obj = JSON.parse(message.toString());
     color = [json_obj.red, json_obj.green, json_obj.blue];
-    sendOnChange();
+    sendStatus();
     color = null;
     set_color_full(json_obj.red, json_obj.green, json_obj.blue);
     frame_to_ledcontroller();
@@ -63,7 +63,7 @@ client.on('message', function (topic, message) {
     const json_obj = JSON.parse(message.toString());
     playing_effect = json_obj.effect_id;
     play_effect();
-    sendOnChange();
+    sendStatus();
   }
 
   else if(topic=="controller/asset") logging("ASSET", true);
@@ -104,27 +104,22 @@ function set_matrixsize(rows, columns) {
   if(playing_effect != null) play();
 }
 
-function sendContent() {
+function sendStatus() {
   let obj = new Object();
   let matrix_obj = new Object();
   let matrixsize = get_matrixsize();
   matrix_obj.rows = matrixsize[0];
   matrix_obj.cols = matrixsize[1];
   obj.matrix = matrix_obj;
+  obj.current_effect = playing_effect;
   let effect_obj = manager.get_effects();
   obj.effects = effect_obj;
-  obj.assets = "NONE";
-  client.publish('controller/content', JSON.stringify(obj));
-}
-
-function sendOnChange() {
-  let obj = new Object();
+  obj.current_asset = playing_asset;
+  obj.assets = ["random1.png", "cat.jpg"];
   if(ispaused) obj.pause = "true";
   else obj.pause = "false";
   if(ispaused && playing_effect == null && playing_asset == null) obj.stop = "true";
   else obj.stop = "false";
-  obj.effect = playing_effect;
-  obj.asset = playing_asset;
   if(color != null) {
     let color_obj = new Object();
     color_obj.red = color[0];
@@ -148,15 +143,15 @@ function get_matrixsize() {
 
 function pause() {
   ispaused = true;
-  sendOnChange();
+  sendStatus();
 }
 function play() {
   ispaused = false;
-  sendOnChange();
+  sendStatus();
 }
 function togglepause() {
   ispaused = !ispaused;
-  sendOnChange();
+  sendStatus();
 }
 
 function stop(){
@@ -165,7 +160,7 @@ function stop(){
   playing_asset = null;
   set_color_full(0,0,0);
   frame_to_ledcontroller();
-  sendOnChange();
+  sendStatus();
 }
 
 function frame_to_ledcontroller() {
@@ -216,7 +211,7 @@ function play_effect() {
     playing_effect = null;
     set_color_full(100,0,0);
     frame_to_ledcontroller();
-    sendOnChange();
+    sendStatus();
   }
 }
 
@@ -229,6 +224,7 @@ setInterval(() => {
   }
   else {
     logging("PAUSED", true);
+    sendStatus();
   }
 }, 200);
 
