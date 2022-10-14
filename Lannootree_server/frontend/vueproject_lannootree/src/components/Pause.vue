@@ -23,7 +23,7 @@ import { Pause } from "@/assets/api-connection.js"
 
 <template>
   <div>
-    <Toggle v-model="notPaused" on-label="Pause" off-label="Play" @click="Pausing(notPaused)"/>
+    <Toggle v-model="notPaused" on-label="⏸" off-label="▶" @click="Pausing(notPaused)"/>
   </div>
 </template>
 
