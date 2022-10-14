@@ -7,11 +7,11 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
+// Socket client
+// const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
+
 // MQTT
 const client = mqtt.connect('mqtt://lannootree.devbitapp.be:1883');
-
-// Socket client
-const socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
 
 client.on('connect', function () {
   console.log("mqtt connected");
@@ -120,9 +120,11 @@ function sendOnChange() {
   client.publish('controller/status', JSON.stringify(obj));
 }
 
+// @jens de lijn in comment cracht de boel. dit omdat deze functie uitvoert voor dat fs klaar is met het uitlezen van config.json
 function get_matrixsize() {
   let rows = 0;
-  let cols = ledmatrix[0].length;
+  // let cols = ledmatrix[0].length;
+  let cols = 0;
   for(var i = 0; i < ledmatrix.length; i++) rows++;
   return [rows, cols];
 }
@@ -158,7 +160,7 @@ function frame_to_ledcontroller() {
     serializedData.push(...color.get_color());
   });
 
-  socket.write(Uint8Array.from(serializedData));
+  // socket.write(Uint8Array.from(serializedData));
 
   // ------------------------------------
 

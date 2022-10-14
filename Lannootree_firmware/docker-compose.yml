@@ -5,7 +5,7 @@ services:
     image: led_driver:latest
     # build: 
     #   context: ./led_driver
-    restart: unless-stopped
+    restart: always
     volumes:
       - /var/run/:/lannootree/dev
       - /dev/mem:/dev/mem
@@ -16,6 +16,8 @@ services:
   controller:
     build:
       context: ./controller
-    restart: unless-stopped
-    depends_on:
-      - led_driver
+    restart: always
+    volumes:
+      - ./config.json:/config.json
+    # depends_on:
+    #   - led_driver
