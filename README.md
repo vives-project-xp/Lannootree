@@ -8,7 +8,10 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Docker structure:
 
-- Lannootree_server:
+![Lannootree drawio](https://user-images.githubusercontent.com/71697142/195920493-01a897f4-4702-41ac-8c14-3c71cb66574e.png)
+
+
+<!-- - Lannootree_server:
 This is the public server
     - traefik
     - authelia
@@ -29,7 +32,7 @@ This runs on the raspberry pi and makes connection to the public server
   
 - Asset-Client:
 This is a client that connects to mqtt and handles jobs to process assets
-    - asset-processor
+    - asset-processor -->
 
 ## installation
 
