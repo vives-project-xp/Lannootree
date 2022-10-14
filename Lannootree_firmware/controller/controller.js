@@ -96,7 +96,7 @@ function sendContent() {
   let effect_obj = manager.get_effects();
   obj.effects = effect_obj;
   obj.assets = "NONE";
-  console.log(JSON.stringify(obj));
+  // console.log(JSON.stringify(obj));
 
   client.publish('controller/content', JSON.stringify(obj));
 }
@@ -152,10 +152,13 @@ function stop(){
 function frame_to_ledcontroller() {
   // ------------------------------------
   // CODE FRAME STUREN NAAR LEDCONTROLLER
-  // let serializedData = [];
+  let serializedData = [];
 
+  [].concat(...ledmatrix).forEach(color => {
+    serializedData.push(...color.get_color());
+  });
 
-  // socket.write(Uint8Array.from(serializedData));
+  socket.write(Uint8Array.from(serializedData));
 
   // ------------------------------------
 
@@ -170,7 +173,7 @@ function frame_to_console() { // DEBUGGING
     }
     frame_console+="\n";
   }
-  console.log(frame_console);
+  // console.log(frame_console);
   return frame_console;
 }
 
