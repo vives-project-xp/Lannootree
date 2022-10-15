@@ -251,3 +251,9 @@ function logging(message, msgdebug = false){
     console.log(message);
   }
 }
+
+function crashApp(message) {
+  client.publish('logs/controller', 'FATAL: ' + message, (error) => {
+    process.exit(1);
+  })
+}
