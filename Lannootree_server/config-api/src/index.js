@@ -33,7 +33,7 @@ const port = 3000
 app.use(express.json())
 app.post('/', async (req, res) => {
 
-    logging("reicieved new json from: "  + req.headers['x-forwarded-for']);
+    logging("INFO: recieved new json from: "  + req.headers['x-forwarded-for']);
     client.publish('controller/config', JSON.stringify({requestBody: req.body}));
     
     res.sendStatus(200);
