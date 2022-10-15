@@ -106,6 +106,22 @@ services:
       - 'traefik.http.routers.config-webpage.tls.certresolver=production'
       - 'traefik.http.routers.config-webpage.middlewares=authelia@docker'
 
+  config-api:
+    build:
+      context: ./config-api
+    restart: always
+    volumes:
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.config-api.rule=Host(`admin.lannootree.devbitapp.be`) && PathPrefix(`/json`)'
+      - "traefik.http.routers.config-api.middlewares=config-api-stripprefix"
+      - "traefik.http.middlewares.config-api-stripprefix.stripprefix.prefixes=/json"
+      - 'traefik.http.routers.config-api.priority=100'
+      - 'traefik.http.services.config-api.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.config-api.entrypoints=websecure'
+      - 'traefik.http.routers.config-api.tls.certresolver=production'
+      - 'traefik.http.routers.config-api.middlewares=authelia@docker'
 
   log-parser:
     build:
