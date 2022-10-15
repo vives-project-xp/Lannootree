@@ -7,7 +7,7 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-const debug = false;
+const debug = true;
 const leddriver_connection = false;
 
 // Socket client
@@ -40,35 +40,40 @@ client.on('connect', function () {
 
 client.on('message', function (topic, message) {
 
-  if(topic=="controller/pause") {
-    const json_obj = JSON.parse(message.toString());
-    if(json_obj.value == "pause") pause();
-    else if(json_obj.value == "togglepause") togglepause();
-    else if(json_obj.value == "play") play();
+  switch (topic) {
+    case "controller/pause":
+      const json_obj1 = JSON.parse(message.toString());
+      if(json_obj1.value == "pause") pause();
+      else if(json_obj1.value == "togglepause") togglepause();
+      else if(json_obj1.value == "play") play();
+      sendStatus();
+      break;
+    case "controller/stop":
+      stop();
+      sendStatus();
+      break;
+    case "controller/setcolor":
+      playing_effect = null;
+      const json_obj2 = JSON.parse(message.toString());
+      set_color_full(json_obj2.red, json_obj2.green, json_obj2.blue);
+      frame_to_ledcontroller();
+      color = [json_obj2.red, json_obj2.green, json_obj2.blue];
+      sendStatus();
+      color = null;
+      break;
+    case "controller/effect":
+      const json_obj3 = JSON.parse(message.toString());
+      playing_effect = json_obj3.effect_id;
+      play_effect();
+      sendStatus();
+      break;
+    case "controller/asset":
+      logging("ASSET", true);
+      sendStatus();
+      break;
+    default:
+      logging("Unknown topic", true);
   }
-
-  else if(topic=="controller/stop") stop();
-  
-  else if(topic=="controller/setcolor") {
-    playing_effect = null;
-    const json_obj = JSON.parse(message.toString());
-    color = [json_obj.red, json_obj.green, json_obj.blue];
-    sendStatus();
-    color = null;
-    set_color_full(json_obj.red, json_obj.green, json_obj.blue);
-    frame_to_ledcontroller();
-  }
-
-  else if(topic=="controller/effect") {
-    const json_obj = JSON.parse(message.toString());
-    playing_effect = json_obj.effect_id;
-    play_effect();
-    sendStatus();
-  }
-
-  else if(topic=="controller/asset") logging("ASSET", true);
-
-  else logging("Unknown topic", true);
 })
 
 // CONTROLLER
@@ -97,7 +102,6 @@ function set_matrixsize(rows, columns) {
         ledmatrix[i][j] = new Color(0,0,0);
       }
     }
-
     logging(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`, true);
   }
   
@@ -200,18 +204,19 @@ function set_color_full(red, green, blue) {
 
 function play_effect() {
   play();
-  if(playing_effect == "effect1") {       //RANDOM KLEUREN (VOLLEDIG PANEEL)
-    manager.set_effect("random_each", ledmatrix);
-  }
-  else if(playing_effect == "effect2") {  //RANDOM KLEUREN (IEDERE LED APART)
-    manager.set_effect("random_full", ledmatrix);
-  }
-  else {
-    pause();
-    playing_effect = null;
-    set_color_full(100,0,0);
-    frame_to_ledcontroller();
-    sendStatus();
+  switch (playing_effect) {
+    case "random_each":
+      manager.set_effect("random_each", ledmatrix);
+      break;
+    case "random_full":
+      manager.set_effect("random_full", ledmatrix);
+      break;
+    default:
+      pause();
+      playing_effect = null;
+      set_color_full(100,0,0);
+      frame_to_ledcontroller();
+      sendStatus();
   }
 }
 
@@ -224,7 +229,6 @@ setInterval(() => {
   }
   else {
     logging("PAUSED", true);
-    sendStatus();
   }
 }, 200);
 
