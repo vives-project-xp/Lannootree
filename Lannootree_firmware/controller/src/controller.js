@@ -72,7 +72,7 @@ client.on('message', function (topic, message) {
       sendStatus();
       break;
     case "controller/config":
-      fs.writeFileSync('../config_test.json', message);
+      fs.writeFileSync('../config_test.json', JSON.stringify(JSON.parse(message), null, 2));
       logging("WARNING: overwriting old json config file");
       break;
     default:
