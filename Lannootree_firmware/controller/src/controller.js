@@ -71,6 +71,10 @@ client.on('message', function (topic, message) {
       logging("ASSET", true);
       sendStatus();
       break;
+    case "controller/config":
+      fs.writeFileSync('../config_test.json', message);
+      logging("WARNING: overwriting old json config file");
+      break;
     default:
       logging("Unknown topic", true);
   }
