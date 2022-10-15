@@ -3,7 +3,8 @@ import mqtt from "mqtt";
 import * as fs from 'fs';
 import express from 'express'
 
-const db = new sqlite3.default.Database(':memory:');
+// const db = new sqlite3.default.Database(':memory:');
+const db = new sqlite3.default.Database('logs.sqlite');
 const numberOfLogsToKeep = 2
 
 var caFile = fs.readFileSync("ca.crt");
