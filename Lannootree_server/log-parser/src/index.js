@@ -5,7 +5,7 @@ import express from 'express'
 
 // const db = new sqlite3.default.Database(':memory:');
 const db = new sqlite3.default.Database('logs.sqlite');
-const numberOfLogsToKeep = 2
+const numberOfLogsToKeep = 200
 
 var caFile = fs.readFileSync("ca.crt");
 var mqttOptions={
@@ -113,8 +113,8 @@ app.get('/:container', (req, res) => {
             </tr>`;
         rows.forEach(row => {
             data += `<tr>
-                <td>${row.timestamp}</td>
-                <td style="border-left: solid;">${row.message}</td>
+                <td style="color: red;">${row.timestamp}</td>
+                <td style="color: blue;">${row.message}</td>
             </tr>`
         });
         data += `</table>`
