@@ -31,7 +31,7 @@ const app = express()
 const port = 3000
 
 app.use(express.json())
-app.post('/json', async (req, res) => {
+app.post('/', async (req, res) => {
 
     logging("reicieved new json from: "  + req.headers['x-forwarded-for']);
     client.publish('controller/config', JSON.stringify({requestBody: req.body}));
@@ -47,7 +47,7 @@ app.listen(port, () => {
 function logging(message, msgdebug = false){
     if (!msgdebug) {
       console.log(message);
-      client.publish('logs/client-api', message);
+      client.publish('logs/config-api', message);
     }
     else if(msgdebug && debug) {
       console.log(message);
