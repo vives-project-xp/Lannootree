@@ -7,7 +7,7 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-const debug = false;
+const debug = true;
 const leddriver_connection = false;
 
 // Socket client
@@ -72,8 +72,10 @@ client.on('message', function (topic, message) {
       sendStatus();
       break;
     case "controller/config":
-      fs.writeFileSync('../config_test.json', JSON.stringify(JSON.parse(message), null, 2));
+      fs.writeFileSync('../config.json', JSON.stringify(JSON.parse(message), null, 2));
       logging("WARNING: overwriting old json config file");
+      updateMatrixFromFile();
+      sendStatus();
       break;
     default:
       logging("Unknown topic", true);
@@ -90,11 +92,15 @@ var playing_effect = null;
 var playing_asset = null;
 var color = null;
 
-fs.readFile('../config.json', (err, data) => {
-  if (err) throw err;
-  let json_data = JSON.parse(data);
-  set_matrixsize(json_data.dimentions.row,json_data.dimentions.col);
-});
+function updateMatrixFromFile() {
+  fs.readFile('../config.json', (err, data) => {
+    if (err) throw err;
+    let json_data = JSON.parse(data);
+    set_matrixsize(json_data.dimentions.row,json_data.dimentions.col);
+  });
+}
+
+updateMatrixFromFile();
 
 function set_matrixsize(rows, columns) {
   pause();
