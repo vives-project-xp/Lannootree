@@ -10,16 +10,16 @@ services:
       - 1883:1883
       - 8883:8883
 
-  public_key:
+  certificate-api:
     image: "nginx:alpine"
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/usr/share/nginx/html/ca.crt"
+      - "./mqtt/config/ca_certificates/ca.crt:/usr/share/nginx/html/ca.crt:ro"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.public_key.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
-      - 'traefik.http.routers.public_key.priority=100'
-      - 'traefik.http.routers.public_key.entrypoints=websecure'
-      - 'traefik.http.routers.public_key.tls.certresolver=production'
+      - 'traefik.http.routers.certificate-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
+      - 'traefik.http.routers.certificate-api.priority=100'
+      - 'traefik.http.routers.certificate-api.entrypoints=websecure'
+      - 'traefik.http.routers.certificate-api.tls.certresolver=production'
 
   traefik:
     image: "traefik:v2.9"
@@ -45,7 +45,7 @@ services:
     volumes:
       - ./authelia/config:/config
     environment:
-      TZ: "Australia/Melbourne"
+      TZ: "Europe/Brussels"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.authelia.rule=Host(`auth.lannootree.devbitapp.be`)'
@@ -69,8 +69,6 @@ services:
     build:
       context: ./frontend
     restart: always
-    environment:
-      - LOGOUT_URL=https://auth.lannootree.devbitapp.be/logout
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.frontend.rule=Host(`lannootree.devbitapp.be`)'
@@ -83,10 +81,8 @@ services:
     build:
       context: ./client-api
     restart: always
-    environment:
-      - MQTT_URL='mqtt://lannootree.devbitapp.be:1883'
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt"
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.client-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/wss`)'
@@ -109,3 +105,18 @@ services:
       - 'traefik.http.routers.config-webpage.entrypoints=websecure'
       - 'traefik.http.routers.config-webpage.tls.certresolver=production'
       - 'traefik.http.routers.config-webpage.middlewares=authelia@docker'
+
+
+  log-parser:
+    build:
+      context: ./log-parser
+    restart: always
+    volumes:
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.log-parser.rule=Host(`logs.lannootree.devbitapp.be`)'
+      - 'traefik.http.services.log-parser.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.log-parser.entrypoints=websecure'
+      - 'traefik.http.routers.log-parser.tls.certresolver=production'
+      - 'traefik.http.routers.log-parser.middlewares=authelia@docker'
