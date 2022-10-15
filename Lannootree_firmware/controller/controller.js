@@ -7,7 +7,7 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-const debug = true;
+const debug = false;
 const leddriver_connection = false;
 
 // Socket client
@@ -32,7 +32,7 @@ var options={
 const client = mqtt.connect(options);
 
 client.on('connect', function () {
-  logging("INFO: mqtt connected", false);
+  logging("INFO: mqtt connected");
   client.publish('status/controller', 'Online', {retain: true});
   client.subscribe('controller/#');
   sendStatus();
@@ -232,7 +232,7 @@ setInterval(() => {
   }
 }, 200);
 
-function logging(message, msgdebug){
+function logging(message, msgdebug = false){
   if (!msgdebug) {
     console.log(message);
     client.publish('logs/controller', message);
