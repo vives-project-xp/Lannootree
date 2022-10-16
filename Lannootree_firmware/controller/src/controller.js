@@ -7,6 +7,9 @@ import fs from "fs";
 
 import net from "net"
 import { serialize } from 'v8';
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../.env' })
 
 const debug = true;
 const leddriver_connection = false;
