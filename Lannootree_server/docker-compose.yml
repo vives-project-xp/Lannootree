@@ -68,7 +68,11 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+          VITE_LOGOUT_URL: ${VITE_LOGOUT_URL}
     restart: always
+    env_file:
+      - .env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.frontend.rule=Host(`lannootree.devbitapp.be`)'
@@ -82,7 +86,7 @@ services:
       context: ./client-api
     restart: always
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"   
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
     env_file:
       - .env
     labels:
@@ -125,7 +129,7 @@ services:
       - 'traefik.http.services.admin-api.loadbalancer.server.port=3000'
       - 'traefik.http.routers.admin-api.entrypoints=websecure'
       - 'traefik.http.routers.admin-api.tls.certresolver=production'
-      - 'traefik.http.routers.admin-api.middlewares=authelia@docker'
+      # - 'traefik.http.routers.admin-api.middlewares=authelia@docker'
 
   log-parser:
     build:

@@ -5,6 +5,8 @@ WORKDIR /app
 COPY vueproject_lannootree/package*.json ./
 RUN npm install
 
+ARG VITE_LOGOUT_URL
+
 COPY vueproject_lannootree/ ./
 RUN npm run build
 
