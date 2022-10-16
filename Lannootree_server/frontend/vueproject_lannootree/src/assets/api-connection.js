@@ -1,5 +1,4 @@
-// const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
-const ws = new WebSocket('wss://lannootree.devbitapp.be/wss');
+const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
 
 var websocketactive = false; 
 export default function websocketClient() {
