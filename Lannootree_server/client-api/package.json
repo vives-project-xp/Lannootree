@@ -2,10 +2,10 @@
   "name": "client-api",
   "version": "1.0.0",
   "description": "",
-  "main": "client-api.js",
+  "main": "src/client-api.js",
   "scripts": {
-    "dev": "nodemon client-api.js",
-    "start": "node client-api.js"
+    "dev": "nodemon src/client-api.js",
+    "start": "node src/client-api.js"
   },
   "keywords": [],
   "author": "",
