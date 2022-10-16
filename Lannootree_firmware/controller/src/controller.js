@@ -87,8 +87,8 @@ client.on('message', function (topic, message) {
 // CONTROLLER
 
 const manager = new EffectManager();
-manager.set_effect("random_full", [4,4]);
-manager.run();
+manager.set_effect("random_each", [4,4]);
+manager.run(1);
 
 var ledmatrix = [];
 var ispaused = true;
