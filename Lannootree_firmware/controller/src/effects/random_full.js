@@ -2,31 +2,25 @@ import Effect from '../effect.js';
 
 export default class RandomFull extends Effect{
 
-  constructor(ledmatrix) {
-    super(ledmatrix);
+  constructor() {
+    this.run();
   }
 
   run() {
-    this.#set_color_full(
-      Math.floor(Math.random()*256), 
-      Math.floor(Math.random()*256), 
-      Math.floor(Math.random()*256)
-    );
-    return super.get_ledmatrix();
-  }
+    let red = (Math.random()*256);
+    let green = (Math.random()*256);
+    let blue = (Math.random()*256);
 
-  #set_color_full(red, green, blue) {
-    var matrix = super.get_ledmatrix();
-    if(!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
-      if(red<=255 && green<=255 && blue<=255 && red>=0 && green>=0 && blue>=0) {
-        for(var i = 0; i < matrix.length; i++) {
-          for(var j = 0; j < matrix[i].length; j++) {
-            matrix[i][j].set_color(red, green, blue);
-          }
-        }
+    super.currentmatrix = this.nextmatrix;
+    var nextmatrix = super.nextmatrix;
+    for(var i = 0; i < nextmatrix.length; i++) {
+      for(var j = 0; j < nextmatrix[i].length; j++) {
+        nextmatrix[i][j].set_color(red, green, blue);
       }
     }
-    super.set_ledmatrix(matrix);
+    super.nextmatrix = nextmatrix();
+    
+    return super.currentmatrix;
   }
 
 }
