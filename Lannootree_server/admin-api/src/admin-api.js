@@ -1,14 +1,16 @@
+import dotenv from 'dotenv'
 import mqtt from "mqtt";
 import * as fs from 'fs';
 import express from 'express'
 
+dotenv.config({ path: '../.env' })
 
 // MQTT___________________________________________________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
 var mqttOptions={
   clientId:"admin-api" + Math.random().toString(16).substring(2, 8),
-  port:8883,
-  host:'lannootree.devbitapp.be',
+  port: process.env.MQTT_BROKER_PORT,
+  host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
