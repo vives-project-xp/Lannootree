@@ -93,8 +93,8 @@ var ispaused = true;
 var playing_effect = null;
 var playing_asset = null;
 var color = null;
-var fade = true;
-var speed = 10;
+var fade = false;
+var speed = 100;
 
 function updateMatrixFromFile() {
   fs.readFile('../config.json', (err, data) => {
@@ -244,7 +244,7 @@ setInterval(() => {   // frame-interval
           console.log("NEXT:");
           frame_to_console(manager.run());
 
-          enable_subframes = false;
+          enable_subframes = true;
         }
       }
     }

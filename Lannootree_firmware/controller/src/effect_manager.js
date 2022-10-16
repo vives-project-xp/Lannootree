@@ -9,14 +9,19 @@ export default class EffectManager {
       case "random_full": this.current_effect = new RandomFull(matrixsize); break;
       default: console.log("unknown effect_id");
     }
+    this.current_effect.run();
   }
 
   run() {
     return this.current_effect.run();
   }
 
-  get_ledmatrix() {
-    this.current_effect.get_ledmatrix();
+  get_currentmatrix() {
+    return this.current_effect.get_currentmatrix();
+  }
+
+  get_nextmatrix() {
+    return this.current_effect.get_nextmatrix();
   }
 
   get_effects() {
