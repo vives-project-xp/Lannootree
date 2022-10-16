@@ -14,22 +14,6 @@
     }
   });
 
-  const channels =[
-    {
-      name: 'Channel A0',
-      shortName: 'CA0',
-    }, {
-      name: 'Channel A1',
-      shortName: 'CA1',
-    }, {
-      name: 'Channel B0',
-      shortName: 'CB0',
-    }, {
-      name: 'Channel B1',
-      shortName: 'CB1',
-    },
-  ];
-
   const p_panel = computed(() => {
     return panelStore.panels.getValue(props.coordinate.col, props.coordinate.row);
   });
@@ -81,8 +65,8 @@
           <a class="dropdown-item" href="#">Channel &raquo;</a>
 
           <ul class="dropdown-menu dropdown-menu-dark dropdown-submenu">
-            <li v-for="chan in channels" :key="chan.shortName">
-              <a class="dropdown-item" href="#" @click="hasPanel ? panelStore.changeChannel(props.coordinate, chan.shortName) : ''">
+            <li v-for="chan in panelStore.channels" :key="chan.shortName">
+              <a v-if="hasPanel ? p_panel.channel != chan.shortName : true" class="dropdown-item" href="#" @click="hasPanel ? panelStore.changeChannel(props.coordinate, chan.shortName) : ''">
                 {{ chan.name }}
               </a>
             </li>

@@ -42,11 +42,12 @@
     </div>
 
     <!-- ? Make this an other component maby ? -->
-    <!-- <div class="json_display" @click="copyToClipboard" :style="validConfig ? { cursor: 'copy' } : { cursor: 'not-allowed' }">
+    <!-- <div class="json_display" @click="copyToClipboard" :style="validConfig ? { cursor: 'copy' } : { cursor: 'not-allowed' }"> -->
+    <div class="json_display">
         <pre v-highlightjs v-auto-animate>
-          <code class="javascript" style="border-radius: 25px">{{ JSON.stringify(jsonConfig, null, 2) }}</code>
+          <code class="javascript" style="border-radius: 25px">{{ panelStore.toJson }}</code>
         </pre>
-    </div> -->
+    </div>
   </div>
 </template>
 

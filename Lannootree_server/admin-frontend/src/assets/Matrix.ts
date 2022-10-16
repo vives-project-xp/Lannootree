@@ -33,7 +33,7 @@ class Matrix<T> {
     return this._data[row * this._width + col];
   }
 
-  public setValue(col: number, row: number, value: T) {
+  public setValue(col: number, row: number, value: T | null) {
     if (col < 0 || col >= this._width || row < 0 || row >= this._height) {
       console.error("Out of bounds write" + `[${col}, ${row}]`);
       return;
@@ -44,6 +44,10 @@ class Matrix<T> {
 
   public dimention() {
     return [this._width, this._height];
+  }
+
+  public forEach(callbackfn: any) {
+    this._data.forEach(callbackfn);
   }
 
 }

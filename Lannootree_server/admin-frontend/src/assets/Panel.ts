@@ -7,7 +7,6 @@ export interface Coordinate {
 export class Panel {
   
   public uuid: string;
-  public active: boolean;
   public channel: string;
   public coordinate: Coordinate;
   
@@ -16,8 +15,7 @@ export class Panel {
   public canConnect: boolean;
   public disabled: boolean;
   
-  constructor(active: boolean, coordinate: Coordinate) {
-    this.active = active;
+  constructor(coordinate: Coordinate) {
     this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString());
     this.channel = "CA0";
     this.coordinate = coordinate;
