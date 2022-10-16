@@ -16,11 +16,11 @@ export class Panel {
   public canConnect: boolean;
   public disabled: boolean;
   
-  constructor(active: boolean) {
+  constructor(active: boolean, coordinate: Coordinate) {
     this.active = active;
     this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString());
     this.channel = "CA0";
-    this.coordinate = { col: 0, row: 0 };
+    this.coordinate = coordinate;
     
     this.connection = this;
 
