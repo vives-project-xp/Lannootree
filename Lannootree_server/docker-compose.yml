@@ -104,6 +104,8 @@ services:
   admin-frontend:
     build:
       context: ./admin-frontend
+      args:
+          VITE_LOGOUT_URL: ${VITE_LOGOUT_URL}
     restart: always
     labels:
       - 'traefik.enable=true'

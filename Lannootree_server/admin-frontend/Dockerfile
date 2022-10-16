@@ -3,8 +3,10 @@ FROM node:latest as builder
 WORKDIR /app
 
 COPY package*.json ./
-# RUN npm install --save-dev @types/vue3-highlightjs
+
 RUN npm install
+
+ARG VITE_LOGOUT_URL
 
 COPY ./ ./
 RUN npm run build
