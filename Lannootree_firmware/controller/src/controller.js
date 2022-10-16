@@ -87,16 +87,12 @@ client.on('message', function (topic, message) {
 // CONTROLLER
 
 const manager = new EffectManager();
-manager.set_effect("random_each", [4,4]);
-manager.run(1);
 
 var ledmatrix = [];
 var ispaused = true;
 var playing_effect = null;
 var playing_asset = null;
 var color = null;
-var fade = false;
-var speed = 100;
 
 function updateMatrixFromFile() {
   fs.readFile('../config.json', (err, data) => {
@@ -196,6 +192,7 @@ function play_effect() {
   play();
   if(playing_effect != null) {
     manager.set_effect(playing_effect, get_matrixsize());
+    manager.run(1);
   } else {  // TODO: Check if effect is in manager array
     pause();
     playing_effect = null;

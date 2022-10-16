@@ -1,4 +1,6 @@
 import Color from './color.js';
+import Debug  from './debug.js';
+import Fade from './fade.js';
 
 export default class Effect {
 
@@ -23,28 +25,44 @@ export default class Effect {
     return this.nextmatrix;
   }
 
+  get_matrixsize(matrix) {
+    let rows = 0;
+    let cols = 0;
+    if(matrix.length != 0) {
+      cols = matrix[0].length;
+      for(var i = 0; i < matrix.length; i++) rows++;
+    }
+    return [rows, cols];
+  }
+
+  generate_matrix(oldmatrix) {
+    let newmatrix = Array.from(Array(Math.abs(this.get_matrixsize(oldmatrix)[0])), () => new Array(Math.abs(this.get_matrixsize(oldmatrix)[1])));
+    for(var i = 0; i < newmatrix.length; i++) {
+      for(var j = 0; j < newmatrix[i].length; j++) {
+        newmatrix[i][j] = new Color(oldmatrix[i][j].get_red(), oldmatrix[i][j].get_green(), oldmatrix[i][j].get_blue());
+      }
+    }
+    return newmatrix;
+  }
+
   run(speed_modifier) {
     if(!this.running) {
       this.running = true;
       setInterval(() => {   // frame-interval
-        if(this.fade == false) {
+        if(this.fade == false || this.fade_counter >= 255) {
           this.fade_counter = 0;
           console.log(Debug.frame_to_console(this.nextframe()))
         }
-        // else {
-        //   if(this.fade_counter == 0) {
-        //     previous_frame = ledmatrix;
-        //     next_frame = manager.run();
-        //     next_frame = manager.run();
-        //     console.log("HALLO");
-        //     console.log("PREVIOUS:");
-        //     Debug.frame_to_console(ledmatrix);
-        //     console.log("NEXT:");
-        //     Debug.frame_to_console(manager.run());
-  
-        //     enable_subframes = true;
-        //   }
-        // }
+        else {
+          console.log("PREVIOUS:");
+          console.log(Debug.frame_to_console(this.currentmatrix));
+          console.log("CURRENT:");
+          console.log(Debug.frame_to_console(Fade.calculate_subframe(this.currentmatrix, this.nextmatrix, this.fade_counter)));
+          console.log("NEXT:");
+          console.log(Debug.frame_to_console(this.nextmatrix));
+          this.fade_counter++;
+          console.log(this.fade_counter)
+        }
       }, (Math.round(this.framespeed_ms * speed_modifier)));
   
       // setInterval(() => {   // fade-interval
