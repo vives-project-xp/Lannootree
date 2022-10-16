@@ -1,17 +1,18 @@
 {
-  "name": "controller",
+  "name": "config-api",
   "version": "1.0.0",
   "description": "",
-  "main": "src/controller.js",
+  "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon src/controller.js",
-    "start": "node src/controller.js"
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "https": "^1.0.0",
+    "express": "^4.18.2",
+    "fs": "^0.0.1-security",
     "mqtt": "^4.3.7",
     "nodemon": "^2.0.20"
   },

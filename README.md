@@ -8,40 +8,14 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Docker structure:
 
-- Lannootree_server:
-This is the controller that runs on the public server
-    - asset-processor
-    - authelia
-    - client-api
-    - config-webpage
-    - frontend
-    - mqtt
-    - traefik
+![Lannootree drawio](https://user-images.githubusercontent.com/71697142/195920493-01a897f4-4702-41ac-8c14-3c71cb66574e.png)
 
-- Lannootree_firmware:
-This runs on the raspberry pi and makes connection to the main controller
-    - controller
-    - led-driver
+## Data flow
 
-## project structure
-
-- Frontend webpage
-    - vue webpagina
-    - Websocket connection to client-api
-
-- Public server
-    - client api sends commands to mqtt
-    - client api sends assets to mqtt
-
-- Asset processor
-    - gets assets from mqtt and proceses them
-
-- Raspberry pi
-    - controller gets commands from mqtt
-    - controller requests assets from processor via mqtt
-    - controller connects to led-driver via unix socket
+![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/196009784-c73ddbd6-5e9f-4146-97d0-4b589f2df5c1.png)
 
 ## installation
 
 - [Server](Lannootree_server/README.md)
 - [Firmware](Lannootree_firmware/README.md)
+

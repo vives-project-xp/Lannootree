@@ -113,3 +113,6 @@ dist
 *.key
 *.csr
 *.pwd
+
+
+*.sqlite

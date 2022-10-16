@@ -23,7 +23,7 @@
     </template>
     <style scoped>
       .container{
-        width: 200px;
+        width: 250px;
       }
       :deep() {
         --vs-controls-color: #00bd7e;
