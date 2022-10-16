@@ -70,6 +70,7 @@ services:
       context: ./frontend
       args:
           VITE_LOGOUT_URL: ${VITE_LOGOUT_URL}
+          VITE_FRONTEND_WEBSOCKET: ${VITE_FRONTEND_WEBSOCKET}
     restart: always
     env_file:
       - .env
