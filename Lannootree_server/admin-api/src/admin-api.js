@@ -6,14 +6,14 @@ import express from 'express'
 // MQTT___________________________________________________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
 var mqttOptions={
-  clientId:"config-api" + Math.random().toString(16).substring(2, 8),
+  clientId:"admin-api" + Math.random().toString(16).substring(2, 8),
   port:8883,
   host:'lannootree.devbitapp.be',
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
     will: {
-        topic: "status/config-api",
+        topic: "status/admin-api",
         payload: "Offline",
         retain: true
     }
@@ -22,7 +22,7 @@ const client = mqtt.connect(mqttOptions);
 
 client.on('connect', function () {
     logging("INFO: mqtt connected")
-    client.publish('status/config-api', 'Online', {retain: true});
+    client.publish('status/admin-api', 'Online', {retain: true});
 })
     
     
@@ -40,14 +40,14 @@ app.post('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  logging(`INFO: config-api listening on port ${port}`)
+  logging(`INFO: admin-api listening on port ${port}`)
 })
 
 
 function logging(message, msgdebug = false){
     if (!msgdebug) {
       console.log(message);
-      client.publish('logs/config-api', message);
+      client.publish('logs/admin-api', message);
     }
     else if(msgdebug && debug) {
       console.log(message);

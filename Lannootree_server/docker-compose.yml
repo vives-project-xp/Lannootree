@@ -94,34 +94,34 @@ services:
       - 'traefik.http.routers.client-api.tls.certresolver=production'
       - 'traefik.http.routers.client-api.middlewares=authelia@docker'
 
-  config-webpage:
+  admin-frontend:
     build:
-      context: ./config-webpage
+      context: ./admin-frontend
     restart: always
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.config-webpage.rule=Host(`admin.lannootree.devbitapp.be`)'
-      - 'traefik.http.routers.config-webpage.priority=100'
-      - 'traefik.http.routers.config-webpage.entrypoints=websecure'
-      - 'traefik.http.routers.config-webpage.tls.certresolver=production'
-      - 'traefik.http.routers.config-webpage.middlewares=authelia@docker'
+      - 'traefik.http.routers.admin-frontend.rule=Host(`admin.lannootree.devbitapp.be`)'
+      - 'traefik.http.routers.admin-frontend.priority=100'
+      - 'traefik.http.routers.admin-frontend.entrypoints=websecure'
+      - 'traefik.http.routers.admin-frontend.tls.certresolver=production'
+      - 'traefik.http.routers.admin-frontend.middlewares=authelia@docker'
 
-  config-api:
+  admin-api:
     build:
-      context: ./config-api
+      context: ./admin-api
     restart: always
     volumes:
       - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.config-api.rule=Host(`admin.lannootree.devbitapp.be`) && PathPrefix(`/json`)'
-      - "traefik.http.routers.config-api.middlewares=config-api-stripprefix"
-      - "traefik.http.middlewares.config-api-stripprefix.stripprefix.prefixes=/json"
-      - 'traefik.http.routers.config-api.priority=100'
-      - 'traefik.http.services.config-api.loadbalancer.server.port=3000'
-      - 'traefik.http.routers.config-api.entrypoints=websecure'
-      - 'traefik.http.routers.config-api.tls.certresolver=production'
-      - 'traefik.http.routers.config-api.middlewares=authelia@docker'
+      - 'traefik.http.routers.admin-api.rule=Host(`admin.lannootree.devbitapp.be`) && PathPrefix(`/api`)'
+      - "traefik.http.routers.admin-api.middlewares=admin-api-stripprefix"
+      - "traefik.http.middlewares.admin-api-stripprefix.stripprefix.prefixes=/api"
+      - 'traefik.http.routers.admin-api.priority=100'
+      - 'traefik.http.services.admin-api.loadbalancer.server.port=3000'
+      - 'traefik.http.routers.admin-api.entrypoints=websecure'
+      - 'traefik.http.routers.admin-api.tls.certresolver=production'
+      - 'traefik.http.routers.admin-api.middlewares=authelia@docker'
 
   log-parser:
     build:
