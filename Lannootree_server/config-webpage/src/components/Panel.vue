@@ -1,17 +1,21 @@
 <script setup lang="ts">
-  import type { PropType } from 'vue';
-  import { ref, computed } from 'vue'
+  import { toRefs } from 'vue';
+  import type { PropType } from 'vue'
+  import { ref, computed, watch } from 'vue'
   import type { Panel } from '@/assets/Panel';
   import { usePanelGrid } from '@/stores/PanelGrid'
 
   const panelStore = usePanelGrid();
 
   const props = defineProps({
-    thisPanel: {
+    p_panel: {
       type: Object as PropType<Panel>,
       required: true
     },
   });
+
+  const thisPanel = toRefs(props).p_panel;
+  // watch()
 
   const channels =[
     {
@@ -36,81 +40,50 @@
       color: 'balck',
       display: 'grid',
       'place-items': 'center',
-      'background-color': props.thisPanel.active ? 'white' : 'grey',
+      'background-color': props.p_panel.active ? 'white' : 'grey',
     }
     
-    if (props.thisPanel.active) {
+    if (props.p_panel.active) {
       // TODO: make colors more pretty i'm not a visual designer xp
-      if (props.thisPanel.channel === 'CA0') panelStylez['background-color'] = 'red';
-      if (props.thisPanel.channel === 'CA1') panelStylez['background-color'] = 'green';
-      if (props.thisPanel.channel === 'CB0') panelStylez['background-color'] = 'blue';
-      if (props.thisPanel.channel === 'CB1') panelStylez['background-color'] = 'yellow';
+      if (props.p_panel.channel === 'CA0') panelStylez['background-color'] = 'red';
+      if (props.p_panel.channel === 'CA1') panelStylez['background-color'] = 'green';
+      if (props.p_panel.channel === 'CB0') panelStylez['background-color'] = 'blue';
+      if (props.p_panel.channel === 'CB1') panelStylez['background-color'] = 'yellow';
     }
 
     return panelStylez;
-  });
+  }); 
 
-// const channelHasHead = computed(() => {
-//   return ([] as GridCell[]).concat(...props.grid)
-//           .filter((cell: GridCell) => cell.channel === props.cell.channel)
-//           .reduce((p, c) => { return p || (c.isHead !== undefined ? c.isHead : false); }, false);
-// });
-
-// const setHead = function () {
-//   props.cell.isHead = true;
-//   props.cell.canConnect = true;
-// }
-
-// const addConnection = function (next: GridCell) {
-//   props.cell.connection = next;
-//   props.cell.canConnect = false;
-//   next.canConnect = true;
-// }
-
-// const changeChannel = function(channel: string) {
-//   let current: GridCell | undefined = ([] as GridCell[]).concat(...props.grid).find(cell => (cell.channel === props.cell.channel && cell.isHead));
-//   let next: string | GridCell | null = props.cell.connection;
-//   while (next) {
-//     if (current === undefined) break;
-//     current.canConnect = false;
-//     current.isHead = false;
-//     current.connection = null;
-//     (current as GridCell) = (next as GridCell);
-//     next = (next as GridCell).connection;
-//   }
-
-//   props.cell.channel = channel;
-// }
 </script>
 
 <template>
-  <div :style="panelStyle" :class="!thisPanel.active ? 'cell' : ''" @click="panelStore.addPanel(props.thisPanel)">
-    <div v-if="props.thisPanel.active" class="dropdown">
+  <div :style="panelStyle" :class="!p_panel.active ? 'cell' : ''" @click="panelStore.addPanel(props.p_panel)">
+    <div v-if="props.p_panel.active" class="dropdown">
       <button class="btn btn-secondary dropdown-toggle button" 
               type="button" 
               id="dropdownMenuButton" 
               data-bs-toggle="dropdown" 
               aria-expanded="false" 
-              :disabled="props.thisPanel.disabled">
+              :disabled="props.p_panel.disabled">
         <font-awesome-icon icon="fa-regular fa-list-alt"/>
       </button>
 
-      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton" v-show="!props.thisPanel.disabled">
+      <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton" v-show="!props.p_panel.disabled">
         <!--* Channel submenu *-->
         <li>
           <a class="dropdown-item" href="#">Channel &raquo;</a>
 
           <ul class="dropdown-menu dropdown-menu-dark dropdown-submenu">
             <li v-for="chan in channels" :key="chan.shortName">
-              <!-- <a class="dropdown-item" href="#" @click="changeChannel(chan.shortName)">
+              <a class="dropdown-item" href="#" @click="panelStore.changeChannel(p_panel, chan.shortName)">
                 {{ chan.name }}
-              </a> -->
+              </a>
             </li>
           </ul>
         </li>
 
         <!--* Connection submenu *-->
-        <li v-if="props.thisPanel.channel !== null && props.thisPanel.connection === null">
+        <li v-if="props.p_panel.channel !== null && props.p_panel.connection === null">
           <!-- <a class="dropdown-item" href="#" v-if="!channelHasHead" @click="setHead">
             Use as head
           </a> -->

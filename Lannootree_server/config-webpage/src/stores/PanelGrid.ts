@@ -1,11 +1,16 @@
-import { ref, computed } from 'vue'
 import type { Ref } from 'vue'
+import Matrix from '@/assets/Matrix'
+import { ref, computed } from 'vue'
 import { defineStore } from "pinia"
 import { Panel } from '@/assets/Panel'
 
 export const usePanelGrid = defineStore('panel-grid', () => {
   
   const LED_PER_PANEL = 72;
+
+  const currentChannel = ref("CA0");
+
+  const panels = ref<Matrix<Panel>>(new Matrix(3, 3));
 
   const grid: Ref<Panel[][]> = ref([
     [new Panel(false), new Panel(false), new Panel(false)],
@@ -31,6 +36,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
   const addPanel = function(panel: Panel) {
     panel.active = true;
+    panel.channel = currentChannel.value;
 
     if (panel.coordinate.col == 0) grid.value.unshift(
       new Array(rowCount.value)
@@ -53,9 +59,14 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     );
   };
 
+  const changeChannel = function(panel: Panel, channel: string) {
+    panel.channel = channel;
+  }
+
   return { 
     // Ref & computed
     grid, 
+    panels,
     rowCount,
     colCount,
     totalPanels,
@@ -63,6 +74,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     // Methods
     numberToPanel, 
     addPanel,
+    changeChannel,
 
     // Const
     LED_PER_PANEL 

@@ -19,7 +19,7 @@ export class Panel {
   constructor(active: boolean) {
     this.active = active;
     this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString());
-    this.channel = "";
+    this.channel = "CA0";
     this.coordinate = { col: 0, row: 0 };
     
     this.connection = this;

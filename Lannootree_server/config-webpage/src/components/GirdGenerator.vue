@@ -116,7 +116,7 @@
       <Panel
         v-for="i in panelStore.totalPanels" 
         :key="`cel${i}`" 
-        :this-panel="panelStore.numberToPanel(i)"
+        :p_panel="panelStore.numberToPanel(i)"
       />
 
     </div>
