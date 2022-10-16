@@ -22,8 +22,8 @@ if(leddriver_connection) socket = net.createConnection("../led_driver/build/dev/
 var caFile = fs.readFileSync("ca.crt");
 var options={
   clientId:"controller" + Math.random().toString(16).substring(2, 8),
-  port:8883,
-  host:'lannootree.devbitapp.be',
+  port: process.env.MQTT_BROKER_PORT,
+  host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
