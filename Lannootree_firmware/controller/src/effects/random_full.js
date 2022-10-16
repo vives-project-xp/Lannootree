@@ -2,11 +2,7 @@ import Effect from '../effect.js';
 
 export default class RandomFull extends Effect{
 
-  // constructor() {
-  //   //this.run();
-  // }
-
-  run() {
+  nextframe() {
     let red = Math.floor(Math.random()*256);
     let green = Math.floor(Math.random()*256);
     let blue = Math.floor(Math.random()*256);

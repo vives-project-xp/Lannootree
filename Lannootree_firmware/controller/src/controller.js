@@ -1,7 +1,7 @@
 import Color from './color.js';
 import EffectManager from "./effect_manager.js";
-import Fade from "./fade.js";
 import JsonGenerator from "./json_generator.js"
+import Debug  from './debug.js';
 
 import mqtt from "mqtt";
 import fs from "fs";
@@ -87,6 +87,8 @@ client.on('message', function (topic, message) {
 // CONTROLLER
 
 const manager = new EffectManager();
+manager.set_effect("random_full", [4,4]);
+manager.run();
 
 var ledmatrix = [];
 var ispaused = true;
@@ -175,19 +177,7 @@ function frame_to_ledcontroller() {
     });
     socket.write(Uint8Array.from(serializedData));
   }
-  frame_to_console(ledmatrix);
-}
-
-function frame_to_console(frame) {
-  var frame_console = "";
-  for(var i = 0; i < frame.length; i++) {
-    for(var j = 0; j < frame[i].length; j++) {
-      frame_console+=`(${frame[i][j].get_red()},${frame[i][j].get_green()},${frame[i][j].get_blue()})` 
-    }
-    frame_console+="\n";
-  }
-  logging(frame_console, true);
-  return frame_console;
+  logging(Debug.frame_to_console(ledmatrix), true);
 }
 
 function set_color_full(red, green, blue) {
@@ -214,64 +204,6 @@ function play_effect() {
     sendStatus();
   }
 }
-
-var fade_counter = 0;
-var previous_frame = null;
-var next_frame = null;
-
-var enable_subframes = false;
-
-setInterval(() => {   // frame-interval
-  if(!ispaused) {
-    if(playing_effect != null) {
-      if(fade == false) {
-        fade_counter = 0;
-        enable_subframes = false;
-        previous_frame = null;
-        next_frame = null;
-
-        ledmatrix = manager.run();
-        frame_to_ledcontroller();
-      }
-      else {
-        if(fade_counter == 0) {
-          previous_frame = ledmatrix;
-          next_frame = manager.run();
-          next_frame = manager.run();
-          console.log("HALLO");
-          console.log("PREVIOUS:");
-          frame_to_console(ledmatrix);
-          console.log("NEXT:");
-          frame_to_console(manager.run());
-
-          enable_subframes = true;
-        }
-      }
-    }
-  }
-  else {
-    logging("PAUSED", true);
-  }
-}, (speed * 255));
-
-setInterval(() => {   // fade-interval
-  if(fade_counter == 255) {
-    fade_counter = 0;
-    enable_subframes == false;
-  }
-  if(enable_subframes == true) {
-    let subframe = Fade.calculate_subframe(previous_frame, next_frame, fade_counter);
-    //frame_to_ledcontroller();
-    console.log("PREVIOUS:");
-    frame_to_console(previous_frame);
-    console.log("SUB:");
-    frame_to_console(subframe);
-    console.log("NEXT:");
-    frame_to_console(next_frame);
-    console.log(fade_counter);
-    fade_counter++;
-  }
-}, speed);
 
 function logging(message, msgdebug = false){
   if (!msgdebug) {
