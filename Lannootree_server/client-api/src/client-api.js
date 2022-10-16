@@ -1,5 +1,11 @@
-// websocket _________________________________________________________________________________
+import dotenv from 'dotenv'
 import { WebSocketServer } from 'ws';
+import mqtt from "mqtt"
+import * as fs from 'fs';
+
+dotenv.config({ path: '../.env' })
+
+// websocket _________________________________________________________________________________
 const websocket = new WebSocketServer({ port: 3001 });
 
 websocket.on('connection', (ws, req) => {
@@ -32,8 +38,6 @@ websocket.on('connection', (ws, req) => {
 });
 
 // MQTT ______________________________________________________________________________________
-import mqtt from "mqtt"
-import * as fs from 'fs';
 
 var caFile = fs.readFileSync("ca.crt");
 var options={

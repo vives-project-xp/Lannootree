@@ -1,6 +1,6 @@
 class Matrix<T> {
 
-  private _data: T[] = [];
+  private _data: Array<T | null> = [];
   
   private _width: number;
   private _height: number;
@@ -9,46 +9,45 @@ class Matrix<T> {
     this._width = width;
     this._height = height;
 
-    this._data = new Array(width * height).fill(null);
+    this._data = new Array(this._width * this._height).fill(null);
   }
 
-  public resize(width: number, height: number) {
-    let newData: T[] = [];
+  public resize(width: number, height: number): Matrix<T> {
+    let newMatrix = new Matrix<T>(width, height);
 
-    for (let row = 0; row < height; row++) {
-      for (let col = 0; col < width; col++) {
-        newData.push(this.getValue(col, row) as T);
+    for (let col = 0; col < this._width; col++) {
+      for (let row = 0; row < this._height; row++) {
+        newMatrix.setValue(col, row, this.getValue(col, row));
       }
     }
 
-    this._width = width;
-    this._height = height;
-
-    this._data = newData;
+    return newMatrix;
   }
 
-  public getValue(col: number, row: number) {
+  public getValue(col: number, row: number) : T | null {
     if (col < 0 || col >= this._width || row < 0 || row >= this._height) {
+      console.error("Out of bounds read:" + `[${col}, ${row}]`);
       return null;
     }
 
     return this._data[row * this._width + col];
   }
 
-  public setValue(col: number, row: number, value: T) {
+  public setValue(col: number, row: number, value: T | null) {
     if (col < 0 || col >= this._width || row < 0 || row >= this._height) {
+      console.error("Out of bounds write" + `[${col}, ${row}]`);
       return;
     }
     
     this._data[row * this._width + col] = value;
   }
 
-  public get width() {
-    return this._width;
+  public dimention() {
+    return [this._width, this._height];
   }
 
-  public get height() {
-    return this._height;
+  public forEach(callbackfn: any) {
+    this._data.forEach(callbackfn);
   }
 
 }

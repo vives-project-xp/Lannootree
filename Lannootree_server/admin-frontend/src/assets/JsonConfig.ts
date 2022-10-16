@@ -1,4 +1,5 @@
 import type { GridCell } from "./GridCell";
+import type { Coordinate } from "./Panel";
 
 export interface Channel {
   ledCount: number;
@@ -9,6 +10,7 @@ export interface Channel {
 export default interface JsonConfig {
   panelCount: number;
   totalLeds:  number;
+  dimentions: Coordinate,
   inUseChannels: string[];
   channels: { [key: string] : Channel };
 }
