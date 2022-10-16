@@ -7,8 +7,8 @@ import express from 'express'
 var caFile = fs.readFileSync("ca.crt");
 var mqttOptions={
   clientId:"admin-api" + Math.random().toString(16).substring(2, 8),
-  port:8883,
-  host:'lannootree.devbitapp.be',
+  port:parseInt(process.env.MQTT_BROKER_PORT),
+  host:process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
