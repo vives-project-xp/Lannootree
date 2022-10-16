@@ -82,7 +82,9 @@ services:
       context: ./client-api
     restart: always
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"   
+    env_file:
+      - .env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.client-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/wss`)'
