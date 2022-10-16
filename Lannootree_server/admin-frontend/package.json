@@ -19,6 +19,7 @@
     "@kyvg/vue3-notification": "^2.4.1",
     "@vueuse/core": "^9.3.0",
     "bootstrap": "^5.2.2",
+    "pinia": "^2.0.23",
     "vue": "^3.2.38",
     "vue3-highlightjs": "^1.0.5"
   },

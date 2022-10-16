@@ -1,5 +1,6 @@
 import Color from './color.js';
 import EffectManager from "./effect_manager.js";
+import JsonGenerator from "./json_generator.js"
 
 import mqtt from "mqtt";
 import fs from "fs";
@@ -119,29 +120,15 @@ function set_matrixsize(rows, columns) {
 }
 
 function sendStatus() {
-  let obj = new Object();
-  let matrix_obj = new Object();
-  let matrixsize = get_matrixsize();
-  matrix_obj.rows = matrixsize[0];
-  matrix_obj.cols = matrixsize[1];
-  obj.matrix = matrix_obj;
-  obj.current_effect = playing_effect;
-  let effect_obj = manager.get_effects();
-  obj.effects = effect_obj;
-  obj.current_asset = playing_asset;
-  obj.assets = ["random1.png", "cat.jpg"];
-  if(ispaused) obj.pause = "true";
-  else obj.pause = "false";
-  if(ispaused && playing_effect == null && playing_asset == null) obj.stop = "true";
-  else obj.stop = "false";
-  if(color != null) {
-    let color_obj = new Object();
-    color_obj.red = color[0];
-    color_obj.green = color[1];
-    color_obj.blue = color[2];
-    obj.color = color_obj;
-  }
-  else obj.color = null;
+  let obj = JsonGenerator.statusToJson([
+    get_matrixsize(),
+    playing_effect,
+    manager.get_effects(),
+    playing_asset,
+    ["random1.png", "cat.jpg"],
+    ispaused,
+    color
+  ]);
   client.publish('controller/status', JSON.stringify(obj));
 }
 

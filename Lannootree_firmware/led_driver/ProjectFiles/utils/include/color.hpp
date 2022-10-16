@@ -53,6 +53,4 @@ namespace Lannootree {
       uint8_t color[4] = {0};
 
   };
-  
-
 }
