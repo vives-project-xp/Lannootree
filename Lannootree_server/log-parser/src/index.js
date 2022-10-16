@@ -5,7 +5,7 @@ import express from 'express'
 
 // const db = new sqlite3.default.Database(':memory:');
 const db = new sqlite3.default.Database('logs.sqlite');
-const numberOfLogsToKeep = 200
+const numberOfLogsToKeep = 300
 
 var caFile = fs.readFileSync("ca.crt");
 var mqttOptions={
@@ -98,7 +98,7 @@ app.get('/', async (req, res) => {
 
 app.get('/:container', (req, res) => {
     var params = []
-    db.all(`SELECT * FROM logs WHERE container = '${req.params.container}'`, params, (err, rows) => {
+    db.all(`SELECT * FROM logs WHERE container = '${req.params.container}' ORDER BY id DESC`, params, (err, rows) => {
         if (err) {
           res.status(400).json({"error":err.message});
           return;
