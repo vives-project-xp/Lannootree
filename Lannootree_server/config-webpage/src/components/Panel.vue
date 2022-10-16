@@ -14,9 +14,6 @@
     },
   });
 
-  const thisPanel = toRefs(props).p_panel;
-  // watch()
-
   const channels =[
     {
       name: 'Channel A0',
