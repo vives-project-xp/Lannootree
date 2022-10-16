@@ -76,14 +76,6 @@ client.on('message', function (topic, message) {
                 logging("ERROR: MQTT statusJSON invalid"); 
             }
             break;
-        case "controller/content":
-            try {
-                contentJSON = JSON.parse(message)
-            } 
-            catch (error) { 
-                logging("ERROR: MQTT contentJSON invalid"); 
-            }
-            break;
             
         default:
             break;
