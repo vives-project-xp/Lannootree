@@ -1,5 +1,6 @@
 import Color from './color.js';
 import EffectManager from "./effect_manager.js";
+import Fade from "./fade.js";
 import JsonGenerator from "./json_generator.js"
 
 import mqtt from "mqtt";
@@ -92,6 +93,8 @@ var ispaused = true;
 var playing_effect = null;
 var playing_asset = null;
 var color = null;
+var fade = true;
+var speed = 10;
 
 function updateMatrixFromFile() {
   fs.readFile('../config.json', (err, data) => {
@@ -172,14 +175,14 @@ function frame_to_ledcontroller() {
     });
     socket.write(Uint8Array.from(serializedData));
   }
-  frame_to_console();
+  frame_to_console(ledmatrix);
 }
 
-function frame_to_console() {
+function frame_to_console(frame) {
   var frame_console = "";
-  for(var i = 0; i < ledmatrix.length; i++) {
-    for(var j = 0; j < ledmatrix[i].length; j++) {
-      frame_console+=`(${ledmatrix[i][j].get_red()},${ledmatrix[i][j].get_green()},${ledmatrix[i][j].get_blue()})` 
+  for(var i = 0; i < frame.length; i++) {
+    for(var j = 0; j < frame[i].length; j++) {
+      frame_console+=`(${frame[i][j].get_red()},${frame[i][j].get_green()},${frame[i][j].get_blue()})` 
     }
     frame_console+="\n";
   }
@@ -201,33 +204,74 @@ function set_color_full(red, green, blue) {
 
 function play_effect() {
   play();
-  switch (playing_effect) {
-    case "random_each":
-      manager.set_effect("random_each", ledmatrix);
-      break;
-    case "random_full":
-      manager.set_effect("random_full", ledmatrix);
-      break;
-    default:
-      pause();
-      playing_effect = null;
-      set_color_full(100,0,0);
-      frame_to_ledcontroller();
-      sendStatus();
+  if(playing_effect != null) {
+    manager.set_effect(playing_effect, get_matrixsize());
+  } else {  // TODO: Check if effect is in manager array
+    pause();
+    playing_effect = null;
+    set_color_full(100,0,0);
+    frame_to_ledcontroller();
+    sendStatus();
   }
 }
 
-setInterval(() => {
+var fade_counter = 0;
+var previous_frame = null;
+var next_frame = null;
+
+var enable_subframes = false;
+
+setInterval(() => {   // frame-interval
   if(!ispaused) {
     if(playing_effect != null) {
-      ledmatrix = manager.run();
-      frame_to_ledcontroller();
+      if(fade == false) {
+        fade_counter = 0;
+        enable_subframes = false;
+        previous_frame = null;
+        next_frame = null;
+
+        ledmatrix = manager.run();
+        frame_to_ledcontroller();
+      }
+      else {
+        if(fade_counter == 0) {
+          previous_frame = ledmatrix;
+          next_frame = manager.run();
+          next_frame = manager.run();
+          console.log("HALLO");
+          console.log("PREVIOUS:");
+          frame_to_console(ledmatrix);
+          console.log("NEXT:");
+          frame_to_console(manager.run());
+
+          enable_subframes = false;
+        }
+      }
     }
   }
   else {
     logging("PAUSED", true);
   }
-}, 200);
+}, (speed * 255));
+
+setInterval(() => {   // fade-interval
+  if(fade_counter == 255) {
+    fade_counter = 0;
+    enable_subframes == false;
+  }
+  if(enable_subframes == true) {
+    let subframe = Fade.calculate_subframe(previous_frame, next_frame, fade_counter);
+    //frame_to_ledcontroller();
+    console.log("PREVIOUS:");
+    frame_to_console(previous_frame);
+    console.log("SUB:");
+    frame_to_console(subframe);
+    console.log("NEXT:");
+    frame_to_console(next_frame);
+    console.log(fade_counter);
+    fade_counter++;
+  }
+}, speed);
 
 function logging(message, msgdebug = false){
   if (!msgdebug) {

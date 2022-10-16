@@ -1,15 +1,16 @@
 export default class Effect {
 
-  constructor(ledmatrix) {
-    this.ledmatrix = ledmatrix;
+  constructor(matrixsize) {
+    this.currentmatrix = Array.from(Array(Math.abs(matrixsize[0])), () => new Array(Math.abs(matrixsize[1])));
+    this.nextmatrix = Array.from(Array(Math.abs(matrixsize[0])), () => new Array(Math.abs(matrixsize[1])));
   }
 
-  set_ledmatrix(ledmatrix) {
-    this.ledmatrix = ledmatrix;
+  get_currentmatrix() {
+    return this.currentmatrix;
   }
 
-  get_ledmatrix() {
-    return this.ledmatrix;
+  get_nextmatrix() {
+    return this.nextmatrix;
   }
 
 }
