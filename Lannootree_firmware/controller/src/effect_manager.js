@@ -30,4 +30,5 @@ export default class EffectManager {
   run(speed_modifier) {
     this.current_effect.run(speed_modifier);
   }
+
 }

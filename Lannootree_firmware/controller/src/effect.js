@@ -15,6 +15,9 @@ export default class Effect {
     }
     this.fade_counter = 0;
     this.running = false;
+    this.current_frame = 0;
+    this.intervalID = undefined;
+    this.stopInterval = false;
   }
 
   get_currentmatrix() {
@@ -48,42 +51,23 @@ export default class Effect {
   run(speed_modifier) {
     if(!this.running) {
       this.running = true;
-      setInterval(() => {   // frame-interval
+      this.current_frame = 0;
+      this.fade_counter = 0;
+      this.intervalID = setInterval(() => {   // frame-interval
         if(this.fade == false || this.fade_counter >= 255) {
-          this.fade_counter = 0;
-          console.log(Debug.frame_to_console(this.nextframe()))
+          if(this.current_frame >= 255) {
+            this.current_frame = 0;
+            this.fade_counter = 0;
+            console.log(Debug.frame_to_console(this.nextframe()))
+          }
         }
         else {
-          console.log("PREVIOUS:");
-          console.log(Debug.frame_to_console(this.currentmatrix));
-          console.log("CURRENT:");
-          console.log(Debug.frame_to_console(Fade.calculate_subframe(this.currentmatrix, this.nextmatrix, this.fade_counter)));
-          console.log("NEXT:");
-          console.log(Debug.frame_to_console(this.nextmatrix));
+          console.log(Debug.frame_to_console(Fade.calculate_subframe(this.generate_matrix(this.currentmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter)));
           this.fade_counter++;
           console.log(this.fade_counter)
         }
+        this.current_frame++;
       }, (Math.round(this.framespeed_ms * speed_modifier)));
-  
-      // setInterval(() => {   // fade-interval
-      //   if(this.fade_counter == 255) {
-      //     this.fade_counter = 0;
-      //     enable_subframes = false;
-      //   }
-      //   if(enable_subframes == true) {
-      //     let subframe = Fade.calculate_subframe(previous_frame, next_frame, fade_counter);
-      //     //frame_to_ledcontroller();
-      //     console.log("PREVIOUS:");
-      //     Debug.frame_to_console(previous_frame);
-      //     console.log("SUB:");
-      //     Debug.frame_to_console(subframe);
-      //     console.log("NEXT:");
-      //     Debug.frame_to_console(next_frame);
-      //     console.log(this.fade_counter);
-      //     this.fade_counter++;
-      //   }
-      // }, 100);
-
     }
   }
 

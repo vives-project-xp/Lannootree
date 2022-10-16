@@ -1,12 +1,11 @@
 import Effect from '../effect.js';
-import Debug  from '../debug.js';
 
 export default class RandomEach extends Effect {
 
   constructor(matrixsize) {
     super(matrixsize);
     this.fade = true;
-    this.framespeed_ms = 200;
+    this.framespeed_ms = 2;
   }
 
   nextframe() {
@@ -16,10 +15,6 @@ export default class RandomEach extends Effect {
         this.nextmatrix[i][j].set_color(Math.floor(Math.random()*256),Math.floor(Math.random()*256),Math.floor(Math.random()*256));
       }
     }
-    // console.log("PREVIOUS:");
-    // console.log(Debug.frame_to_console(this.currentmatrix));
-    // console.log("NEXT:");
-    // console.log(Debug.frame_to_console(this.nextmatrix));
     return this.currentmatrix;
   }
 }
