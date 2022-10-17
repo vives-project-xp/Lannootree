@@ -108,7 +108,6 @@ function set_matrixsize(rows, columns) {
   pause();
   if(!isNaN(rows) && !isNaN(columns)) {
     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
-    
     for(var i = 0; i < ledmatrix.length; i++) {
       for(var j = 0; j < ledmatrix[i].length; j++) {
         ledmatrix[i][j] = new Color(0,0,0);
@@ -116,7 +115,6 @@ function set_matrixsize(rows, columns) {
     }
     logging(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`, true);
   }
-  
   if(playing_effect != null) play();
 }
 
@@ -173,7 +171,7 @@ function frame_to_ledcontroller() {
     });
     socket.write(Uint8Array.from(serializedData));
   }
-  logging(Debug.frame_to_console(ledmatrix), true);
+  logging(Debug.frame_to_string(ledmatrix), true);
 }
 
 function set_color_full(red, green, blue) {
@@ -217,3 +215,4 @@ function crashApp(message) {
     process.exit(1);
   })
 }
+

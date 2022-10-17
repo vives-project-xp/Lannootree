@@ -60,13 +60,12 @@ export default class Effect {
           if(this.current_frame >= 255) {
             this.current_frame = 0;
             this.fade_counter = 0;
-            console.log(Debug.frame_to_console(this.nextframe()))
+            console.log(Debug.frame_to_string(this.nextframe()))
           }
         }
         else {
-          console.log(Debug.frame_to_console(Fade.calculate_subframe(this.generate_matrix(this.currentmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter)));
+          console.log(Debug.frame_to_string(Fade.calculate_subframe(this.generate_matrix(this.currentmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter)));
           this.fade_counter++;
-          console.log(this.fade_counter)
         }
         this.current_frame++;
         this.previousIntervalID = this.intervalID;

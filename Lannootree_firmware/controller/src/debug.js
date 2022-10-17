@@ -1,6 +1,6 @@
 export default class Debug {
 
-  static frame_to_console(frame) {
+  static frame_to_string(frame) {
     var frame_console = "";
     for(var i = 0; i < frame.length; i++) {
       for(var j = 0; j < frame[i].length; j++) {
