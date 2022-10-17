@@ -31,6 +31,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
   const panels = ref<Matrix<Panel | null>>(new Matrix(3, 3));
   panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
 
+  // This doesn't update for some reason 
   const colCount = computed(() => panels.value.dimention()[0]);
   const rowCount = computed(() => panels.value.dimention()[1]);
 
@@ -40,19 +41,45 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
   const addPanel = function(coordinate: Coordinate) {
     let [cols, rows] = panels.value.dimention();
-
-    if (coordinate.row == 0 || coordinate.row == rows - 1 || coordinate.col == 0 || coordinate.col == cols - 1)
-      panels.value = panels.value.resize(cols + 1, rows + 1);
-
-    // ? Wtf
-    // if (coordinate.row == 0 || coordinate.row == rows - 1) 
-    //   panels.value = panels.value.resize(cols, rows + 1);
-
-    // if (coordinate.col == 0 || coordinate.col == cols - 1)
-    //   panels.value = panels.value.resize(cols + 1, rows);
-    // ?
     
-    panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
+    if (coordinate.row == 0) {
+      panels.value = panels.value.resize(cols, rows + 1, { col: 0, row: 1});
+      for (let col = 0; col < panels.value.dimention()[0]; col++) {
+        for (let row = 0; row < panels.value.dimention()[1]; row++) {
+          let panel = panels.value.getValue(col, row);
+          if (panel !== null)
+            panel.coordinate = { col: col, row: row };
+        }
+      }
+
+      panels.value.setValue(coordinate.col, coordinate.row + 1, new Panel({ col: coordinate.col + 1, row: coordinate.row + 1 }));
+    }
+
+    else if (coordinate.col == 0) {
+      panels.value = panels.value.resize(cols + 1, rows, { col: 1, row: 0 });
+      for (let col = 0; col < panels.value.dimention()[0]; col++) {
+        for (let row = 0; row < panels.value.dimention()[1]; row++) {
+          let panel = panels.value.getValue(col, row);
+          if (panel !== null)
+            panel.coordinate = { col: col, row: row };
+        }
+      }
+      panels.value.setValue(coordinate.col + 1, coordinate.row, new Panel({ col: coordinate.col + 1, row: coordinate.row + 1 }));
+    }
+
+    else if (coordinate.col == cols - 1) {
+      panels.value = panels.value.resize(cols + 1, rows , { col: 0, row: 0 });
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
+    }
+    
+    else if (coordinate.row == rows - 1) {
+      panels.value = panels.value.resize(cols, rows + 1, { col: 0, row: 0 });
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
+    }
+
+    else {
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
+    }
   };
 
   const changeChannel = function(coordinate: Coordinate, channel: string) {
@@ -62,19 +89,6 @@ export const usePanelGrid = defineStore('panel-grid', () => {
       panel.channel = channel;    
     }
   }
-
-  const circularReplacer = function() {
-    const seen = new WeakSet();
-
-    return (key: string, value: any) => {
-      if (typeof value === "object" && value !== null) {
-        if (seen.has(value)) value.uuid;
-        seen.add(value);
-      }
-  
-      return value;
-    }
-  };
 
   const toJson = computed(() => {
     let inUseChannels: string[] = [];
@@ -89,7 +103,6 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     });
 
     let [col, row] = panels.value.dimention();
-
     let obj: JsonConfig = {
       panelCount: panelCount,
       totalLeds: panelCount * LED_PER_PANEL,

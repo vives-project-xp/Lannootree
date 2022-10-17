@@ -12,12 +12,12 @@ class Matrix<T> {
     this._data = new Array(this._width * this._height).fill(null);
   }
 
-  public resize(width: number, height: number): Matrix<T> {
+  public resize(width: number, height: number, shift: { col: number, row: number }): Matrix<T> {
     let newMatrix = new Matrix<T>(width, height);
 
     for (let col = 0; col < this._width; col++) {
       for (let row = 0; row < this._height; row++) {
-        newMatrix.setValue(col, row, this.getValue(col, row));
+        newMatrix.setValue(col + shift.col, row + shift.row, this.getValue(col, row));
       }
     }
 

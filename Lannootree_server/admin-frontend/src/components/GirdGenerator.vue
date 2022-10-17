@@ -3,6 +3,7 @@
   import Panel from '@/components/Panel.vue'
   import { notify } from '@kyvg/vue3-notification'
   import { usePanelGrid } from '@/stores/PanelGrid'
+import Card from './Card.vue'
 
   const panelStore = usePanelGrid();
 
@@ -14,7 +15,7 @@
   const rowStyle = computed(() => {
     return  {
       'display' : 'grid',
-      'grid-template-rows' : `repeat(${panelStore.colCount}, ${boxSize.value}`,
+      'grid-template-rows' : `repeat(${panelStore.panels.dimention()[1]}, ${boxSize.value}`,
       'grid-gap' : '2px'
     };
   });
@@ -22,7 +23,7 @@
   const colStyle = computed(() => {
     return  {
       'display' : 'grid',
-      'grid-template-columns' : `repeat(${panelStore.rowCount}, ${boxSize.value}`,
+      'grid-template-columns' : `repeat(${panelStore.panels.dimention()[0]}, ${boxSize.value}`,
       'grid-gap' : '2px'
     };
   });
@@ -44,7 +45,7 @@
     <!-- ? Make this an other component maby ? -->
     <!-- <div class="json_display" @click="copyToClipboard" :style="validConfig ? { cursor: 'copy' } : { cursor: 'not-allowed' }"> -->
     <div class="json_display">
-        <pre v-highlightjs v-auto-animate>
+        <pre v-highlightjs>
           <code class="javascript" style="border-radius: 25px">{{ panelStore.toJson }}</code>
         </pre>
     </div>
