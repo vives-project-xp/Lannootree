@@ -2,11 +2,8 @@ import Effect from '../effect.js';
 
 export default class RandomFull extends Effect {
 
-  constructor(matrixsize) {
-    super(matrixsize);
-    this.fade = true;
-    this.framespeed_ms = 2;
-  }
+  fade = true;
+  framespeed_ms = 2;
 
   nextframe() {
     let red = Math.floor(Math.random()*256);

@@ -4,6 +4,13 @@ import Fade from './fade.js';
 
 export default class Effect {
 
+  currentmatrix;
+  nextmatrix;
+  fade_counter = 0;
+  running = false;
+  current_frame = 0;
+  intervalID = undefined;
+
   constructor(matrixsize) {
     this.currentmatrix = Array.from(Array(Math.abs(matrixsize[0])), () => new Array(Math.abs(matrixsize[1])));
     this.nextmatrix = Array.from(Array(Math.abs(matrixsize[0])), () => new Array(Math.abs(matrixsize[1])));
@@ -13,11 +20,6 @@ export default class Effect {
         this.nextmatrix[i][j] = new Color(0,0,0);
       }
     }
-    this.fade_counter = 0;
-    this.running = false;
-    this.current_frame = 0;
-    this.intervalID = undefined;
-    this.stopInterval = false;
   }
 
   get_currentmatrix() {
@@ -67,8 +69,13 @@ export default class Effect {
           console.log(this.fade_counter)
         }
         this.current_frame++;
+        this.previousIntervalID = this.intervalID;
       }, (Math.round(this.framespeed_ms * speed_modifier)));
     }
+  }
+
+  stop_interval() {
+    clearInterval(this.intervalID);
   }
 
 }

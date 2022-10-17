@@ -3,7 +3,10 @@ import RandomFull from './effects/random_full.js';
 
 export default class EffectManager {
 
+  current_effect = null;
+
   set_effect(effect_id, matrixsize) {
+    if(this.current_effect != null) this.current_effect.stop_interval();
     switch(effect_id) {
       case "random_each": this.current_effect = new RandomEach(matrixsize); break;
       case "random_full": this.current_effect = new RandomFull(matrixsize); break;
