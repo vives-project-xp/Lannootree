@@ -10,7 +10,6 @@ import fs from "fs";
 import net from "net"
 import { serialize } from 'v8';
 
-
 const debug = true;
 const leddriver_connection = false;
 const framerate = 30;
