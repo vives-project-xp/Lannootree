@@ -41,44 +41,24 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
   const addPanel = function(coordinate: Coordinate) {
     let [cols, rows] = panels.value.dimention();
-    
-    if (coordinate.row == 0) {
-      panels.value = panels.value.resize(cols, rows + 1, { col: 0, row: 1});
-      for (let col = 0; col < panels.value.dimention()[0]; col++) {
-        for (let row = 0; row < panels.value.dimention()[1]; row++) {
-          let panel = panels.value.getValue(col, row);
-          if (panel !== null)
-            panel.coordinate = { col: col, row: row };
-        }
-      }
 
-      panels.value.setValue(coordinate.col, coordinate.row + 1, new Panel({ col: coordinate.col + 1, row: coordinate.row + 1 }));
-    }
+    if (coordinate.col == 0 || coordinate.row == 0 || coordinate.col == cols - 1 || coordinate.row == rows - 1) {
+      let resize = {
+        col: (coordinate.col == 0 || coordinate.col == cols - 1) ? cols + 1 : cols,
+        row: (coordinate.row == 0 || coordinate.row == rows - 1) ? rows + 1 : rows
+      };
 
-    else if (coordinate.col == 0) {
-      panels.value = panels.value.resize(cols + 1, rows, { col: 1, row: 0 });
-      for (let col = 0; col < panels.value.dimention()[0]; col++) {
-        for (let row = 0; row < panels.value.dimention()[1]; row++) {
-          let panel = panels.value.getValue(col, row);
-          if (panel !== null)
-            panel.coordinate = { col: col, row: row };
-        }
-      }
-      panels.value.setValue(coordinate.col + 1, coordinate.row, new Panel({ col: coordinate.col + 1, row: coordinate.row + 1 }));
-    }
+      let shift = {
+        col: coordinate.col == 0 ? 1 : 0,
+        row: coordinate.row == 0 ? 1 : 0
+      };
 
-    else if (coordinate.col == cols - 1) {
-      panels.value = panels.value.resize(cols + 1, rows , { col: 0, row: 0 });
-      panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
-    }
-    
-    else if (coordinate.row == rows - 1) {
-      panels.value = panels.value.resize(cols, rows + 1, { col: 0, row: 0 });
-      panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
+      panels.value = panels.value.resize(resize.col, resize.row, shift);
     }
 
     else {
-      panels.value.setValue(coordinate.col, coordinate.row, new Panel({ col: coordinate.col, row: coordinate.row }));
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
     }
   };
 
@@ -122,10 +102,11 @@ export const usePanelGrid = defineStore('panel-grid', () => {
   return { 
     // Ref & computed
     panels,
-    rowCount,
-    colCount,
+    // rowCount,
+    // colCount,
     totalPanels,
     channels,
+    currentChannel,
 
     // Methods 
     addPanel,

@@ -1,3 +1,4 @@
+import { usePanelGrid } from "@/stores/PanelGrid";
 
 export interface Coordinate {
   col: number;
@@ -16,8 +17,10 @@ export class Panel {
   public disabled: boolean;
   
   constructor(coordinate: Coordinate) {
+    const PanelStore = usePanelGrid();
+
     this.uuid = ''.concat(Math.floor(Math.random() * Date.now()).toString());
-    this.channel = "CA0";
+    this.channel = PanelStore.currentChannel;
     this.coordinate = coordinate;
     
     this.connection = this;
