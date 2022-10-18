@@ -13,7 +13,7 @@ import { serialize } from 'v8';
 
 const debug = true;
 const leddriver_connection = false;
-const framerate = 144;
+const framerate = 30;
 
 // Socket client
 const leddriver = new LedDriver(leddriver_connection);
@@ -199,7 +199,7 @@ function play_effect(effect) {
 function PushMatrix() {
   switch (status) {
     case "effect":
-      // ledmatrix = manager.get_currentmatrix();
+      ledmatrix = manager.get_currentmatrix();
       break;
     case "asset":
       
@@ -211,7 +211,7 @@ function PushMatrix() {
   leddriver.frame_to_ledcontroller(ledmatrix);
   logging(Debug.frame_to_string(ledmatrix), true)
 }
-setInterval(() => {PushMatrix()}, (Math.round(1/framerate)));
+setInterval(() => {PushMatrix()}, (Math.round(1000/framerate)));
 
 // general__________________________________________________________________
 function logging(message, msgdebug = false){

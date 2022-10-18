@@ -64,7 +64,7 @@ export default class Effect {
         }
       }
       else {
-        Fade.calculate_subframe(this.generate_matrix(this.previousmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter);
+        this.currentmatrix = Fade.calculate_subframe(this.generate_matrix(this.previousmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter);
         this.fade_counter++;
       }
       this.current_frame++;
