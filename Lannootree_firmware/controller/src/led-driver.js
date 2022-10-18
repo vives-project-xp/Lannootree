@@ -8,7 +8,6 @@ export default class LedDriver {
         if(leddriver_connection) this.socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
     }
 
-
     frame_to_ledcontroller() {
         if(this.leddriver_connection) {
           let serializedData = [];

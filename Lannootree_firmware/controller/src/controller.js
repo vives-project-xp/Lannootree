@@ -95,7 +95,6 @@ var activeData = null; // change back to color
 var paused = false;
 var speed_modifier = 1;
 
-
 function updateMatrixFromFile() {
   fs.readFile('../config.json', (err, data) => {
     if (err) throw err;
@@ -138,7 +137,6 @@ function sendStatus() {
 function get_matrixsize() {
   let rows = 0;
   let cols = 0;
-  
   if(ledmatrix.length != 0) {
     cols = ledmatrix[0].length;
     for(var i = 0; i < ledmatrix.length; i++) rows++;
@@ -162,7 +160,6 @@ function pause(type) {
       if(paused) pause("play");
       else pause("pause")
       break;
-  
     default:
       break;
   }
@@ -195,8 +192,6 @@ function play_effect(effect) {
     manager.set_effect(effect, get_matrixsize(), speed_modifier);
   }
 }
-
-
 
 function PushMatrix() {
   switch (status) {
@@ -231,4 +226,3 @@ function crashApp(message) {
     process.exit(1);
   })
 }
-
