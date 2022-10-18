@@ -5,5 +5,6 @@ target_include_directories(utils INTERFACE
 )
 
 target_sources(utils INTERFACE
+  ${CMAKE_CURRENT_LIST_DIR}/led_buffer.cpp
   ${CMAKE_CURRENT_LIST_DIR}/thread_starter.cpp
 )
