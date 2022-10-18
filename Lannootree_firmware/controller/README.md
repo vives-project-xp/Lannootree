@@ -36,6 +36,8 @@ client.publish('controller/effect', JSON.stringify({"effect_id": "random_full"})
     "rows": 18,
     "cols": 18
   },
+  "pause": "false",
+  "status": "effect",
   "current_effect": null,
   "effects": [
     "random_full",
@@ -46,8 +48,6 @@ client.publish('controller/effect', JSON.stringify({"effect_id": "random_full"})
     "random1.png",
     "cat.jpg"
   ],
-  "pause": "true",
-  "stop": "true",
   "color": null
 }
 ```
