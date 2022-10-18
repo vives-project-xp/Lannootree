@@ -13,7 +13,6 @@ import dotenv from 'dotenv'
 
 dotenv.config({ path: '../.env' })
 
-
 const debug = true;
 const leddriver_connection = false;
 const framerate = 30;
