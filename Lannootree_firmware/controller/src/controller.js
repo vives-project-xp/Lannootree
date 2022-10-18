@@ -1,6 +1,8 @@
 import Color from './color.js';
 import EffectManager from "./effect_manager.js";
 import JsonGenerator from "./json_generator.js"
+import Debug  from './debug.js';
+import LedDriver from './led-driver.js';
 
 import mqtt from "mqtt";
 import fs from "fs";
@@ -11,12 +13,13 @@ import dotenv from 'dotenv'
 
 dotenv.config({ path: '../.env' })
 
+
 const debug = true;
 const leddriver_connection = false;
+const framerate = 30;
 
 // Socket client
-const socket = 0;
-if(leddriver_connection) socket = net.createConnection("../led_driver/build/dev/lannootree.socket");
+const leddriver = new LedDriver(leddriver_connection);
 
 // MQTT
 var caFile = fs.readFileSync("ca.crt");
@@ -38,42 +41,38 @@ const client = mqtt.connect(options);
 client.on('connect', function () {
   logging("INFO: mqtt connected");
   client.publish('status/controller', 'Online', {retain: true});
-  client.subscribe('controller/#');
+  client.subscribe("controller/pause");
+  client.subscribe("controller/stop");
+  client.subscribe("controller/setcolor");
+  client.subscribe("controller/effect");
+  client.subscribe("controller/asset");
+  client.subscribe("controller/config");
   sendStatus();
 })
 
 client.on('message', function (topic, message) {
+  var data = message;
+  try {
+    data = JSON.parse(message.toString());
+  } catch (error) {
+    data = message;
+  }
 
   switch (topic) {
     case "controller/pause":
-      const json_obj1 = JSON.parse(message.toString());
-      if(json_obj1.value == "pause") pause();
-      else if(json_obj1.value == "togglepause") togglepause();
-      else if(json_obj1.value == "play") play();
-      sendStatus();
+      pause(data.value);
       break;
     case "controller/stop":
       stop();
-      sendStatus();
       break;
     case "controller/setcolor":
-      playing_effect = null;
-      const json_obj2 = JSON.parse(message.toString());
-      set_color_full(json_obj2.red, json_obj2.green, json_obj2.blue);
-      frame_to_ledcontroller();
-      color = [json_obj2.red, json_obj2.green, json_obj2.blue];
-      sendStatus();
-      color = null;
+      set_color_full(data.red, data.green, data.blue);
       break;
     case "controller/effect":
-      const json_obj3 = JSON.parse(message.toString());
-      playing_effect = json_obj3.effect_id;
-      play_effect();
-      sendStatus();
+      play_effect(data.effect_id);
       break;
     case "controller/asset":
       logging("ASSET", true);
-      sendStatus();
       break;
     case "controller/config":
       fs.writeFileSync('../config.json', JSON.stringify(JSON.parse(message), null, 2));
@@ -82,19 +81,21 @@ client.on('message', function (topic, message) {
       sendStatus();
       break;
     default:
-      logging("Unknown topic", true);
+      logging("INFO: MQTT Unknown topic: " + topic, true);
   }
+  sendStatus();
 })
 
-// CONTROLLER
+// CONTROLLER-------------------------------------------------------------------------------------
 
 const manager = new EffectManager();
 
 var ledmatrix = [];
-var ispaused = true;
-var playing_effect = null;
-var playing_asset = null;
-var color = null;
+var status = "stop"
+var activeData = null; // change back to color
+var paused = false;
+var speed_modifier = 1;
+
 
 function updateMatrixFromFile() {
   fs.readFile('../config.json', (err, data) => {
@@ -106,11 +107,9 @@ function updateMatrixFromFile() {
 
 updateMatrixFromFile();
 
-function set_matrixsize(rows, columns) {
-  pause();
+function set_matrixsize(rows, columns) { // this needs to reinitiate the effect_controller (create a new object)
   if(!isNaN(rows) && !isNaN(columns)) {
     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
-    
     for(var i = 0; i < ledmatrix.length; i++) {
       for(var j = 0; j < ledmatrix[i].length; j++) {
         ledmatrix[i][j] = new Color(0,0,0);
@@ -118,26 +117,29 @@ function set_matrixsize(rows, columns) {
     }
     logging(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`, true);
   }
-  
-  if(playing_effect != null) play();
 }
 
 function sendStatus() {
-  let obj = JsonGenerator.statusToJson([
+  let obj = JsonGenerator.statusToJson(
     get_matrixsize(),
-    playing_effect,
+    status,
+    paused,
+    activeData,
+    manager.get_current_effect(),
     manager.get_effects(),
-    playing_asset,
-    ["random1.png", "cat.jpg"],
-    ispaused,
-    color
-  ]);
+    "null", // current_asset
+    [// assets
+      "random1.png",
+      "cat.jpg"
+    ] 
+  );
   client.publish('controller/status', JSON.stringify(obj));
 }
 
 function get_matrixsize() {
   let rows = 0;
   let cols = 0;
+  
   if(ledmatrix.length != 0) {
     cols = ledmatrix[0].length;
     for(var i = 0; i < ledmatrix.length; i++) rows++;
@@ -145,52 +147,37 @@ function get_matrixsize() {
   return [rows, cols];
 }
 
-function pause() {
-  ispaused = true;
-  sendStatus();
-}
-function play() {
-  ispaused = false;
-  sendStatus();
-}
-function togglepause() {
-  ispaused = !ispaused;
-  sendStatus();
+function pause(type) {
+  switch (type) {
+    case "pause":
+      paused = true;
+      manager.pause();
+      sendStatus();
+      break;
+    case "play":
+      paused = false;
+      if(status == "effect")manager.run(speed_modifier);
+      sendStatus();
+      break;
+    case "toggle":
+      if(paused) pause("play");
+      else pause("pause")
+      break;
+  
+    default:
+      break;
+  }
 }
 
 function stop(){
-  pause();
-  playing_effect = null;
-  playing_asset = null;
+  status = "stop";
+  manager.stop();
   set_color_full(0,0,0);
-  frame_to_ledcontroller();
-  sendStatus();
-}
-
-function frame_to_ledcontroller() {
-  if(leddriver_connection) {
-    let serializedData = [];
-    [].concat(...ledmatrix).forEach(color => {
-      serializedData.push(...color.get_color());
-    });
-    socket.write(Uint8Array.from(serializedData));
-  }
-  frame_to_console();
-}
-
-function frame_to_console() {
-  var frame_console = "";
-  for(var i = 0; i < ledmatrix.length; i++) {
-    for(var j = 0; j < ledmatrix[i].length; j++) {
-      frame_console+=`(${ledmatrix[i][j].get_red()},${ledmatrix[i][j].get_green()},${ledmatrix[i][j].get_blue()})` 
-    }
-    frame_console+="\n";
-  }
-  logging(frame_console, true);
-  return frame_console;
+  activeData = null;
 }
 
 function set_color_full(red, green, blue) {
+  activeData = {color: [red, green, blue]};
   if(!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
     if(red<=255 && green<=255 && blue<=255 && red>=0 && green>=0 && blue>=0) {
       for(var i = 0; i < ledmatrix.length; i++) {
@@ -202,36 +189,34 @@ function set_color_full(red, green, blue) {
   }
 }
 
-function play_effect() {
-  play();
-  switch (playing_effect) {
-    case "random_each":
-      manager.set_effect("random_each", ledmatrix);
-      break;
-    case "random_full":
-      manager.set_effect("random_full", ledmatrix);
-      break;
-    default:
-      pause();
-      playing_effect = null;
-      set_color_full(100,0,0);
-      frame_to_ledcontroller();
-      sendStatus();
+function play_effect(effect) {
+  if(manager.has_effect(effect)) {
+    pause("play");
+    status = "effect"
+    manager.set_effect(effect, get_matrixsize(), speed_modifier);
   }
 }
 
-setInterval(() => {
-  if(!ispaused) {
-    if(playing_effect != null) {
-      ledmatrix = manager.run();
-      frame_to_ledcontroller();
-    }
-  }
-  else {
-    logging("PAUSED", true);
-  }
-}, 200);
 
+
+function PushMatrix() {
+  switch (status) {
+    case "effect":
+      ledmatrix = manager.get_currentmatrix();
+      break;
+    case "asset":
+      
+      break;
+  
+    default:
+      break;
+  }
+  leddriver.frame_to_ledcontroller(ledmatrix);
+  logging(Debug.frame_to_string(ledmatrix), true)
+}
+setInterval(() => {PushMatrix()}, (Math.round(1000/framerate)));
+
+// general__________________________________________________________________
 function logging(message, msgdebug = false){
   if (!msgdebug) {
     console.log(message);
@@ -247,3 +232,4 @@ function crashApp(message) {
     process.exit(1);
   })
 }
+
