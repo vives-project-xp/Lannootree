@@ -1,17 +1,16 @@
-#include <socket_thread.hpp>
+#include <unix_socket.hpp>
 
 namespace Lannootree {
 
-  SocketThread::SocketThread(volatile bool* running, uint max_read, socket_callback_t callback)
-    : SocketThread(running, max_read, callback, nullptr);
+  UnixSocket::UnixSocket(std::string socket_path, uint max_read, socket_callback_t callback)
+    : UnixSocket(socket_path, max_read, callback, nullptr) { };
 
-  SocketThread::SocketThread(volatile bool* running, uint max_read, socket_callback_t callback, void* arg) 
-    : running(running), _max_read(max_read), _callback(callback), _arg(arg) {
+  UnixSocket::UnixSocket(std::string socket_path, uint max_read, socket_callback_t callback, void* arg) 
+    : _socket_path(socket_path), _max_read(max_read), _callback(callback), _arg(arg) {
     
     info_log("Creating socket...");
     if ((_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
       error_log("Failed to create socket");
-      *running = false;
     }
 
     fcntl(_socket_fd, F_SETFL, O_NONBLOCK);
@@ -25,22 +24,34 @@ namespace Lannootree {
     info_log("Binding socket...");
     if (bind(_socket_fd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
       error_log("Failed to bind to socket");
-      *running = false;
     }
 
     info_log("Listening to socket...");
     if (listen(_socket_fd, 20) == -1) {
       error_log("Failed to listen on socket");
-      *running = false;
     }
   }
 
-  SocketThread::~SocketThread() {
+  UnixSocket::~UnixSocket() {
     if (_socket_fd) close(_socket_fd);
     if (access(_socket_path.c_str(), F_OK) != -1) unlink(_socket_path.c_str());
   }
 
-  void SocketThread::loop(void) {
+  void UnixSocket::start(void) {
+    _running = true;
+    _t = std::thread(&UnixSocket::recv_loop, this);
+  }
+
+  void UnixSocket::stop(void) {
+    _running = false;
+    _t.join();
+  }
+
+  void UnixSocket::send_data(uint8_t* data, size_t data_len) {
+    send(_socket_fd, data, data_len, 0);
+  }
+
+  void UnixSocket::recv_loop(void) {
     fd_set rfds;
     struct timeval tv;
     int select_ret;
@@ -50,7 +61,7 @@ namespace Lannootree {
 
     char* buffer = new char[_max_read];    
 
-    while (*running) {
+    while (_running) {
       FD_ZERO(&rfds);
       FD_SET(_socket_fd, &rfds);
 
@@ -81,7 +92,7 @@ namespace Lannootree {
             break;
           }
 
-          _callback(_arg, (uint8_t *) buffer, read_status);
+          _callback(_arg, (uint8_t *) buffer, read_status); // User defined callback
         }
 
         close(_current_sock_fd);

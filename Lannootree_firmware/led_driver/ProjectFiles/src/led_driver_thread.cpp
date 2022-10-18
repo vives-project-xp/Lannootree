@@ -22,23 +22,17 @@ namespace Lannootree {
         auto coordinate = current["coordinate"];
 
         info_log("Adding panel");
-        // Note to self: don't use auto it will remove the reference and will get the value as value 
-        // Update: can use auto&
-        // auto t_offset = std::get<0>(_matrix->get_value((int) coordinate["col"], (int) coordinate["row"]));
-        // auto t_mem = std::get<1>(_matrix->get_value((int) coordinate["col"], (int) coordinate["row"]));
-
         info_log("Col: " << coordinate["col"] << " Row: " << coordinate["row"]);
 
         auto& [t_offset, t_mem] = _matrix->get_value((int) coordinate["col"], (int) coordinate["row"]);
 
         t_offset = offset + PANEL_LED_COUNT;
         t_mem = _channel_mem[channel["channel"]];
-
         // std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint)(offset * PANEL_LED_COUNT);
         // std::get<1>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint32_t*)(_channel_mem.at(current["channel"]));
 
-        info_log(current["channel"] << " Memory address: " << _channel_mem.at(current["channel"]));
 
+        info_log(current["channel"] << " Memory address: " << _channel_mem.at(current["channel"]));
         info_log("Offset in matrix: " << std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)));
         info_log("Memory in matrix: " << std::get<1>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)));
 
@@ -70,8 +64,6 @@ namespace Lannootree {
       for (auto controller : _controllers) {
         
         
-
-
         if ((ret = ws2811_render(controller)) != WS2811_SUCCESS) {
           std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
           error_log("Failed to render " << error);
@@ -105,16 +97,16 @@ namespace Lannootree {
 
       // Creation of led buffers
       if (_controllers.at(0)->channel[0].count)
-        _channel_mem["CA0"] = new uint32_t[_controllers.at(0)->channel[0].count](0);
+        _channel_mem["CA0"] = new uint32_t[_controllers.at(0)->channel[0].count]();
 
       if (_controllers.at(0)->channel[1].count)
-        _channel_mem["CA1"] = new uint32_t[_controllers.at(0)->channel[1].count](0);
+        _channel_mem["CA1"] = new uint32_t[_controllers.at(0)->channel[1].count]();
 
       if (_controllers.at(1)->channel[0].count)
-        _channel_mem["CB0"] = new uint32_t[_controllers.at(1)->channel[0].count](0);
+        _channel_mem["CB0"] = new uint32_t[_controllers.at(1)->channel[0].count]();
 
       if (_controllers.at(1)->channel[1].count)
-        _channel_mem["CB1"] = new uint32_t[_controllers.at(1)->channel[1].count](0);
+        _channel_mem["CB1"] = new uint32_t[_controllers.at(1)->channel[1].count]();
     }
     else {
       bool isChannelA = (ca0 || ca1);
@@ -128,11 +120,11 @@ namespace Lannootree {
       {
         info_log("Created memory");
         info_log("GPIO: " << _controllers.at(0)->channel[0].gpionum);
-        _channel_mem[isChannelA ? "CA0" : "CB0"] = new uint32_t[_controllers.at(0)->channel[0].count](0);
+        _channel_mem[isChannelA ? "CA0" : "CB0"] = new uint32_t[_controllers.at(0)->channel[0].count]();
       }
 
       if (_controllers.at(0)->channel[1].count > 0)
-        _channel_mem[isChannelA ? "CA1" : "CB1"] = new uint32_t[_controllers.at(0)->channel[1].count](0);
+        _channel_mem[isChannelA ? "CA1" : "CB1"] = new uint32_t[_controllers.at(0)->channel[1].count]();
     }
 
     // Initialize led control blocks

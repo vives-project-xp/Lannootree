@@ -5,7 +5,7 @@
 #include <signal.h>
 
 #include <matrix.hpp>
-#include <socket_thread.hpp>
+#include <unix_socket.hpp>
 #include <thread_starter.hpp>
 #include <lannootree_config.hpp>
 #include <led_driver_thread.hpp>
@@ -28,7 +28,7 @@ namespace Lannootree {
 
     private:
       json config;
-      Matrix < std::tuple<uint, uint32_t*> > * _matrix_mapping;
+      Matrix < std::tuple<uint, uint32_t*> >* _matrix_mapping;
 
     private:
       volatile bool _running = true;

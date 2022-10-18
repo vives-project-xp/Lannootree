@@ -40,12 +40,17 @@ namespace Lannootree {
 
     info_log("Creating threads...");
     // Pass in thread object to thread starter, thread starter will delete heap memory
-    ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping, &_running));
-    ThreadStarter::add_thread("MatrixSocket", new SocketThread(&_running, max_read, martix_socket_callback, _matrix_mapping));
+    // ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping, &_running));
 
+    UnixSocket matrix_socket("./dev/lannootree.socket", max_read, martix_socket_callback, _matrix_mapping);
+    matrix_socket.start();
+
+
+    // Wait for shutdown signal
     std::unique_lock lock(mtx);
     shutdown_request.wait(lock);
 
+    matrix_socket.stop();
     _running = false;
 
     info_log("Waiting for threads to join...");
@@ -80,6 +85,8 @@ namespace Lannootree {
         info_log("Memory: " << memory);
 
         uint32_t color = c.to_uint32_t();
+
+        info_log("received: " << c);
 
         for (int i = 0; i < 72; i++) memory[offset + i] = color;
       }
