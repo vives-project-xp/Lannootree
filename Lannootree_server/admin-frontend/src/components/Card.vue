@@ -39,5 +39,8 @@ const cardTransform = computed(() => {
   transition: transform 0.25s ease-out;
   perspective: v-bind(elementWidth * 5);
   transform-style: preserve-3d;
+  width: 150px;
+  height: 150px;
+  background-color: white;
 }
 </style>
