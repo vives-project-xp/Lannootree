@@ -17,7 +17,8 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Data flow:
 
-![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/196009784-c73ddbd6-5e9f-4146-97d0-4b589f2df5c1.png)
+![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/196389285-4081b3a1-8e22-46f0-ad61-770c79770342.png)
+
 
 
 
