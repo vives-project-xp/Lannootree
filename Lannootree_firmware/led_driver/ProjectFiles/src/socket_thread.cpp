@@ -2,7 +2,12 @@
 
 namespace Lannootree {
 
-  SocketThread::SocketThread(volatile bool* running, Matrix< std::tuple<uint, uint32_t*> >* matrix) : running(running), _matrix(matrix)  {
+  SocketThread::SocketThread(volatile bool* running, uint max_read, socket_callback_t callback)
+    : SocketThread(running, max_read, callback, nullptr);
+
+  SocketThread::SocketThread(volatile bool* running, uint max_read, socket_callback_t callback, void* arg) 
+    : running(running), _max_read(max_read), _callback(callback), _arg(arg) {
+    
     info_log("Creating socket...");
     if ((_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
       error_log("Failed to create socket");
@@ -36,17 +41,14 @@ namespace Lannootree {
   }
 
   void SocketThread::loop(void) {
-    struct sockaddr_un cli_addr;
-    socklen_t cli_len = sizeof(cli_addr);
-
-
     fd_set rfds;
     struct timeval tv;
     int select_ret;
 
-    auto[width, height] = _matrix -> dimention();
-    int max_read = (width * height) * 3;
-    char * buffer = new char[max_read];
+    struct sockaddr_un cli_addr;
+    socklen_t cli_len = sizeof(cli_addr);
+
+    char* buffer = new char[_max_read];    
 
     while (*running) {
       FD_ZERO(&rfds);
@@ -60,12 +62,14 @@ namespace Lannootree {
       if (select_ret == -1) {
         error_log("Error in select");
         continue;
-      } else if (select_ret) {
+      }
+
+      else if (select_ret) {
         info_log("Accepting incomming connection");
         if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr* ) & cli_addr, & cli_len)) == -1) continue;
 
         while (true) {
-          int read_status = read(_current_sock_fd, buffer, max_read);
+          int read_status = read(_current_sock_fd, buffer, _max_read);
 
           if (read_status == -1) {
             error_log("Failed to read socket");
@@ -77,36 +81,7 @@ namespace Lannootree {
             break;
           }
 
-          auto[width, height] = _matrix -> dimention();
-
-          /**
-           * @brief Values to skip
-           * 
-           * (1, 1) (1, 5) (1, 8)
-           * (5, 1) (5, 5) (5, 8)
-           * (8, 1) (8, 5) (8, 8)
-           * 
-           */
-
-          for (int row = 0; row < height; row++) {
-            for (int col = 0; col < width; col++) {
-              int red_index = 3 * (width * row + col);
-              int green_index = red_index + 1;
-              int blue_index = green_index + 1;
-              
-              Color c(buffer[red_index], buffer[green_index], buffer[blue_index]);
-
-              auto offset = std::get<0>(_matrix -> get_value(col, row));
-              info_log("adding color to mem offset " << offset);
-              auto memory = std::get<1>(_matrix->get_value(col, row));
-              info_log("Memory: " << memory);
-
-              uint32_t color = c.to_uint32_t();
-
-              for (int i = 0; i < 72; i++) memory[offset + i] = color;
-              
-            }
-          }
+          _callback(_arg, (uint8_t *) buffer, read_status);
         }
 
         close(_current_sock_fd);

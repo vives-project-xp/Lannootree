@@ -24,6 +24,9 @@ namespace Lannootree {
       void start(void);
 
     private:
+      static void martix_socket_callback(void* arg, uint8_t* data, size_t data_len);
+
+    private:
       json config;
       Matrix < std::tuple<uint, uint32_t*> > * _matrix_mapping;
 
