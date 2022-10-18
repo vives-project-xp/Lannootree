@@ -16,6 +16,12 @@ namespace Lannootree {
       uint32_t const read(size_t idx);
 
     public:
+      // Not thread safe !
+      uint32_t* get_read_buffer(void) {
+        return (*_current);
+      }
+
+    public:
       void swap() noexcept;
 
     private:

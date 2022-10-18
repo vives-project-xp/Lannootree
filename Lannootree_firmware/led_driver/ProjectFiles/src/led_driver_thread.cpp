@@ -64,12 +64,10 @@ namespace Lannootree {
       for (auto controller : _controllers) {
         
         
-        if ((ret = ws2811_render(controller)) != WS2811_SUCCESS) {
+        if ((ret = ws2811_render(controller, [](void* arg){}, this)) != WS2811_SUCCESS) {
           std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
           error_log("Failed to render " << error);
         }
-
-        // Todo: flip buffers
 
         std::this_thread::sleep_for(std::chrono::milliseconds(4));
       }      

@@ -1137,7 +1137,7 @@ ws2811_return_t ws2811_wait(ws2811_t *ws2811)
  *
  * @returns  None
  */
-ws2811_return_t  ws2811_render(ws2811_t *ws2811)
+ws2811_return_t  ws2811_render(ws2811_t *ws2811, dma_finish_callback_t finish_callback, void* arg)
 {
     volatile uint8_t *pxl_raw = ws2811->device->pxl_raw;
     int driver_mode = ws2811->device->driver_mode;
@@ -1246,6 +1246,9 @@ ws2811_return_t  ws2811_render(ws2811_t *ws2811)
     {
         return ret;
     }
+
+    // Here buffers should swap
+    finish_callback(arg);
 
     if (ws2811->render_wait_time != 0) {
         const uint64_t current_timestamp = get_microsecond_timestamp();
