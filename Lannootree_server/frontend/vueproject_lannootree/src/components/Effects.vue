@@ -5,7 +5,8 @@
       data() {
         return {
           clientStore: useClientAPIStore(),
-          effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"]
+          effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
+          // json: {  "matrix": {    "rows": 18,    "cols": 18  },  "pause": "false",  "status": "effect",  "fade": true,  "current_effect": null,  "effects": [    "random_full",    "random_each"  ],  "current_asset": null,  "assets": [    "random1.png",    "cat.jpg"  ],  "color": null}
         }
       },
       components: {
@@ -16,13 +17,21 @@
     import { useClientAPIStore } from '../stores/client.connection';
     // Replaced by useClientStore
     // import { Effects } from '@/assets/api-connection.js';
+    
+    function updateEffect(eventData) {
+ 	    console.log(eventData)
+	    clientStore.updateEffect(eventData);
+    }
+
+    // string = json.parse(json);
+    // console.log(string);
 
 
     </script>
     
     <template>
         <div class="container">
-          <v-select :options="effects" :value="effects" placeholder="Effects" @change="Effects()"/>
+          <v-select :options="effects" :value="effects" placeholder="Effects" @change="updateEffect(eventData)" />
         </div>
     </template>
     <style scoped>

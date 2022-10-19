@@ -42,6 +42,7 @@ client.on('connect', function () {
   client.subscribe("controller/stop");
   client.subscribe("controller/setcolor");
   client.subscribe("controller/effect");
+  client.subscribe("controller/fade");
   client.subscribe("controller/asset");
   client.subscribe("controller/config");
   sendStatus();
@@ -59,6 +60,7 @@ client.on('message', function (topic, message) {
     case "controller/stop": stop(); break;
     case "controller/setcolor": set_color_full(data.red, data.green, data.blue); break;
     case "controller/effect": play_effect(data.effect_id); break;
+    case "controller/fade": set_fade(data.fade); break;
     case "controller/asset": logging("ASSET", true); break;
     case "controller/config":
       fs.writeFileSync('../../config.json', JSON.stringify(JSON.parse(message), null, 2));
@@ -103,11 +105,14 @@ function set_matrixsize(rows, columns) { // this needs to reinitiate the effect_
 }
 
 function sendStatus() {
+  let fade = false;
+  if(status == "effect") fade = effect_manager.get_fade();
   let obj = JsonGenerator.statusToJson(
     get_matrixsize(),
     status,
     paused,
     activeData,
+    fade,
     effect_manager.get_current_effect(),
     effect_manager.get_effects(),
     "null", // current_asset
@@ -178,6 +183,10 @@ function play_effect(effect_id) {
     status = "effect";
     effect_manager.set_effect(effect_id, get_matrixsize(), speed_modifier);
   }
+}
+
+function set_fade(fade) {
+  if(status = "effect") effect_manager.set_fade(fade);
 }
 
 // Live update__________________________________________________________________________
