@@ -1,5 +1,5 @@
 <script>
-    import { color_matrix } from '@/assets/api-connection.js'
+    import { useClientAPIStore } from '@/stores/client.connection';
 
     export default {
     //   data() {
@@ -8,6 +8,8 @@
     //     }
     //   }
     data() {return {
+        clientStore: useClientAPIStore(),
+
     //   matrix: [
     //     [1,2,3,4],
     //     [5,6,7,8],
@@ -22,8 +24,8 @@
     <template>
 <div class="lannootree-display" >
     <table>
-        <tr class="lannootree-row" v-for="(line,lineIndex) in color_matrix">
-            <td class="lannootree-display-column" v-for="(cell,coloumIndex) in line" :style="{ 'background-color': `rgb(${cell.red}, ${cell.green}, ${cell.blue})`}">
+        <tr class="lannootree-row" v-for="(line,lineIndex) in clientStore.color_matrix" :key="`row${lineIndex}`">
+            <td class="lannootree-display-column" v-for="(cell,coloumIndex) in line" :style="{ 'background-color': `rgb(${cell.red}, ${cell.green}, ${cell.blue})`}" :key="`col${coloumIndex}`">
                 <pre :style="{ 'color': `rgb(${cell.red}, ${cell.green}, ${cell.blue})`}">col</pre>
             </td>
         </tr>

@@ -1,5 +1,7 @@
 <script >
-import { Pause } from "@/assets/api-connection.js"
+  import { useClientAPIStore } from '../stores/client.connection';
+  // Replaced by useClientStore
+  // import { Pause } from "@/assets/api-connection.js"
 
 //   function Pausing() {
 // 	  Pause(notPaused)
@@ -12,18 +14,16 @@ import { Pause } from "@/assets/api-connection.js"
     },
     data() {
       return {
+        clientStore: useClientAPIStore(),
         notPaused: true
       }
-    },
-    Pausing(test) {
-      Pause(test)
     }
   }
 </script>
 
 <template>
   <div>
-    <Toggle v-model="notPaused" on-label="⏸" off-label="▶" @click="Pausing(notPaused)"/>
+    <Toggle v-model="notPaused" on-label="⏸" off-label="▶" @click="clientStore.Pause(notPaused)"/>
   </div>
 </template>
 

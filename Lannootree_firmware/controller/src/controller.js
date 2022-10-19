@@ -75,7 +75,7 @@ client.on('message', function (topic, message) {
       logging("ASSET", true);
       break;
     case "controller/config":
-      fs.writeFileSync('../config.json', JSON.stringify(JSON.parse(message), null, 2));
+      fs.writeFileSync('../../config-example.json', JSON.stringify(JSON.parse(message), null, 2));
       logging("WARNING: overwriting old json config file");
       updateMatrixFromFile();
       sendStatus();
@@ -97,7 +97,7 @@ var paused = false;
 var speed_modifier = 1;
 
 function updateMatrixFromFile() {
-  fs.readFile('../config.json', (err, data) => {
+  fs.readFile('../config-example.json', (err, data) => {
     if (err) throw err;
     let json_data = JSON.parse(data);
     set_matrixsize(json_data.dimentions.row,json_data.dimentions.col);

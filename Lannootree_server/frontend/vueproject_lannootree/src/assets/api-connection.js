@@ -1,59 +1,6 @@
-const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
-
-var websocketactive = false; 
-export default function websocketClient() {
-
-  ws.onopen = () => {
-    console.log("we are connected to the client-API")
-    websocketactive = true
-  } 
-
-  ws.onmessage = (event) => {
-    console.log(event.data);
-  }
-
-};
-websocketClient();
+// Moved to /src/stores/client.connection.ts
 
 
-
-export function Pause(notPaused) {
-  if(websocketactive == true) {
-
-    ws.send(JSON.stringify({"pause": notPaused}));
-    console.log(notPaused);
-
-  }
-};
-
-export function Stop() {
-  if(websocketactive == true) {
-
-    ws.send(JSON.stringify({"stop": true}));
-    console.log("stop!")
-
-  }
-  
-};
-
-
-
-export function Color(selectedColor) {
-  if(websocketactive == true) {
-    
-    // console.log(selectedColor);
-    ws.send(JSON.stringify({"Color": selectedColor}));
-
-  }
-  
-};
-
-
-export function Effects(selectedEffect) {
-  ws.onopen = () => ws.send("{stop: " + selectedEffect + "}");
-
- 
-};
 
 // document.getElementById("test") = onOff();
 

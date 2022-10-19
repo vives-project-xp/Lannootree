@@ -3,12 +3,17 @@
 </template>
 
 <script setup>
-import {Color} from "@/assets/api-connection.js"
+import { useClientAPIStore } from '../stores/client.connection';
+// Replaced by useClientStore
+// import {Color} from "@/assets/api-connection.js"
+// Why are u using both options and composition API ?
 import { ColorPicker } from 'vue-accessible-color-picker'
+
+const clientStore = useClientAPIStore();
 
 function updateColor (eventData) {
  	// console.log(eventData)
-	Color(eventData.cssColor);
+	clientStore.Color(eventData.cssColor);
  }
 
 </script>

@@ -4,6 +4,7 @@
     export default {
       data() {
         return {
+          clientStore: useClientAPIStore(),
           effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"]
         }
       },
@@ -12,7 +13,10 @@
       }
     }
     
-    import { Effects } from '@/assets/api-connection.js';
+    import { useClientAPIStore } from '../stores/client.connection';
+    // Replaced by useClientStore
+    // import { Effects } from '@/assets/api-connection.js';
+
 
     </script>
     
