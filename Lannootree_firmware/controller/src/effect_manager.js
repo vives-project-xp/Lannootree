@@ -19,7 +19,7 @@ export default class EffectManager {
       default: console.log("unknown effect_id");
     }
     this.current_effect.nextframe();
-    this.run(speed_modifier)
+    this.run(speed_modifier);
   }
 
   run(speed_modifier) {
@@ -48,7 +48,7 @@ export default class EffectManager {
     return this.effects;
   }
 
-  get_current_effect(){
+  get_current_effect() {
     return this.current_effect_id;
   }
 

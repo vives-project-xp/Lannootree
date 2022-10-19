@@ -20,6 +20,6 @@ export default class JsonGenerator {
       "current_asset": active_asset,
       "assets": assets,
       "color": active_color
-    }
+    };
   }
 }

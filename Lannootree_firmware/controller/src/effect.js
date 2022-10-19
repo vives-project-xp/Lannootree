@@ -1,5 +1,4 @@
 import Color from './color.js';
-import MatrixParser  from './matrixParser.js';
 import Fade from './fade.js';
 
 export default class Effect {
@@ -70,7 +69,7 @@ export default class Effect {
       this.current_frame++;
       this.previousIntervalID = this.intervalID;
     }, (Math.round(this.framespeed_ms * speed_modifier)));
-}
+  }
 
   stop_interval() {
     clearInterval(this.intervalID);
