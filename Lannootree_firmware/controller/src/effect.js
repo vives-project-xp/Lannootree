@@ -7,7 +7,6 @@ export default class Effect {
   currentmatrix;
   nextmatrix;
   fade_counter = 0;
-  current_frame = 0;
   intervalID = undefined;
 
   constructor(matrixsize) {
@@ -55,7 +54,6 @@ export default class Effect {
     this.stop_interval(); // stops the interval if any is running 
     this.intervalID = setInterval(() => {   // frame-interval
       if(this.fade == false || this.fade_counter >= 128) {
-          this.current_frame = 0;
           this.fade_counter = 0;
           this.nextframe();
           this.previousmatrix = this.generate_matrix(this.currentmatrix);
