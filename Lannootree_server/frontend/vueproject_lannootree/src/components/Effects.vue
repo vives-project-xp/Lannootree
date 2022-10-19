@@ -17,6 +17,11 @@
     import { useClientAPIStore } from '../stores/client.connection';
     // Replaced by useClientStore
     // import { Effects } from '@/assets/api-connection.js';
+    
+    function updateEffect(eventData) {
+ 	    console.log(eventData)
+	    clientStore.updateEffect(eventData);
+    }
 
     // string = json.parse(json);
     // console.log(string);
@@ -26,7 +31,7 @@
     
     <template>
         <div class="container">
-          <v-select :options="effects" :value="effects" placeholder="Effects" @change="Effects()"/>
+          <v-select :options="effects" :value="effects" placeholder="Effects" @change="updateEffect(eventData)" />
         </div>
     </template>
     <style scoped>
