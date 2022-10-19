@@ -53,15 +53,15 @@ export default class Effect {
   run(speed_modifier) {
     this.stop_interval(); // stops the interval if any is running 
     this.intervalID = setInterval(() => {   // frame-interval
-      if(this.fade == false || this.fade_counter >= 255) {
+      if(this.fade_counter >= 255) {
           this.fade_counter = 0;
           this.nextframe();
           this.previousmatrix = this.generate_matrix(this.currentmatrix);
       }
-      else {
+      else if (this.fade){
         this.currentmatrix = Fade.calculate_subframe(this.generate_matrix(this.previousmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter);
       }
-      this.fade_counter += 2;
+      this.fade_counter += 15;
       this.previousIntervalID = this.intervalID;
     }, (Math.round(this.framespeed_ms / speed_modifier)));
   }
