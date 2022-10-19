@@ -170,6 +170,7 @@ function stop() {
 }
 
 function set_color_full(red, green, blue) {
+  if(status != "color") logging("INFO: status changed to static color(s)");
   status = "color";
   effect_manager.stop();
   activeData = {color: [red, green, blue]};
