@@ -2,10 +2,10 @@
 
 ## MQTT connection with CLIENT-API
 
-`togglepause/pause/start`
+`toggle/pause/start`
 
 ```js
-client.publish('controller/pause', JSON.stringify({"value": "togglepause"}));
+client.publish('controller/pause', JSON.stringify({"value": "toggle"}));
 client.publish('controller/pause', JSON.stringify({"value": "pause"}));
 client.publish('controller/pause', JSON.stringify({"value": "start"}));
 ```
@@ -28,6 +28,12 @@ client.publish('controller/setcolor', JSON.stringify({"red": 10, "green": 20, "b
 client.publish('controller/effect', JSON.stringify({"effect_id": "random_full"}));
 ```
 
+`fade`
+
+```js
+client.publish('controller/fade', JSON.stringify({"fade": true}));
+```
+
 ## MQTT status message
 
 ```json
@@ -38,6 +44,7 @@ client.publish('controller/effect', JSON.stringify({"effect_id": "random_full"})
   },
   "pause": "false",
   "status": "effect",
+  "fade": true,
   "current_effect": null,
   "effects": [
     "random_full",

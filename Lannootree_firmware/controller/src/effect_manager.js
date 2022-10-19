@@ -19,7 +19,7 @@ export default class EffectManager {
       default: console.log("unknown effect_id");
     }
     this.current_effect.nextframe();
-    this.run(speed_modifier)
+    this.run(speed_modifier);
   }
 
   run(speed_modifier) {
@@ -41,15 +41,23 @@ export default class EffectManager {
   }
 
   get_nextmatrix() {
-    return this.current_effect.get_nextmatrix();
+    if(this.current_effect != null) return this.current_effect.get_nextmatrix();
   }
 
   get_effects() {
     return this.effects;
   }
 
-  get_current_effect(){
+  get_current_effect() {
     return this.current_effect_id;
+  }
+
+  set_fade(fade) {
+    if(this.current_effect != null) this.current_effect.set_fade(fade);
+  }
+
+  get_fade() {
+    if(this.current_effect != null) return this.current_effect.get_fade();
   }
 
   has_effect(effect_id) {
