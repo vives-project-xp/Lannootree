@@ -1,5 +1,5 @@
 export default class JsonGenerator {
-  static statusToJson(matrixsize, status, paused, activeData, current_effect, effects, current_asset, assets){
+  static statusToJson(matrixsize, status, paused, activeData, fade, current_effect, effects, current_asset, assets){
 
     var active_effect = null;
     var active_asset = null;
@@ -15,6 +15,7 @@ export default class JsonGenerator {
       },
       "status": status,
       "pause": paused,
+      "fade": fade,
       "current_effect": active_effect,
       "effects": effects,
       "current_asset": active_asset,

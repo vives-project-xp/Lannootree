@@ -52,6 +52,14 @@ export default class EffectManager {
     return this.current_effect_id;
   }
 
+  set_fade(fade) {
+    this.current_effect_id.set_fade(fade);
+  }
+
+  get_fade() {
+    return this.current_effect_id.get_fade();
+  }
+
   has_effect(effect_id) {
     let effect_found = false;
     this.effects.forEach(effect => {

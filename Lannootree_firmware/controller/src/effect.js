@@ -40,6 +40,15 @@ export default class Effect {
     return [rows, cols];
   }
 
+  set_fade(fade) {
+    if(fade) this.fade = true;
+    else this.fade = false;
+  }
+
+  get_fade() {
+    return this.fade;
+  }
+
   generate_matrix(oldmatrix) {
     let newmatrix = Array.from(Array(Math.abs(this.get_matrixsize(oldmatrix)[0])), () => new Array(Math.abs(this.get_matrixsize(oldmatrix)[1])));
     for(var i = 0; i < newmatrix.length; i++) {
