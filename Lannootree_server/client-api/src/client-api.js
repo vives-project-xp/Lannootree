@@ -5,38 +5,6 @@ import * as fs from 'fs';
 
 dotenv.config({ path: '../.env' })
 
-// websocket _________________________________________________________________________________
-const websocket = new WebSocketServer({ port: 3001 });
-
-websocket.on('connection', (ws, req) => {
-    logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
-    ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
-
-    ws.on("message", data => {
-        try {
-            data = JSON.parse(data)
-            if(data.hasOwnProperty('stop')) {stop();}
-            if(data.hasOwnProperty('pause')) {pause()}
-            if(data.hasOwnProperty('play')) {play()}
-            if(data.hasOwnProperty('effect')) {effect(data.effect)}
-            if(data.hasOwnProperty('asset')) {asset(data.asset)}
-            if(data.hasOwnProperty('Color')) {
-                setcolor(parseColor(data.Color));
-            }
-        } 
-        catch (error) { 
-            logging("ERROR: Websocket data invalid"); 
-        }
-        
-    });
-    
-    
-    ws.on("close", () => {
-        logging("INFO: Websocket client disconnected")
-    });
-    
-});
-
 // MQTT ______________________________________________________________________________________
 
 var caFile = fs.readFileSync("ca.crt");
@@ -59,33 +27,65 @@ client.on('connect', function () {
     logging("INFO: mqtt connected")
     client.publish('status/client-api', 'Online', {retain: true});
 
-    client.subscribe('controller/#', function (err) {
-        if (err) {
-            logging("ERROR: Can't subscribe to toppic controller/#");
-        }
-    })
+    client.subscribe('controller/#');
+    client.subscribe('lannootree/out');
 })
 
-// other MQTT___________________________________________________________________________________________
+// msg buffer___________________________________________________________________________________________
 var statusJSON;
 var contentJSON;
 
-client.on('message', function (topic, message) {
-    switch (topic) {
-        case "controller/status":
-            try {
-                statusJSON = JSON.parse(message)
-            } 
-            catch (error) { 
-                logging("ERROR: MQTT statusJSON invalid"); 
+// websocket _________________________________________________________________________________
+const websocket = new WebSocketServer({ port: 3001 });
+
+websocket.on('connection', (ws, req) => {
+    logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
+    ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
+
+    ws.on("message", data => {
+        try {
+            data = JSON.parse(data.toString())
+            if(data.hasOwnProperty('stop')) {stop();}
+            if(data.hasOwnProperty('pause')) {pause()}
+            if(data.hasOwnProperty('play')) {play()}
+            if(data.hasOwnProperty('effect')) {effect(data.effect)}
+            if(data.hasOwnProperty('asset')) {asset(data.asset)}
+            if(data.hasOwnProperty('Color')) {
+                if (parseColor(data.Color) != null) setcolor(parseColor(data.Color));
             }
-            break;
-            
-        default:
-            break;
-    }
+        } 
+        catch (error) { 
+            logging("ERROR: Websocket received data exception"); 
+        }
+        
+    });
+    
+    
+    ws.on("close", () => {
+        logging("INFO: Websocket client disconnected")
+    });
+    // other MQTT___________________________________________________________________________________________
+
+    client.on('message', function (topic, message) {
+        switch (topic) {
+            case "controller/status":
+                try {
+                    statusJSON = JSON.parse(message)
+                } 
+                catch (error) { 
+                    logging("ERROR: MQTT statusJSON invalid"); 
+                }
+                break;
+            case "lannootree/out":
+                ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
+                break;
+                
+            default:
+                break;
+        }
 })
-         
+});
+
 // Sending updates_________________________________________
 function stop() {
     logging('INFO: sending stop');
@@ -118,21 +118,25 @@ function asset(asset_id) {
 }
 
 function setcolor(color) {
-    logging(`INFO: sending setcolor: (${color[0]},${color[1]},${color[2]})`, true);
     client.publish('controller/setcolor', JSON.stringify({"red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
 }
 
 
 function parseColor(input) {
-    let output = input.substring(4)
-    output = output.split(' ')
-
-    output[0] = output[0].split('.')[0]
-    output[1] = output[1].split('.')[0]
-    output[2] = output[2].split('.')[0]
-    output[2] = output[2].split(')')[0]
-
-    return output;
+    try {
+        let output = input.substring(4)
+        output = output.split(' ')
+    
+        output[0] = output[0].split('.')[0]
+        output[1] = output[1].split('.')[0]
+        output[2] = output[2].split('.')[0]
+        output[2] = output[2].split(')')[0]
+    
+        return output;
+    } catch (error) {
+        logging("ERROR: Color parsing from string");
+    }
+    return null;
 }
 
 
