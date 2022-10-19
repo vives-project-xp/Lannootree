@@ -137,7 +137,7 @@ function pause(type) {
       break;
     case "play":
       paused = false;
-      if(status == "effect")effect_manager.run(speed_modifier);
+      if(status == "effect") effect_manager.run(speed_modifier);
       sendStatus();
       break;
     case "toggle":
@@ -171,11 +171,11 @@ function set_color_full(red, green, blue) {
   }
 }
 
-function play_effect(effect) {
-  if(effect_manager.has_effect(effect)) {
+function play_effect(effect_id) {
+  if(effect_manager.has_effect(effect_id)) {
     pause("play");
     status = "effect";
-    effect_manager.set_effect(effect, get_matrixsize(), speed_modifier);
+    effect_manager.set_effect(effect_id, get_matrixsize(), speed_modifier);
   }
 }
 

@@ -68,7 +68,7 @@ export default class Effect {
       }
       this.current_frame++;
       this.previousIntervalID = this.intervalID;
-    }, (Math.round(this.framespeed_ms * speed_modifier)));
+    }, (Math.round(this.framespeed_ms / speed_modifier)));
   }
 
   stop_interval() {
