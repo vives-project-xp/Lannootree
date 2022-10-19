@@ -38,11 +38,6 @@
     
   border-collapse: collapse;
   }
-   .lannootree-row{
-    /* display: flex; */
-  }
-   .lannootree-column{
 
-  }
     </style>
 
