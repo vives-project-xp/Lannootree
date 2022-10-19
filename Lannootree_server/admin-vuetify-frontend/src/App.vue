@@ -1,46 +1,69 @@
+<script setup lang="ts">
+  import { ref, watch } from 'vue'
+
+  const drawer = ref(false);
+  const group = ref(null);
+
+  const items = [
+    {
+      title: 'ConfigPanel',
+      value: 'config'
+    },
+    {
+      title: 'LogPanel',
+      value: 'logging'
+    }
+  ];
+
+  watch(group, () => {
+    drawer.value = false;
+  });
+
+</script>
+
 <template>
   <v-app>
-    <!-- <v-navigation-drawer app> -->
-      <!-- -->
-    <!-- </v-navigation-drawer> -->
+    <v-app-bar app color="grey-darken-3">
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" ></v-app-bar-nav-icon>
+      </template>
 
-    <v-app-bar app>
-      <v-app-bar-title>Chuck Norris Questionnaire</v-app-bar-title>
+      <v-app-bar-title>Lanootree admin page</v-app-bar-title>
       
-      <v-spacer></v-spacer>
-
-      <v-btn to="/" color="dark">Home</v-btn>
-      <v-btn to="/About" color="dark">About</v-btn>
+      <v-btn to="/">
+        <v-icon>mdi-home</v-icon>
+      </v-btn>
       
-      <v-spacer></v-spacer>
+      <v-btn href="https://github.com/vives-project-xp/Lannootree">
+        <v-icon>mdi-github</v-icon>
+      </v-btn>
     </v-app-bar>
 
-    <!-- Sizes your content based upon application components -->
-    <v-main>
-      <!-- Provides the application the proper gutter -->
-      <v-container fluid>
+    <v-navigation-drawer 
+      v-model="drawer"
+      bottom
+      temporary
+    >
+      <v-list>
+        <v-list-item
+          v-for="sub in items"
+          :key="sub.value"
+          :to="sub.value">
 
-        <!-- If using vue-router -->
+            {{ sub.title }}
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main>
+      <v-container fluid>
         <router-view></router-view>
       </v-container>
     </v-main>
 
-    <v-footer app>
-      <!-- -->
-    </v-footer>
+    <!-- <v-footer app>
+      
+    </v-footer> -->
   </v-app>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'App',
-
-  data () {
-    return {
-      //
-    }
-  },
-})
-</script>
