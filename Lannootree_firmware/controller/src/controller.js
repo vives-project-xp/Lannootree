@@ -144,11 +144,13 @@ function pause(type) {
       paused = true;
       effect_manager.pause();
       sendStatus();
+      logging("INFO: controller paused");
       break;
     case "play":
       paused = false;
       if(status == "effect") effect_manager.run(speed_modifier);
       sendStatus();
+      logging("INFO: controller resumed");
       break;
     case "toggle":
       if(paused) pause("play");
@@ -164,6 +166,7 @@ function stop() {
   effect_manager.stop();
   set_color_full(0,0,0);
   activeData = null;
+  logging("INFO: controller stopped");
 }
 
 function set_color_full(red, green, blue) {
@@ -186,11 +189,13 @@ function play_effect(effect_id) {
     pause("play");
     status = "effect";
     effect_manager.set_effect(effect_id, get_matrixsize(), speed_modifier);
+    logging("INFO: Set effect:" + effect_id);
   }
 }
 
 function set_fade(fade) {
   if(status = "effect") effect_manager.set_fade(fade);
+  logging("INFO: set fade:" + fade);
 }
 
 // Live update__________________________________________________________________________
