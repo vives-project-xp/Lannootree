@@ -1,4 +1,6 @@
 <script>
+    import { color_matrix } from '@/assets/api-connection.js'
+
     export default {
     //   data() {
     //     return {
@@ -20,7 +22,7 @@
     <template>
 <div class="lannootree-display" >
     <table>
-        <tr class="lannootree-row" v-for="(line,lineIndex) in matrix">
+        <tr class="lannootree-row" v-for="(line,lineIndex) in color_matrix">
             <td class="lannootree-display-column" v-for="(cell,coloumIndex) in line" :style="{ 'background-color': `rgb(${cell.red}, ${cell.green}, ${cell.blue})`}">
                 <pre :style="{ 'color': `rgb(${cell.red}, ${cell.green}, ${cell.blue})`}">col</pre>
             </td>
