@@ -1,5 +1,5 @@
 import Color from './color.js';
-import EffectManager from "./effect_effect_manager.js";
+import EffectManager from "./effect_manager.js";
 import JsonGenerator from "./json_generator.js"
 import MatrixParser  from './matrixParser.js';
 import LedDriver from './led-driver.js';
