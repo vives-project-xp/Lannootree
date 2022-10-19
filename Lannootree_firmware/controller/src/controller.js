@@ -9,7 +9,7 @@ import fs from "fs";
 import dotenv from "dotenv";
 dotenv.config({ path: '../.env' });
 
-const debug = true;
+const debug = false;
 const leddriver_connection = false;
 const framerate = 30;
 const frontend_framerate = 10;
@@ -33,6 +33,7 @@ var options = {
   }
 };
 const client = mqtt.connect(options);
+
 
 client.on('connect', function () {
   logging("INFO: mqtt connected");
@@ -60,7 +61,7 @@ client.on('message', function (topic, message) {
     case "controller/effect": play_effect(data.effect_id); break;
     case "controller/asset": logging("ASSET", true); break;
     case "controller/config":
-      fs.writeFileSync('../../config-example.json', JSON.stringify(JSON.parse(message), null, 2));
+      fs.writeFileSync('../../config.json', JSON.stringify(JSON.parse(message), null, 2));
       logging("WARNING: overwriting old json config file");
       updateMatrixFromFile();
       break;
@@ -79,7 +80,7 @@ var paused = false;
 var speed_modifier = 1;
 
 function updateMatrixFromFile() {
-  fs.readFile('../config-example.json', (err, data) => {
+  fs.readFile('../config.json', (err, data) => {
     if (err) throw err;
     let json_data = JSON.parse(data);
     set_matrixsize(json_data.dimentions.row,json_data.dimentions.col);
