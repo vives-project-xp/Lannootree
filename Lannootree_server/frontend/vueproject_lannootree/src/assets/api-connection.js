@@ -4,11 +4,17 @@ var websocketactive = false;
 export default function websocketClient() {
 
   ws.onopen = () => {
-    console.log("we are connected to mqtt")
+    console.log("we are connected to the client-API")
     websocketactive = true
-  }   
+  } 
+
+  ws.onmessage = (event) => {
+    console.log(event.data);
+  }
+
 };
 websocketClient();
+
 
 
 export function Pause(notPaused) {
