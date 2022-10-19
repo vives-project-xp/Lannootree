@@ -6,6 +6,7 @@ import Title from './components/Title.vue'
 import Pause from './components/Pause.vue';
 import Effects from './components/Effects.vue';
 import Color from './components/Color.vue';
+import LannootreeGrid from './components/LannootreeGrid.vue';
 // import {effect} from '@/src/assets/api-connection.js';
 
 import Logout from './components/Logout.vue';
@@ -35,6 +36,8 @@ import Assets from './components/Assets.vue';
   </div>
   <div class="componentsrow2">
     <Color />
+    <LannootreeGrid />
+    
   </div>
   </main>
 </template>
