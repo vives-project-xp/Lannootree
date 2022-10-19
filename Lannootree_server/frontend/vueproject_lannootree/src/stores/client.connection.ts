@@ -54,7 +54,9 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
   };
 
   const Effects = function (selectedEffect) {
-      ws.send(JSON.stringify({"stop": + selectedEffect }));
+    if(websocketactive.value == true) {
+      ws.send(JSON.stringify({"effect": selectedEffect }));
+    };
   };
 
   return {
