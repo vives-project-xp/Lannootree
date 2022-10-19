@@ -1,5 +1,5 @@
 import Color from './color.js';
-import Debug  from './debug.js';
+import MatrixParser  from './matrixParser.js';
 import Fade from './fade.js';
 
 export default class Effect {

@@ -1,7 +1,7 @@
 import Color from './color.js';
 import EffectManager from "./effect_manager.js";
 import JsonGenerator from "./json_generator.js"
-import Debug  from './debug.js';
+import MatrixParser  from './matrixParser.js';
 import LedDriver from './led-driver.js';
 
 import mqtt from "mqtt";
@@ -16,6 +16,7 @@ dotenv.config({ path: '../.env' })
 const debug = true;
 const leddriver_connection = false;
 const framerate = 30;
+const frontend_framerate = 10;
 
 // Socket client
 const leddriver = new LedDriver(leddriver_connection);
@@ -192,7 +193,7 @@ function play_effect(effect) {
     manager.set_effect(effect, get_matrixsize(), speed_modifier);
   }
 }
-
+// Live update__________________________________________________________________________
 function PushMatrix() {
   switch (status) {
     case "effect":
@@ -206,9 +207,16 @@ function PushMatrix() {
       break;
   }
   leddriver.frame_to_ledcontroller(ledmatrix);
-  logging(Debug.frame_to_string(ledmatrix), true)
+  logging(MatrixParser.frame_to_string(ledmatrix), true)
 }
+
+function PushMatrix_frontend() {
+  let response = JSON.stringify(MatrixParser.frame_to_json(ledmatrix));
+  client.publish('lannootree/out', response);
+}
+
 setInterval(() => {PushMatrix()}, (Math.round(1000/framerate)));
+setInterval(() => {PushMatrix_frontend()}, (Math.round(1000/frontend_framerate)));
 
 // general__________________________________________________________________
 function logging(message, msgdebug = false){
