@@ -48,6 +48,10 @@ client.on('connect', function () {
   sendStatus();
 });
 
+client.on('error', function(error) {
+  console.log("ERROR: mqtt:  " + error);
+});
+
 client.on('message', function (topic, message) {
   let data = message;
   try {
