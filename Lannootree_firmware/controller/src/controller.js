@@ -174,6 +174,8 @@ function stop(){
 }
 
 function set_color_full(red, green, blue) {
+  status = "color";
+  manager.stop();
   activeData = {color: [red, green, blue]};
   if(!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
     if(red<=255 && green<=255 && blue<=255 && red>=0 && green>=0 && blue>=0) {
