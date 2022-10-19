@@ -67,10 +67,10 @@ export default class Effect {
           this.nextframe();
           this.previousmatrix = this.generate_matrix(this.currentmatrix);
       }
-      else if(this.fade == true){
+      else if (this.fade){
         this.currentmatrix = Fade.calculate_subframe(this.generate_matrix(this.previousmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter);
       }
-      this.fade_counter += 2;
+      this.fade_counter += 15;
       this.previousIntervalID = this.intervalID;
     }, (Math.round(this.framespeed_ms / speed_modifier)));
   }
