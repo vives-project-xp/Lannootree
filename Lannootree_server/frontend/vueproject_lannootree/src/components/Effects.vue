@@ -5,7 +5,8 @@
       data() {
         return {
           clientStore: useClientAPIStore(),
-          effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"]
+          effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
+          // json: {  "matrix": {    "rows": 18,    "cols": 18  },  "pause": "false",  "status": "effect",  "fade": true,  "current_effect": null,  "effects": [    "random_full",    "random_each"  ],  "current_asset": null,  "assets": [    "random1.png",    "cat.jpg"  ],  "color": null}
         }
       },
       components: {
@@ -21,6 +22,9 @@
  	    console.log(eventData)
 	    clientStore.updateEffect(eventData);
     }
+
+    // string = json.parse(json);
+    // console.log(string);
 
 
     </script>
