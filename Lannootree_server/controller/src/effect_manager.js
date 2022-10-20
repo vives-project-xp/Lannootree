@@ -1,5 +1,6 @@
 import RandomEach from './effects/random_each.js';
 import RandomFull from './effects/random_full.js';
+import RandomFull from './effects/strobe.js';
 
 export default class EffectManager {
 
@@ -7,7 +8,8 @@ export default class EffectManager {
   current_effect_id = null;
   effects = [
     "random_full",
-    "random_each"
+    "random_each",
+    "strobe"
   ];
 
   set_effect(effect_id, matrixsize, speed_modifier) {
@@ -16,6 +18,7 @@ export default class EffectManager {
     switch(effect_id) {
       case "random_each": this.current_effect = new RandomEach(matrixsize); break;
       case "random_full": this.current_effect = new RandomFull(matrixsize); break;
+      case "strobe": this.current_effect = new Strobe(matrixsize); break;
       default: console.log("unknown effect_id");
     }
     this.current_effect.nextframe();
