@@ -8,21 +8,28 @@ using json = nlohmann::json;
 
 namespace Lannootree {
   
-  class LedDriverThread : public IThreadObject {
+  class LedDriverThread {
 
     public:
-      LedDriverThread(json& config, Matrix< std::tuple<uint, uint32_t*> >* matrix, volatile bool* running);
+      LedDriverThread(json& config, Matrix< std::tuple<uint, uint32_t*> >* matrix);
       ~LedDriverThread();
 
+    public:
+      void start(void);
+      void stop(void);
+
     private:
-      virtual void loop(void);
+      void loop(void);
 
     private:
       void initialize_memory(json& config);
       ws2811_t* create_ws2811(json& config, int dma, int gpio1, int gpio2, std::string channel);
 
     private:
-      volatile bool* _running;
+      bool _running = false;
+      std::thread _t;
+
+    private:
       std::vector<ws2811_t*> _controllers;
       Matrix< std::tuple<uint, uint32_t*> >* _matrix;
       std::unordered_map<std::string, uint32_t*> _channel_mem;
@@ -47,7 +54,7 @@ namespace Lannootree {
         _channel_mem = std::move(other._channel_mem);
         
         other._matrix = nullptr;
-        other._running = nullptr;
+        other._running = false;
 
         return *this;
       };

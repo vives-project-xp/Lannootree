@@ -36,8 +36,8 @@ namespace Lannootree {
     _matrix_mapping = new Matrix < std::tuple<uint, uint32_t*> > (config["dimentions"]["col"], config["dimentions"]["row"]);
     auto[width, height] = _matrix_mapping -> dimention();
 
-    // Pass in thread object to thread starter, thread starter will delete heap memory
-    // ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping, &_running));
+    LedDriverThread led_driver(config, _matrix_mapping);
+    led_driver.start();
 
     UnixSocket matrix_socket("./dev/lannootree.socket", (width * height) * 3, martix_socket_callback, _matrix_mapping);
     matrix_socket.start();

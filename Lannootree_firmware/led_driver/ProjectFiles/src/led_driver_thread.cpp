@@ -2,7 +2,7 @@
 
 namespace Lannootree {
 
-  LedDriverThread::LedDriverThread(json &config, Matrix<std::tuple<uint, uint32_t *>> *matrix, volatile bool *running) : _running(running), _matrix(matrix) {
+  LedDriverThread::LedDriverThread(json &config, Matrix<std::tuple<uint, uint32_t *>> *matrix) : _matrix(matrix) {
     initialize_memory(config);
 
     std::for_each(config["channels"].begin(), config["channels"].end(), [&](const json &channel) {
@@ -57,10 +57,20 @@ namespace Lannootree {
     }
   }
 
+  void LedDriverThread::start(void) {
+    _running = true;
+    _t = std::thread(&LedDriverThread::loop, this);
+  }
+
+  void LedDriverThread::stop(void) {
+    _running = false;
+    _t.join();
+  }
+
   void LedDriverThread::loop(void) {
     int ret;
 
-    while (*_running) {
+    while (_running) {
       for (auto controller : _controllers) {
         
         
