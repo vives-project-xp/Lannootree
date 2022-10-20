@@ -14,8 +14,7 @@
     },
     data() {
       return {
-        clientStore: useClientAPIStore(),
-        notPaused: true
+        clientStore: useClientAPIStore()
       }
     }
   }
@@ -23,7 +22,7 @@
 
 <template>
   <div>
-    <Toggle v-model="notPaused" on-label="⏸" off-label="▶" @click="clientStore.Pause(notPaused)"/>
+    <Toggle v-model="clientStore.status_json.pause" on-label="⏸" off-label="▶" @click="clientStore.Pause(!paused)"/>
   </div>
 </template>
 

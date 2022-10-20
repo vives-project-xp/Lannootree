@@ -983,14 +983,14 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
 
         // Removed this so i can allocate my own memory in C++
         
-        // channel->leds = malloc(sizeof(ws2811_led_t) * channel->count);
-        // if (!channel->leds)
-        // {
-        //     ws2811_cleanup(ws2811);
-        //     return WS2811_ERROR_OUT_OF_MEMORY;
-        // }
+        channel->leds = malloc(sizeof(ws2811_led_t) * channel->count);
+        if (!channel->leds)
+        {
+            ws2811_cleanup(ws2811);
+            return WS2811_ERROR_OUT_OF_MEMORY;
+        }
 
-        // memset(channel->leds, 0, sizeof(ws2811_led_t) * channel->count);
+        memset(channel->leds, 0, sizeof(ws2811_led_t) * channel->count);
 
         if (!channel->strip_type)
         {

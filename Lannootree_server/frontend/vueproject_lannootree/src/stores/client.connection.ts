@@ -21,7 +21,8 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     "current_asset": null,
     "assets": [
       "random1.png",
-      "cat.jpg"
+      "cat.jpg",
+      "hallojson.gif"
     ],
     "color": null
   });
@@ -59,15 +60,15 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
 
   websocketClient();
 
-  const Pause = function(notPaused) {
+  const Pause = function(paused) {
     if(websocketactive.value == true) {
-      if(notPaused) {
-        ws.send(JSON.stringify({"play": true}));
-        console.log(notPaused);
+      if(paused) {
+        ws.send(JSON.stringify({"pause": true}));
+        console.log(paused);
       }
       else{
-        ws.send(JSON.stringify({"pause": true}));
-        console.log(notPaused);
+        ws.send(JSON.stringify({"play": true}));
+        console.log(paused);
       }
     }
    
@@ -98,13 +99,22 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     };
   };
 
+  const setAsset = function (selectedAsset) {
+    if(websocketactive.value == true) {
+      console.log(selectedAsset)
+      ws.send(JSON.stringify({"asset": selectedAsset }));
+    };
+  };
+
   return {
     color_matrix,
-
+    status_json,
+    
     websocketClient,
     Pause,
     Stop,
     Color,
     setEffect,
+    setAsset,
   };
 });
