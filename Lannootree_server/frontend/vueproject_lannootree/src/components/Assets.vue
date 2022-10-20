@@ -6,7 +6,6 @@
       data() {
         return {
           // assets:["chrismas-tree.gif", "cat.gif", "lannootree-logo.png"],
-          selected: "",
           clientStore: useClientAPIStore()
 
         }
@@ -21,7 +20,7 @@
     <template>
 
       <div class="container">
-        <select v-model="selected" @change="clientStore.setAsset(selected)">
+        <select v-model="clientStore.status_json.current_asset" @change="clientStore.setAsset(clientStore.status_json.current_asset)">
           <option v-for="asset in clientStore.status_json.assets" > {{ asset }}</option>
         </select>
         <!-- <v-select :options="assets" placeholder="Assets"/> -->

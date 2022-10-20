@@ -7,7 +7,6 @@
     export default {
       data() {
         return {
-          selected: "",
           clientStore: useClientAPIStore(),
         }
       },
@@ -21,8 +20,9 @@
   
       <div>Selected: </div>
 
-      <select v-model="selected" @change="clientStore.setEffect(selected)">
+      <select v-model="clientStore.status_json.current_effect" @change="clientStore.setEffect(clientStore.status_json.current_effect)">
         <option v-for="effect in clientStore.status_json.effects" > {{ effect }}</option>
+        
       </select>
 
     </template>
