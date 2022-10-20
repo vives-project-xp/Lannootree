@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: '../.env' });
 
 const debug = false;
-const leddriver_connection = false;
+const leddriver_connection = true;
 const framerate = 30;
 const frontend_framerate = 10;
 
@@ -44,8 +44,8 @@ client.on('error', function(error) {
 });
 
 client.on('message', function (topic, message) {
- if (toppic == "lannootree/out") {
-  leddriver.frame_to_ledcontroller(ledmatrix);
+ if (topic == "lannootree/out") {
+  leddriver.frame_to_ledcontroller(JSON.parse(message.toString()));
  }
 });
 
