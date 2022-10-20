@@ -5,7 +5,7 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
   
   const color_matrix = ref({});
   const status_json =
-  {
+  ref({
     "matrix": {
       "rows": 18,
       "cols": 18
@@ -24,7 +24,7 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
       "cat.jpg"
     ],
     "color": null
-  };
+  });
 
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
@@ -37,14 +37,14 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
 
     // ws.onmessage = (event) => {
       
-    //   let data = JSON.parse(event.data.toString()).matrix;
+      // let data = JSON.parse(event.data.toString()).matrix;
 
-    //   if(data.hasOwnProperty('matrix')) color_matrix.value = data;
+      // if(data.hasOwnProperty('matrix')) color_matrix.value = data;
 
-    //   if(data.hasOwnProperty('status')){
-    //     status_json.value = data;
-    //     console.log(data)
-    //   }       
+      // if(data.hasOwnProperty('status')){
+      //   status_json.value = data;
+      //   console.log(data)
+      // }       
     // };
     ws.onmessage = (event) => {
       let temp = JSON.parse(event.data.toString()).matrix;
