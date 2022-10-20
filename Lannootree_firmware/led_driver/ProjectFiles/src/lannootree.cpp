@@ -12,7 +12,8 @@ namespace Lannootree {
   }
 
   LannooTree::~LannooTree() {
-    delete _matrix_mapping;
+    for (auto c : _controllers) delete c;
+    for (auto [chan, mem] : _channel_mem) delete mem;
   }
 
   void LannooTree::start(void) {
@@ -33,61 +34,120 @@ namespace Lannootree {
     info_log("Cleaning up...");
     f.close();
 
-    _matrix_mapping = new Matrix < std::tuple<uint, uint32_t*> > (config["dimentions"]["col"], config["dimentions"]["row"]);
-    auto[width, height] = _matrix_mapping -> dimention();
+    initialize_memory(config);    
 
-    // Pass in thread object to thread starter, thread starter will delete heap memory
-    // ThreadStarter::add_thread("LedDriver", new LedDriverThread(config, _matrix_mapping, &_running));
+    LedDriverThread led_driver(&_channel_mem, &_controllers);
+    led_driver.start();
 
-    UnixSocket matrix_socket("./dev/lannootree.socket", (width * height) * 3, martix_socket_callback, _matrix_mapping);
+    UnixSocket matrix_socket("./dev/lannootree.socket", 288 * 3, socket_callback, &_channel_mem);
     matrix_socket.start();
-
 
     // Wait for shutdown signal
     std::unique_lock lock(mtx);
     shutdown_request.wait(lock);
 
-    matrix_socket.stop();
-    _running = false;
-
     info_log("Waiting for threads to join...");
-    ThreadStarter::join_all();
+    led_driver.stop();
+    matrix_socket.stop();
+
     info_log("Lannootree gracefully shut down");
   }
 
-  void LannooTree::martix_socket_callback(void* arg, uint8_t* data, size_t data_len) {
-    auto _matrix = (Matrix< std::tuple<uint, uint32_t*> > *) arg;
+  void LannooTree::initialize_memory(json &config) {
+    bool ca0, ca1, cb0, cb1 = false;
 
-    /**
-     * @brief Values to skip
-     * 
-     * (1, 1) (1, 5) (1, 8)
-     * (5, 1) (5, 5) (5, 8)
-     * (8, 1) (8, 5) (8, 8)
-     * 
-     */
+    for (std::string c : config["inUseChannels"]) {
+      if (c.compare("CA0") == 0)
+        ca0 = true;
+      if (c.compare("CA1") == 0)
+        ca1 = true;
+      if (c.compare("CB0") == 0)
+        cb0 = true;
+      if (c.compare("CB1") == 0)
+        cb1 = true;
+    };
 
-    auto[width, height] = _matrix -> dimention();
-    for (int row = 0; row < height; row++) {
-      for (int col = 0; col < width; col++) {
-        int red_index = 3 * (width * row + col);
-        int green_index = red_index + 1;
-        int blue_index = green_index + 1;
-        
-        Color c(data[red_index], data[green_index], data[blue_index]);
+    if ((ca0 || ca1) && (cb0 || cb1)) {
+      // Creation of led controll blocks
+      _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
+      _controllers.push_back(create_ws2811(config, 11, 9, 10, "CB"));
 
-        auto offset = std::get<0>(_matrix -> get_value(col, row));
-        info_log("adding color to mem offset " << offset);
-        auto memory = std::get<1>(_matrix->get_value(col, row));
-        info_log("Memory: " << memory);
+      // Creation of led buffers
+      // if (_controllers.at(0)->channel[0].count)
+      //   _channel_mem["CA0"] = new uint32_t[_controllers.at(0)->channel[0].count]();
 
-        uint32_t color = c.to_uint32_t();
+      // if (_controllers.at(0)->channel[1].count)
+      //   _channel_mem["CA1"] = new uint32_t[_controllers.at(0)->channel[1].count]();
 
-        info_log("received: " << c);
+      // if (_controllers.at(1)->channel[0].count)
+      //   _channel_mem["CB0"] = new uint32_t[_controllers.at(1)->channel[0].count]();
 
-        for (int i = 0; i < 72; i++) memory[offset + i] = color;
+      // if (_controllers.at(1)->channel[1].count)
+      //   _channel_mem["CB1"] = new uint32_t[_controllers.at(1)->channel[1].count]();
+    }
+    else {
+      bool isChannelA = (ca0 || ca1);
+      // Creation of led control block
+      _controllers.push_back(create_ws2811(config, 10, 18, 19, isChannelA ? "CA" : "CB"));
+
+      info_log((isChannelA ? "Using channel A" : "Not using channel A"));
+
+      // Creation of led buffers
+      if (_controllers.at(0)->channel[0].count > 0)
+        _channel_mem[isChannelA ? "CA0" : "CB0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
+        // _channel_mem[isChannelA ? "CA0" : "CB0"] = new uint32_t[_controllers.at(0)->channel[0].count]();
+
+      info_log("ChanA0 led count: " << _controllers.at(0)->channel[0].count);
+
+      if (_controllers.at(0)->channel[1].count > 0)
+        _channel_mem[isChannelA ? "CA1" : "CB1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
+        // _channel_mem[isChannelA ? "CA1" : "CB1"] = new uint32_t[_controllers.at(0)->channel[1].count]();
+    }
+
+    // Initialize led control blocks
+    for (auto c : _controllers) {
+      if (ws2811_init(c) != WS2811_SUCCESS) {
+        error_log("Failed to init ws2811");
       }
     }
+  }
+
+  ws2811_t* LannooTree::create_ws2811(json &config, int dma, int gpio1, int gpio2, std::string channel) {
+    auto instance = new ws2811_t;
+    instance->freq = WS2811_TARGET_FREQ;
+    instance->dmanum = dma;
+    instance->render_wait_time = 100;
+    instance->channel[0] = {
+        .gpionum = gpio1,
+        .invert = 0,
+        .count = config["channels"].contains(channel + "0") ? (int)config["channels"][channel + "0"]["ledCount"] : 0,
+        .strip_type = STRIP_TYPE,
+        .brightness = 255,
+    };
+    instance->channel[1] = {
+        .gpionum = gpio2,
+        .invert = 0,
+        .count = config["channels"].contains(channel + "1") ? (int)config["channels"][channel + "1"]["ledCount"] : 0,
+        .strip_type = STRIP_TYPE,
+        .brightness = 255,
+    };
+    return instance;
+  }
+
+  void LannooTree::socket_callback(void* arg, uint8_t* data, size_t data_len) {
+    auto _channel_mem = (std::unordered_map<std::string, LedBuffer*>*) arg;
+
+    std::vector<uint32_t> colors;
+    for (int i = 0; i < 288; i++) {
+      int red_index = 3 * i;
+      int green_index = red_index + 1;
+      int blue_index = green_index + 1;
+
+      Color c(data[red_index], data[green_index], data[blue_index]);
+      colors.push_back(c.to_uint32_t());
+    }
+
+    _channel_mem->at("CA0")->mem_write(colors.data(), colors.size() * sizeof(uint32_t));
   }
 
 }

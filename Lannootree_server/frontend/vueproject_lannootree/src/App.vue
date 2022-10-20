@@ -1,5 +1,4 @@
 <script setup>
-
 // import Websocket from '../src/assets/api-connection.js';
 import Stop from './components/Stop.vue';
 import Title from './components/Title.vue'
@@ -28,17 +27,27 @@ import Assets from './components/Assets.vue';
   <main>
 
     <div class="components">
-    <Stop />
-    <Pause />
-    <Effects />
-    <Assets />
-    
-  </div>
-  <div class="componentsrow2">
-    <Color />
-    <LannootreeGrid />
-    
-  </div>
+      <Stop />
+      <Pause />
+      <Effects />
+      <Assets />
+      
+    </div>
+
+    <div class="componentsrow2">
+
+      <div>
+        <Color />
+      </div>
+
+      <div>
+        <LannootreeGrid />
+      </div>  
+      
+    </div>
+  <!-- <div class="componentscol2">
+
+  </div> -->
   </main>
 </template>
 
@@ -72,5 +81,6 @@ header {
     place-items: flex-start;
     flex-wrap: wrap;
   }
+
 }
 </style>

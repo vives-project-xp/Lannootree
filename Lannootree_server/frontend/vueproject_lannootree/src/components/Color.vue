@@ -1,5 +1,6 @@
 <template>
-	<ColorPicker @color-change="updateColor" :visible-formats="['rgb']" alpha-channel="hide"/>
+	<button @click="visible= !visible">Choose Color</button>
+		<ColorPicker v-if="visible" @color-change="updateColor" :visible-formats="['rgb']" alpha-channel="hide"/>
 </template>
 
 <script setup>
@@ -16,6 +17,15 @@ function updateColor (eventData) {
 	clientStore.Color(eventData.cssColor);
  }
 
+</script>
+
+<script>
+    export default {
+
+		data(){ return {
+		visible: false
+		}}
+	}
 </script>
 <style scoped>
 :deep() {
