@@ -4,35 +4,33 @@
     export default {
       data() {
         return {
+          selected: "",
           clientStore: useClientAPIStore(),
-          effects:["Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
+          // effects:["random_full", "random_each", "Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
           // json: {  "matrix": {    "rows": 18,    "cols": 18  },  "pause": "false",  "status": "effect",  "fade": true,  "current_effect": null,  "effects": [    "random_full",    "random_each"  ],  "current_asset": null,  "assets": [    "random1.png",    "cat.jpg"  ],  "color": null}
         }
       },
-      components: {
-        vSelect
-      }
+      // components: {
+      //   vSelect
+      // }
     }
     
     import { useClientAPIStore } from '../stores/client.connection';
     // Replaced by useClientStore
     // import { Effects } from '@/assets/api-connection.js';
     
-    function updateEffect(eventData) {
- 	    console.log(eventData)
-	    clientStore.updateEffect(eventData);
-    }
-
-    // string = json.parse(json);
-    // console.log(string);
-
-
     </script>
     
     <template>
-        <div class="container">
-          <v-select :options="effects" :value="effects" placeholder="Effects" @change="updateEffect(eventData)" />
-        </div>
+  
+      <div>Selected: </div>
+
+      <select v-model="selected" @change="clientStore.setEffect(selected)">
+        <option disabled value="">Please select one</option>
+        <option>random_full</option>
+        <option>random_each</option>
+      </select>
+
     </template>
     <style scoped>
       .container{
