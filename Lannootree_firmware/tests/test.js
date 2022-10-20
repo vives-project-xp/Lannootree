@@ -19,9 +19,17 @@ client.on('error', (err) => {
 let i = 0;
 console.time("240 fps");
 const interval2 = setInterval(() => {
+  let color = {
+    r: Math.floor((Math.random() * 129)),
+    g: Math.floor((Math.random() * 129)),
+    b: Math.floor((Math.random() * 129))
+  }
+  let random = Math.floor((Math.random() * 129));
   let matrix = new Array(288 * 3)
   .fill(0)
-  .map(e => Math.floor((Math.random() * 129)));
+  .map(e => random);
+
+
 
   client.write(Uint8Array.from(matrix));
 
