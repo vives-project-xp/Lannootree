@@ -1,23 +1,31 @@
 <script>
   import vSelect from "vue-select"
   import 'vue-select/dist/vue-select.css';
+  import { useClientAPIStore } from '@/stores/client.connection';
     export default {
       data() {
         return {
-          assets:["chrismas-tree.gif", "cat.gif", "lannootree-logo.png"]
+          // assets:["chrismas-tree.gif", "cat.gif", "lannootree-logo.png"],
+          selected: "",
+          clientStore: useClientAPIStore()
+
         }
       },
-      components: {
-        vSelect
-      }
+      // components: {
+      //   vSelect
+      // }
     }
     
     </script>
     
     <template>
-        <div class="container">
-          <v-select :options="assets" placeholder="Assets"/>
-    </div>
+
+      <div class="container">
+        <select v-model="selected" @change="clientStore.setAsset(selected)">
+          <option v-for="asset in clientStore.status_json.assets" > {{ asset }}</option>
+        </select>
+        <!-- <v-select :options="assets" placeholder="Assets"/> -->
+      </div>
     </template>
     <style scoped>
       .container{

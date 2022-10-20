@@ -96,6 +96,13 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     };
   };
 
+  const setAsset = function (selectedAsset) {
+    if(websocketactive.value == true) {
+      console.log(selectedAsset)
+      ws.send(JSON.stringify({"asset": selectedAsset }));
+    };
+  };
+
   return {
     color_matrix,
     status_json,
@@ -105,5 +112,6 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     Stop,
     Color,
     setEffect,
+    setAsset,
   };
 });
