@@ -35,24 +35,26 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
       websocketactive.value = true;
     };
 
-    // ws.onmessage = (event) => {
-      
-      // let data = JSON.parse(event.data.toString()).matrix;
-
-      // if(data.hasOwnProperty('matrix')) color_matrix.value = data;
-
-      // if(data.hasOwnProperty('status')){
-      //   status_json.value = data;
-      //   console.log(data)
-      // }       
-    // };
     ws.onmessage = (event) => {
-      let temp = JSON.parse(event.data.toString()).matrix;
+      
+      let data = JSON.parse(event.data.toString());
+
+      if(data.hasOwnProperty('matrix')) color_matrix.value = data.matrix;
+
+      if(data.hasOwnProperty('status')){
+        status_json.value = data;
+        console.log(data);
+      }    
+
+         
+    };
+    // ws.onmessage = (event) => {
+    //   let temp = JSON.parse(event.data.toString()).matrix;
   
       
   
-      color_matrix.value = temp;
-    };
+    //   color_matrix.value = temp;
+    // };
   }
 
   websocketClient();
