@@ -15,6 +15,7 @@ export default class LedDriver {
       [].concat(...ledmatrix).forEach(color => {
         serializedData.push(...color.get_color());
       });
+      serializedData.splice(serializedData.length - (9 * 4 * 3), serializedData.length);
       socket.write(Uint8Array.from(serializedData));
     }
   }
