@@ -41,8 +41,10 @@ const websocket = new WebSocketServer({ port: 3001 });
 websocket.on('connection', (ws, req) => {
     logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
+    ws.send(JSON.stringify(statusJSON));
 
     ws.on("message", data => {
+        
         try {
             data = JSON.parse(data.toString())
             if(data.hasOwnProperty('stop')) {stop();}
@@ -59,7 +61,9 @@ websocket.on('connection', (ws, req) => {
         }
         
     });
-    
+
+
+
     
     ws.on("close", () => {
         logging("INFO: Websocket client disconnected")
@@ -71,6 +75,7 @@ websocket.on('connection', (ws, req) => {
             case "controller/status":
                 try {
                     statusJSON = JSON.parse(message)
+                    ws.send(JSON.stringify(statusJSON));
                 } 
                 catch (error) { 
                     logging("ERROR: MQTT statusJSON invalid"); 
