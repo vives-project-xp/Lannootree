@@ -4,6 +4,8 @@ import { defineStore } from 'pinia';
 export const useClientAPIStore = defineStore('client-api-store', () => {
   
   const color_matrix = ref({});
+  const status_json = ref({});
+
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
 
@@ -14,8 +16,11 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     };
 
     ws.onmessage = (event) => {
-      let temp = JSON.parse(event.data.toString()).matrix;
-      color_matrix.value = temp;
+      let data = JSON.parse(event.data.toString()).matrix;
+
+      if(data.hasOwnProperty('matrix')) color_matrix.value = data;
+      if(data.hasOwnProperty('status')) status_json.value = data;
+
     };
   }
 
