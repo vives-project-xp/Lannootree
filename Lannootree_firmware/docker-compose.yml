@@ -22,7 +22,9 @@ services:
 
   controller:
     build:
-      context: ./controller
+      context: ./controller 
+    env_file:
+      - .env
     restart: always
     volumes:
       - ./config.json:/config.json

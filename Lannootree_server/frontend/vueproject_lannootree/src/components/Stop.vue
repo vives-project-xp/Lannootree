@@ -8,12 +8,6 @@ export default {
     return {
       clientStore: useClientAPIStore(),
     }
-  },
-  methods: {
-    stop() {
-      // console.log("stop")
-      // <Stop/>
-    }
   }
 }
 </script>

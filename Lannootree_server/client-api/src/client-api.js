@@ -99,7 +99,7 @@ function pause() {
 
 function play() {
     logging('INFO: sending play');
-    client.publish('controller/pause', JSON.stringify({"value": "start"}));
+    client.publish('controller/pause', JSON.stringify({"value": "play"}));
 }
 
 function togglepause() {
