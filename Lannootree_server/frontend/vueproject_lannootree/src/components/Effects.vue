@@ -9,8 +9,6 @@
         return {
           selected: "",
           clientStore: useClientAPIStore(),
-          effects:["random_full", "random_each", "Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
-          // json: {  "matrix": {    "rows": 18,    "cols": 18  },  "pause": "false",  "status": "effect",  "fade": true,  "current_effect": null,  "effects": [    "random_full",    "random_each"  ],  "current_asset": null,  "assets": [    "random1.png",    "cat.jpg"  ],  "color": null}
         }
       },
       // components: {
@@ -25,12 +23,11 @@
 
       <select v-model="selected" @change="clientStore.setEffect(selected)">
         <option v-for="effect in clientStore.status_json.effects" > {{ effect }}</option>
-        <!-- <option :value="{effect}" ></option> -->
       </select>
 
     </template>
     <style scoped>
-      .container{
+      .container{ 
         width: 250px;
       }
       :deep() {
