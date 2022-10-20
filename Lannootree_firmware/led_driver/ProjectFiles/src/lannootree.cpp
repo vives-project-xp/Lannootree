@@ -68,22 +68,24 @@ namespace Lannootree {
     };
 
     if ((ca0 || ca1) && (cb0 || cb1)) {
+      throw "Multiple channels are no implemented!";
       // Creation of led controll blocks
       _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
       _controllers.push_back(create_ws2811(config, 11, 9, 10, "CB"));
 
       // Creation of led buffers
-      // if (_controllers.at(0)->channel[0].count)
-      //   _channel_mem["CA0"] = new uint32_t[_controllers.at(0)->channel[0].count]();
+      if (_controllers.at(0)->channel[0].count)
+        _channel_mem["CA0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
 
-      // if (_controllers.at(0)->channel[1].count)
-      //   _channel_mem["CA1"] = new uint32_t[_controllers.at(0)->channel[1].count]();
+      if (_controllers.at(0)->channel[1].count)
+        _channel_mem["CA1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
 
-      // if (_controllers.at(1)->channel[0].count)
-      //   _channel_mem["CB0"] = new uint32_t[_controllers.at(1)->channel[0].count]();
+      if (_controllers.at(1)->channel[0].count)
+        _channel_mem["CB0"] = new LedBuffer(_controllers.at(1)->channel[0].count);
 
-      // if (_controllers.at(1)->channel[1].count)
-      //   _channel_mem["CB1"] = new uint32_t[_controllers.at(1)->channel[1].count]();
+      if (_controllers.at(1)->channel[1].count)
+        _channel_mem["CB1"] = new LedBuffer(_controllers.at(1)->channel[1].count);
+
     }
     else {
       bool isChannelA = (ca0 || ca1);
@@ -95,13 +97,12 @@ namespace Lannootree {
       // Creation of led buffers
       if (_controllers.at(0)->channel[0].count > 0)
         _channel_mem[isChannelA ? "CA0" : "CB0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
-        // _channel_mem[isChannelA ? "CA0" : "CB0"] = new uint32_t[_controllers.at(0)->channel[0].count]();
 
       info_log("ChanA0 led count: " << _controllers.at(0)->channel[0].count);
 
       if (_controllers.at(0)->channel[1].count > 0)
         _channel_mem[isChannelA ? "CA1" : "CB1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
-        // _channel_mem[isChannelA ? "CA1" : "CB1"] = new uint32_t[_controllers.at(0)->channel[1].count]();
+        
     }
 
     // Initialize led control blocks
