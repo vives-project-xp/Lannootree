@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <stdint.h>
+#include <semaphore.hpp>
 #include <cstdint>
 #include <cstring>
 #include <condition_variable>
@@ -32,9 +33,13 @@ namespace Lannootree {
       uint _buffer_size = 0;
 
     private:
+      int writen = 0;
       mutable std::mutex _read_mtx;
       std::mutex _write_mtx;
       std::condition_variable _swaped_buffers;
+
+    private:
+      semaphore _write_sem;
 
   };
 
