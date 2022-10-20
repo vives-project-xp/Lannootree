@@ -1,0 +1,20 @@
+{
+  "name": "controller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/controller.js",
+  "scripts": {
+    "dev": "nodemon src/controller.js",
+    "start": "node src/controller.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "https": "^1.0.0",
+    "mqtt": "^4.3.7",
+    "nodemon": "^2.0.20"
+  },
+  "type": "module"
+}

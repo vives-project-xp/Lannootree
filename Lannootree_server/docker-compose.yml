@@ -149,3 +149,13 @@ services:
       - 'traefik.http.routers.log-parser.entrypoints=websecure'
       - 'traefik.http.routers.log-parser.tls.certresolver=production'
       - 'traefik.http.routers.log-parser.middlewares=authelia@docker'
+
+  controller:
+    build:
+      context: ./controller 
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./config.json:/config.json
+      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
