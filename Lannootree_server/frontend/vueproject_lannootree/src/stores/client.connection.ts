@@ -21,7 +21,8 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     "current_asset": null,
     "assets": [
       "random1.png",
-      "cat.jpg"
+      "cat.jpg",
+      "hallojson.gif"
     ],
     "color": null
   });
@@ -57,15 +58,15 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
 
   websocketClient();
 
-  const Pause = function(notPaused) {
+  const Pause = function(paused) {
     if(websocketactive.value == true) {
-      if(notPaused) {
-        ws.send(JSON.stringify({"play": true}));
-        console.log(notPaused);
+      if(paused) {
+        ws.send(JSON.stringify({"pause": true}));
+        console.log(paused);
       }
       else{
-        ws.send(JSON.stringify({"pause": true}));
-        console.log(notPaused);
+        ws.send(JSON.stringify({"play": true}));
+        console.log(paused);
       }
     }
    
