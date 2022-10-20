@@ -1,7 +1,7 @@
 <script>
   import vSelect from "vue-select"
   import 'vue-select/dist/vue-select.css';
-  import { useClientAPIStore } from '../stores/client.connection';
+  import { useClientAPIStore } from '@/stores/client.connection';
     // Replaced by useClientStore
     // import { Effects } from '@/assets/api-connection.js';
     export default {
@@ -9,7 +9,7 @@
         return {
           selected: "",
           clientStore: useClientAPIStore(),
-          // effects:["random_full", "random_each", "Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
+          effects:["random_full", "random_each", "Twinkle", "DVD", "Snake", "Matrix", "Stars", "Snow", "Glitch", "Flikker","Ocean waves", "Wind"],
           // json: {  "matrix": {    "rows": 18,    "cols": 18  },  "pause": "false",  "status": "effect",  "fade": true,  "current_effect": null,  "effects": [    "random_full",    "random_each"  ],  "current_asset": null,  "assets": [    "random1.png",    "cat.jpg"  ],  "color": null}
         }
       },
@@ -24,9 +24,8 @@
       <div>Selected: </div>
 
       <select v-model="selected" @change="clientStore.setEffect(selected)">
-        <option disabled value="">Please select one</option>
-        <option>random_full</option>
-        <option>random_each</option>
+        <option v-for="effect in clientStore.status_json.effects" > {{ effect }}</option>
+        <!-- <option :value="{effect}" ></option> -->
       </select>
 
     </template>

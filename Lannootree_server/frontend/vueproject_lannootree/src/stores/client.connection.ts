@@ -98,7 +98,8 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
 
   return {
     color_matrix,
-
+    status_json,
+    
     websocketClient,
     Pause,
     Stop,
