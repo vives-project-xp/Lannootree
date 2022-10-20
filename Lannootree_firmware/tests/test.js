@@ -25,10 +25,10 @@ const interval2 = setInterval(() => {
 
   client.write(Uint8Array.from(matrix));
 
-  if (i++ > 240) {
-    console.timeEnd("240 fps");
-    clearInterval(interval2);
-    client.destroy();
-  }
-}, 4);
+  // if (i++ > 60) {
+  //   console.timeEnd("240 fps");
+  //   clearInterval(interval2);
+  //   client.destroy();
+  // }
+}, 100);
 
