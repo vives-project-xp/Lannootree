@@ -22,11 +22,10 @@ services:
 
   controller:
     build:
-      context: ./controller
+      context: ./controller 
+    env_file:
+      - .env
     restart: always
     volumes:
       - ./config.json:/config.json
-      - ./ca.crt/ca.crt:/app/ca.crt
-    depends_on:
-      - cert_downloader
-      - led_driver
+      - ./ca_crt/ca.crt:/app/ca.crt

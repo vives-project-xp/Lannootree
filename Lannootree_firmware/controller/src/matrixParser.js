@@ -4,7 +4,7 @@ export default class MatrixParser {
     var frame_console = "";
     for(var i = 0; i < frame.length; i++) {
       for(var j = 0; j < frame[i].length; j++) {
-        frame_console+=`(${frame[i][j].get_red()},${frame[i][j].get_green()},${frame[i][j].get_blue()})` 
+        frame_console+=`(${frame[i][j].get_red()},${frame[i][j].get_green()},${frame[i][j].get_blue()})`;
       }
       frame_console+="\n";
     }
@@ -17,9 +17,9 @@ export default class MatrixParser {
       frame_json[i] = [];
       for(var j = 0; j < frame[i].length; j++) {
         frame_json[i][j] = new Object();
-        frame_json[i][j].red = frame[i][j].get_red()
-        frame_json[i][j].green = frame[i][j].get_green()
-        frame_json[i][j].blue = frame[i][j].get_blue()
+        frame_json[i][j].red = frame[i][j].get_red();
+        frame_json[i][j].green = frame[i][j].get_green();
+        frame_json[i][j].blue = frame[i][j].get_blue();
       }
     }
     return frame_json;

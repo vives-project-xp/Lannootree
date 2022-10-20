@@ -23,11 +23,16 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
 
   const Pause = function(notPaused) {
     if(websocketactive.value == true) {
-  
-      ws.send(JSON.stringify({"pause": notPaused}));
-      console.log(notPaused);
-  
+      if(notPaused) {
+        ws.send(JSON.stringify({"play": true}));
+        console.log(notPaused);
+      }
+      else{
+        ws.send(JSON.stringify({"pause": true}));
+        console.log(notPaused);
+      }
     }
+   
   };
 
   const Stop = function () {
@@ -48,8 +53,11 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     }
   };
 
-  const Effects = function (selectedEffect) {
-    ws.onopen = () => ws.send("{stop: " + selectedEffect + "}");
+  const setEffect = function (selectedEffect) {
+    if(websocketactive.value == true) {
+      console.log(selectedEffect)
+      ws.send(JSON.stringify({"effect": selectedEffect }));
+    };
   };
 
   return {
@@ -59,6 +67,6 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     Pause,
     Stop,
     Color,
-    Effects,
+    setEffect,
   };
 });

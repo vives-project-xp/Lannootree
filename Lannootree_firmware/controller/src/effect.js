@@ -1,5 +1,4 @@
 import Color from './color.js';
-import MatrixParser  from './matrixParser.js';
 import Fade from './fade.js';
 
 export default class Effect {
@@ -8,7 +7,6 @@ export default class Effect {
   currentmatrix;
   nextmatrix;
   fade_counter = 0;
-  current_frame = 0;
   intervalID = undefined;
 
   constructor(matrixsize) {
@@ -42,6 +40,15 @@ export default class Effect {
     return [rows, cols];
   }
 
+  set_fade(fade) {
+    if(fade) this.fade = true;
+    else this.fade = false;
+  }
+
+  get_fade() {
+    return this.fade;
+  }
+
   generate_matrix(oldmatrix) {
     let newmatrix = Array.from(Array(Math.abs(this.get_matrixsize(oldmatrix)[0])), () => new Array(Math.abs(this.get_matrixsize(oldmatrix)[1])));
     for(var i = 0; i < newmatrix.length; i++) {
@@ -55,22 +62,18 @@ export default class Effect {
   run(speed_modifier) {
     this.stop_interval(); // stops the interval if any is running 
     this.intervalID = setInterval(() => {   // frame-interval
-      if(this.fade == false || this.fade_counter >= 255) {
-        if(this.current_frame >= 255) {
-          this.current_frame = 0;
+      if(this.fade_counter >= 255) {
           this.fade_counter = 0;
           this.nextframe();
           this.previousmatrix = this.generate_matrix(this.currentmatrix);
-        }
       }
-      else {
+      else if (this.fade){
         this.currentmatrix = Fade.calculate_subframe(this.generate_matrix(this.previousmatrix), this.generate_matrix(this.nextmatrix), this.fade_counter);
-        this.fade_counter++;
       }
-      this.current_frame++;
+      this.fade_counter += 15;
       this.previousIntervalID = this.intervalID;
-    }, (Math.round(this.framespeed_ms * speed_modifier)));
-}
+    }, (Math.round(this.framespeed_ms / speed_modifier)));
+  }
 
   stop_interval() {
     clearInterval(this.intervalID);
