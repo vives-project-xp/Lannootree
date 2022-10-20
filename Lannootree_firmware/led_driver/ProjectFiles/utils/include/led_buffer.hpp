@@ -2,6 +2,8 @@
 
 #include <mutex>
 #include <stdint.h>
+#include <cstdint>
+#include <cstring>
 #include <condition_variable>
 
 namespace Lannootree {
@@ -13,14 +15,8 @@ namespace Lannootree {
       ~LedBuffer();
 
     public:
-      void write(size_t idx, uint32_t value);
-      uint32_t const read(size_t idx);
-
-    public:
-      // Not thread safe !
-      uint32_t* get_read_buffer(void) {
-        return (*_current);
-      }
+      void mem_write(uint32_t* data, size_t len);
+      void mem_read(uint32_t* data);
 
     public:
       void swap() noexcept;
@@ -31,6 +27,9 @@ namespace Lannootree {
 
       uint32_t** _next = &_buff0;
       uint32_t** _current = &_buff1;
+
+    private:
+      uint _buffer_size = 0;
 
     private:
       mutable std::mutex _read_mtx;

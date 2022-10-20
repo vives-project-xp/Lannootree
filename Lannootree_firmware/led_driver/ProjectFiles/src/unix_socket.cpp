@@ -70,6 +70,8 @@ namespace Lannootree {
 
       select_ret = select(_socket_fd + 1, &rfds, NULL, NULL, &tv);
 
+      if (select_ret == 0) continue;
+
       if (select_ret == -1) {
         error_log("Error in select");
         continue;
