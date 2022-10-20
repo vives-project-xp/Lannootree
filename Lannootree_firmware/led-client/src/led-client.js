@@ -36,6 +36,7 @@ const client = mqtt.connect(options);
 client.on('connect', function () {
   logging("INFO: mqtt connected");
   client.publish('status/controller', 'Online', {retain: true});
+  client.subscribe("lannootree/out");
 });
 
 client.on('error', function(error) {
@@ -43,7 +44,9 @@ client.on('error', function(error) {
 });
 
 client.on('message', function (topic, message) {
- 
+ if (toppic == "lannootree/out") {
+  leddriver.frame_to_ledcontroller(ledmatrix);
+ }
 });
 
 
