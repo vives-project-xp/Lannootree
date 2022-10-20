@@ -4,6 +4,29 @@ import { defineStore } from 'pinia';
 export const useClientAPIStore = defineStore('client-api-store', () => {
   
   const color_matrix = ref({});
+  const status_json =
+  ref({
+    "matrix": {
+      "rows": 18,
+      "cols": 18
+    },
+    "pause": "false",
+    "status": "effect",
+    "fade": true,
+    "current_effect": null,
+    "effects": [
+      "random_full",
+      "random_each"
+    ],
+    "current_asset": null,
+    "assets": [
+      "random1.png",
+      "cat.jpg",
+      "hallojson.gif"
+    ],
+    "color": null
+  });
+
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
 
@@ -13,23 +36,37 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
       websocketactive.value = true;
     };
 
+    // ws.onmessage = (event) => {
+      
+      // let data = JSON.parse(event.data.toString()).matrix;
+
+      // if(data.hasOwnProperty('matrix')) color_matrix.value = data;
+
+      // if(data.hasOwnProperty('status')){
+      //   status_json.value = data;
+      //   console.log(data)
+      // }       
+    // };
     ws.onmessage = (event) => {
       let temp = JSON.parse(event.data.toString()).matrix;
+  
+      
+  
       color_matrix.value = temp;
     };
   }
 
   websocketClient();
 
-  const Pause = function(notPaused) {
+  const Pause = function(paused) {
     if(websocketactive.value == true) {
-      if(notPaused) {
-        ws.send(JSON.stringify({"play": true}));
-        console.log(notPaused);
+      if(paused) {
+        ws.send(JSON.stringify({"pause": true}));
+        console.log(paused);
       }
       else{
-        ws.send(JSON.stringify({"pause": true}));
-        console.log(notPaused);
+        ws.send(JSON.stringify({"play": true}));
+        console.log(paused);
       }
     }
    
@@ -60,13 +97,22 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     };
   };
 
+  const setAsset = function (selectedAsset) {
+    if(websocketactive.value == true) {
+      console.log(selectedAsset)
+      ws.send(JSON.stringify({"asset": selectedAsset }));
+    };
+  };
+
   return {
     color_matrix,
-
+    status_json,
+    
     websocketClient,
     Pause,
     Stop,
     Color,
     setEffect,
+    setAsset,
   };
 });
