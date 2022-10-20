@@ -2,10 +2,10 @@
   "name": "controller",
   "version": "1.0.0",
   "description": "",
-  "main": "src/controller.js",
+  "main": "src/led-client.js",
   "scripts": {
-    "dev": "nodemon src/controller.js",
-    "start": "node src/controller.js"
+    "dev": "nodemon src/led-client.js",
+    "start": "node src/led-client.js"
   },
   "keywords": [],
   "author": "",
