@@ -4,28 +4,7 @@ import { defineStore } from 'pinia';
 export const useClientAPIStore = defineStore('client-api-store', () => {
   
   const color_matrix = ref({});
-  const status_json =
-  ref({
-    "matrix": {
-      "rows": 18,
-      "cols": 18
-    },
-    "pause": "false",
-    "status": "effect",
-    "fade": true,
-    "current_effect": null,
-    "effects": [
-      "random_full",
-      "random_each"
-    ],
-    "current_asset": null,
-    "assets": [
-      "random1.png",
-      "cat.jpg",
-      "hallojson.gif"
-    ],
-    "color": null
-  });
+  const status_json = ref({});
 
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
