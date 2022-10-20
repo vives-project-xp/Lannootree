@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <stdint.h>
+#include <condition_variable>
 
 namespace Lannootree {
 
@@ -34,6 +35,7 @@ namespace Lannootree {
     private:
       mutable std::mutex _read_mtx;
       std::mutex _write_mtx;
+      std::condition_variable _swaped_buffers;
 
   };
 

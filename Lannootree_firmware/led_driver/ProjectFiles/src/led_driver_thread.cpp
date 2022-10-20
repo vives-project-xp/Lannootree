@@ -24,13 +24,8 @@ namespace Lannootree {
         info_log("Adding panel");
         info_log("Col: " << coordinate["col"] << " Row: " << coordinate["row"]);
 
-        auto& [t_offset, t_mem] = _matrix->get_value((int) coordinate["col"], (int) coordinate["row"]);
-
-        t_offset = offset + PANEL_LED_COUNT;
-        t_mem = _channel_mem[channel["channel"]];
-        // std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint)(offset * PANEL_LED_COUNT);
-        // std::get<1>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint32_t*)(_channel_mem.at(current["channel"]));
-
+        std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint)(offset * PANEL_LED_COUNT);
+        std::get<1>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)) = (uint32_t*)(_channel_mem.at(current["channel"]));
 
         info_log(current["channel"] << " Memory address: " << _channel_mem.at(current["channel"]));
         info_log("Offset in matrix: " << std::get<0>(_matrix->get_value((int) coordinate["col"] - 1, (int) coordinate["row"] - 1)));
@@ -71,18 +66,21 @@ namespace Lannootree {
     int ret;
 
     while (_running) {
-      for (auto controller : _controllers) {
+
+      for (auto c : _controllers) {
+
         for (int i = 0; i < (72 * 4); i++) {
-          controller->channel[0].leds[i] = _channel_mem.at("CA0")[i];
+          info_log("Adding: " << _channel_mem.at("CA0")[i]);
+          c->channel[0].leds[i] = _channel_mem.at("CA0")[i];
         }
-        
-        if ((ret = ws2811_render(controller, [](void* arg){}, this)) != WS2811_SUCCESS) {
+
+        if ((ret = ws2811_render(c, [](void* arg){  }, this)) != WS2811_SUCCESS) {
           std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
           error_log("Failed to render " << error);
         }
+      }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(4));
-      }      
+      std::this_thread::sleep_for(std::chrono::milliseconds(4));
     }
   }
 
