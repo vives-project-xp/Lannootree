@@ -22,15 +22,14 @@
     </script>
     
     <template>
-  
-      <div>Selected: </div>
 
+      <div>Selected: </div>
       <select v-model="selected" @change="clientStore.setEffect(selected)">
         <option disabled value="">Please select one</option>
         <option>random_full</option>
         <option>random_each</option>
       </select>
-
+      
     </template>
     <style scoped>
       .container{
