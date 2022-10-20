@@ -3,8 +3,8 @@
 namespace Lannootree {
 
   LedBuffer::LedBuffer(unsigned int buffer_size) : _buffer_size(buffer_size) {
-    _buff0 = new uint32_t[buffer_size];
-    _buff1 = new uint32_t[buffer_size];
+    _buff0 = new uint32_t[buffer_size]();
+    _buff1 = new uint32_t[buffer_size]();
   }
 
   LedBuffer::~LedBuffer() {
@@ -15,7 +15,6 @@ namespace Lannootree {
   void LedBuffer::mem_write(uint32_t* data, size_t len) {
     std::unique_lock lock(_write_mtx);
     _write_sem.release();
-    // writen++;
     _swaped_buffers.wait(lock);
     std::memcpy(*_next, data, len);
   }
@@ -23,8 +22,6 @@ namespace Lannootree {
   void LedBuffer::mem_read(uint32_t* data) {
     std::unique_lock lock(_read_mtx);
     _write_sem.acquire();
-    // while (writen == 0) {}; // Block
-    // writen--;
     std::memcpy(data, *_current, _buffer_size * sizeof(uint32_t));
   }
 
