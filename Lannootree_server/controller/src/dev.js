@@ -16,8 +16,6 @@ export default class DevCheck extends EventEmitter{
     Update(status) {
         status = status.toString();
         if (this.production_server && status != this.previous_status) {
-            console.log(status);
-            console.log(this.previous_status);
 
             this.previous_status = status;
             if (status == "Offline" && this.controllerStatus != "Online") {
