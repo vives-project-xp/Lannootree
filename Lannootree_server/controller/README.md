@@ -38,7 +38,7 @@ client.publish('controller/fade', JSON.stringify({"fade": true}));
 
 ```json
 {
-  "matrix": {
+  "matrix_size": {
     "rows": 18,
     "cols": 18
   },
