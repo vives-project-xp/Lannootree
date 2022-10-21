@@ -3,7 +3,7 @@
   import Panel from '@/components/Panel.vue'
   import { notify } from '@kyvg/vue3-notification'
   import { usePanelGrid } from '@/stores/PanelGrid'
-import { useBase64 } from '@vueuse/core';
+  import { useBase64 } from '@vueuse/core';
 
   const _fun_ = ref(false);
   const fun = "\r\n\u2500\u2500\u2500\u2500\u2500\u2500\u2584\u258C\u2590\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u258C\r\n\u2500\u2500\u2500\u2584\u2584\u2588\u2588\u258C\u2588 BEEP BEEP\r\n\u2584\u2584\u2584\u258C\u2590\u2588\u2588\u258C\u2588 The nerd truck\r\n\u2588\u2588\u2588\u2588\u2588\u2588\u2588\u258C\u2588\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u2584\u258C\r\n\u2580(\u2299)\u2580\u2580\u2580\u2580\u2580\u2580\u2580(\u2299)(\u2299)\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580\u2580(\u2299";
@@ -97,7 +97,7 @@ import { useBase64 } from '@vueuse/core';
       <v-col col="12" class="d-flex align-center justify-center">
         <!-- TODO: Make this an other component -->
         <!-- <div class="json_display" @click="copyToClipboard" :style="validConfig ? { cursor: 'copy' } : { cursor: 'not-allowed' }"> -->
-        <div class="json_display" @click="_fun_ = !_fun_">
+        <div class="json_display" @click.ctrl="_fun_ = !_fun_">
             <pre v-highlightjs v-if="!_fun_">
               <code class="javascript" style="border-radius: 25px">{{ panelStore.toJson }}</code>
             </pre>
