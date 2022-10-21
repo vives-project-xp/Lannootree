@@ -16,10 +16,10 @@ var production_server = process.env.PRODUCTION_SERVER
 const developement_time = process.env.CONTROLLER_DEV_SECONDS;
 
 
-var statusTopic = "status/controller";
+var instanceName = "controller";
 if (typeof production_server == 'undefined') {
   production_server = false;
-  statusTopic = "status/controller-dev";
+  instanceName = "controller-dev";
 }
 const devCheck = new DevCheck(production_server, developement_time);
 
@@ -33,7 +33,7 @@ var options = {
   rejectUnauthorized : true,
   ca:caFile,
   will: {
-      topic: statusTopic,
+      topic: "status/" + instanceName,
       payload: "Offline",
       retain: true
   }
@@ -58,13 +58,13 @@ client.on('connect', function () {
     topics.forEach(topic => {
       client.subscribe(topic);
     });
-    client.publish(statusTopic, 'Online', {retain: true});
+    client.publish("status/" + instanceName, 'Online', {retain: true});
     logging("INFO: controller started")
     sendStatus();
   });
   
   devCheck.on('sleep', () => {
-    client.publish(statusTopic, 'Sleep', {retain: true});
+    client.publish("status/" + instanceName, 'Sleep', {retain: true});
     topics.forEach(topic => {
       client.unsubscribe(topic);
     });
@@ -72,7 +72,7 @@ client.on('connect', function () {
   });
   
   devCheck.on('timer', () => {
-    client.publish(statusTopic, 'Starting', {retain: true});
+    client.publish("status/" + instanceName, 'Starting', {retain: true});
     logging(`INFO: dev controller went offline, starting in ${developement_time} seconds`)
   });
 
@@ -264,7 +264,7 @@ setInterval(() => {PushMatrix_frontend()}, (Math.round(1000/frontend_framerate))
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
     console.log(message);
-    client.publish('logs/controller', message);
+    client.publish('logs/' + instanceName, message);
   }
   else if(msgdebug && debug) {
     console.log(message);
@@ -272,7 +272,7 @@ function logging(message, msgdebug = false) {
 }
 
 function crashApp(message) {
-  client.publish('logs/controller', 'FATAL: ' + message, (error) => {
+  client.publish('logs/' + instanceName, 'FATAL: ' + message, (error) => {
     process.exit(1);
   })
 }
