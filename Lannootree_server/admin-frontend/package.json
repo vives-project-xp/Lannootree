@@ -1,13 +1,13 @@
 {
-  "name": "lannootree_config",
+  "name": "admin-vuetify-frontend",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "run-p type-check build-only",
-    "preview": "vite preview --port 4173",
+    "serve": "vite preview",
+    "build": "vite build",
     "build-only": "vite build",
-    "type-check": "vue-tsc --noEmit",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore"
+    "dev": "vite",
+    "preview": "vite preview --port 4173",
+    "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
     "@formkit/auto-animate": "^1.0.0-beta.3",
@@ -16,24 +16,27 @@
     "@fortawesome/free-regular-svg-icons": "^6.2.0",
     "@fortawesome/free-solid-svg-icons": "^6.2.0",
     "@fortawesome/vue-fontawesome": "^3.0.1",
+    "vue3-highlightjs": "^1.0.5",
     "@kyvg/vue3-notification": "^2.4.1",
     "@vueuse/core": "^9.3.0",
-    "bootstrap": "^5.2.2",
-    "pinia": "^2.0.23",
+    "@mdi/font": "5.9.55",
+    "pinia": "^2.0.21",
+    "roboto-fontface": "*",
     "vue": "^3.2.38",
-    "vue3-highlightjs": "^1.0.5"
+    "vue-router": "^4.1.5",
+    "vuetify": "^3.0.0-beta.0",
+    "webfontloader": "^1.0.0"
   },
   "devDependencies": {
-    "@rushstack/eslint-patch": "^1.1.4",
     "@types/node": "^16.11.56",
+    "@types/webfontloader": "^1.0.0",
     "@vitejs/plugin-vue": "^3.0.3",
-    "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/tsconfig": "^0.1.3",
-    "eslint": "^8.22.0",
-    "eslint-plugin-vue": "^9.3.0",
     "npm-run-all": "^4.1.5",
     "typescript": "~4.7.4",
     "vite": "^3.0.9",
+    "vite-plugin-vuetify": "^1.0.0-alpha.12",
+    "vue-cli-plugin-vuetify": "~2.5.8",
     "vue-tsc": "^0.40.7"
   }
 }
