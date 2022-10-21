@@ -46,15 +46,10 @@
     return (p_panel.value !== null && p_panel.value !== undefined) ? true : false;
   });
 
-  const test = function () {
-    console.log("Test")
-  }
-
 </script>
 
 <template>
   <v-sheet :style="panelStyle" :class="p_panel === null ? 'cell' : ''" @click="!hasPanel ? panelStore.addPanel(props.coordinate) : ''">
-    
     <v-menu transition="scale-transform" v-if="p_panel !== null">
 
       <template v-slot:activator="{ props }">
@@ -71,50 +66,14 @@
         <v-list-item
           v-for="chan in panelStore.channels"
           :key="chan.shortName"
-          @click="test"
+          @click="panelStore.changeChannel(props.coordinate, chan.shortName)"
         >
           {{ chan.name }}
         </v-list-item>
       </v-list>
 
     </v-menu>
-    
-    <!-- <div v-if="p_panel !== null" class="dropdown">
-      <button class="btn btn-secondary dropdown-toggle button" 
-              type="button" 
-              id="dropdownMenuButton" 
-              data-bs-toggle="dropdown" 
-              aria-expanded="false">
-        <font-awesome-icon icon="fa-regular fa-list-alt"/>
-      </button> -->
-
-      <!-- <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton" v-show="hasPanel ? !p_panel.disabled : false">
-        * Channel submenu *
-        <li>
-          <a class="dropdown-item" href="#">Channel &raquo;</a>
-
-          <ul class="dropdown-menu dropdown-menu-dark dropdown-submenu">
-            <li v-for="chan in panelStore.channels" :key="chan.shortName">
-              <a v-if="hasPanel ? p_panel.channel != chan.shortName : true" class="dropdown-item" href="#" @click="hasPanel ? panelStore.changeChannel(props.coordinate, chan.shortName) : ''">
-                {{ chan.name }}
-              </a>
-            </li>
-          </ul>
-        </li> -->
-
-        <!--* Connection submenu *-->
-        <!-- <li v-if="p_panel.channel !== null && p_panel.connection === null">
-          <a class="dropdown-item" href="#" v-if="!channelHasHead" @click="setHead">
-            Use as head
-          </a>
-          <a class="dropdown-item" href="#" v-if="props.cell.canConnect" @click="emit('createConnection', props.cell)">
-            Add connection
-          </a>
-        </li> -->
-      <!-- </ul> -->
-    <!-- </div> -->
   </v-sheet>
-  
 </template>
 
 <style scoped>
