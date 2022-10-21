@@ -90,6 +90,8 @@ client.on('message', function (topic, message) {
   } catch (error) {
     data = message;
   }
+  
+
   switch (topic) {
     case "status/controller-dev": devCheck.Update(data); break;
     case "controller/pause": pause(data.value); break;
@@ -103,6 +105,9 @@ client.on('message', function (topic, message) {
       logging("WARNING: overwriting old json config file");
       updateMatrixFromFile();
       break;
+  }
+  if (topic == "status/" + instanceName  && message == "restart") {
+    crashApp("restarted via mqtt command");
   }
 });
 
@@ -272,6 +277,7 @@ function logging(message, msgdebug = false) {
 }
 
 function crashApp(message) {
+  console.log('FATAL: ' + message);
   client.publish('logs/' + instanceName, 'FATAL: ' + message, (error) => {
     process.exit(1);
   })
