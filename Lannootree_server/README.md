@@ -15,10 +15,6 @@
 Mosquitto needs certificates for SSL-TLS and for each client to connect securely.
 Follow [this guide](mqtt/README.md) in the mqtt directory.
 
-### asset processor
-
-This is a seperate docker-compose file. Because it can run on a different server with more power.
-
 ## Deploy all containers
 
 ```

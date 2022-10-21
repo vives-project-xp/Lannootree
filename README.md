@@ -9,6 +9,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 ## installation
 
 - [Server](Lannootree_server/README.md)
+- [Firmware](Lannootree_processor/README.md)
 - [Firmware](Lannootree_firmware/README.md)
 
 ## Docker structure:
