@@ -2,7 +2,6 @@ import Color from './color.js';
 import EffectManager from "./effect_manager/effect_manager.js";
 import JsonGenerator from "./json_generator.js"
 import MatrixParser  from './matrixParser.js';
-import LedDriver from './led-driver.js';
 
 import mqtt from "mqtt";
 import fs from "fs";
@@ -10,12 +9,8 @@ import dotenv from "dotenv";
 dotenv.config({ path: '../.env' });
 
 const debug = false;
-const leddriver_connection = false;
 const framerate = process.env.CONTROLLER_FRAMERATE;
 const frontend_framerate = process.env.CONTROLLER_FRONTEND_FRAMERATE;
-
-// Socket client
-const leddriver = new LedDriver(leddriver_connection);
 
 // MQTT______________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
@@ -212,7 +207,6 @@ function PushMatrix() {
     default:
       break;
   }
-  leddriver.frame_to_ledcontroller(ledmatrix);
   logging(MatrixParser.frame_to_string(ledmatrix), true);
 }
 
