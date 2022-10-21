@@ -1,4 +1,4 @@
-import Color from '../color.js';
+import Color from '../../color.js';
 import Effect from '../effect.js';
 
 export default class Strobe extends Effect {

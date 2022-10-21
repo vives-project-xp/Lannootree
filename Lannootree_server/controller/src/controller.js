@@ -1,5 +1,5 @@
 import Color from './color.js';
-import EffectManager from "./effect_manager.js";
+import EffectManager from "./effect_manager/effect_manager.js";
 import JsonGenerator from "./json_generator.js"
 import MatrixParser  from './matrixParser.js';
 import LedDriver from './led-driver.js';
@@ -12,7 +12,7 @@ dotenv.config({ path: '../.env' });
 const debug = false;
 const leddriver_connection = false;
 const framerate = 30;
-const frontend_framerate = 1;
+const frontend_framerate = 10;
 
 // Socket client
 const leddriver = new LedDriver(leddriver_connection);
