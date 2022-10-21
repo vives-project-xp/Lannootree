@@ -12,7 +12,7 @@ dotenv.config({ path: '../.env' });
 const debug = false;
 const leddriver_connection = false;
 const framerate = 30;
-const frontend_framerate = 10;
+const frontend_framerate = 40;
 
 // Socket client
 const leddriver = new LedDriver(leddriver_connection);

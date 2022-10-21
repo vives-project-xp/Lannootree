@@ -1,6 +1,6 @@
 import Color from './color.js';
 import MatrixParser  from './matrixParser.js';
-import LedDriver from './led-driver.js';
+import LedDriver from './driver-connection.js';
 
 import mqtt from "mqtt";
 import fs from "fs";

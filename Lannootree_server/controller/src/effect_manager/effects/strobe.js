@@ -4,7 +4,7 @@ import Effect from '../effect.js';
 export default class Strobe extends Effect {
 
   fade = false;
-  framespeed_ms = 2;
+  framespeed_ms = 1;
   iSOn = false;
 
   nextframe() {

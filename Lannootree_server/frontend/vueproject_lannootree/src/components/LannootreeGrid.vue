@@ -38,8 +38,7 @@
 
     <style scoped>
         .lannootree-display table,  .lannootree-display td,  .lannootree-display tr{
-            border: 1px solid;
-            border-color: white;
+            border: none;
             
         border-collapse: collapse;
         }
