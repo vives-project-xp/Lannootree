@@ -158,6 +158,8 @@ services:
       context: ./controller 
     env_file:
       - .env
+    environment:
+      - PRODUCTION_SERVER=true
     restart: always
     volumes:
       - ./config.json:/config.json
