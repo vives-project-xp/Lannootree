@@ -9,7 +9,7 @@ export default class JsonGenerator {
     if (status == "color") active_color = activeData;
 
     return {
-      "matrix": {
+      "matrix_size": {
         "rows": matrixsize[0],
         "cols": matrixsize[1]
       },
