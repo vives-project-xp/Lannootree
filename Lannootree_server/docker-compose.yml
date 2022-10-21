@@ -12,6 +12,7 @@ services:
 
   certificate-api:
     image: "nginx:alpine"
+    restart: always
     volumes:
       - "./mqtt/config/ca_certificates/ca.crt:/usr/share/nginx/html/ca.crt:ro"
     labels:
@@ -23,6 +24,7 @@ services:
 
   traefik:
     image: "traefik:v2.9"
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -58,6 +60,7 @@ services:
 
   whoami:
     image: "traefik/whoami"
+    restart: always
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.whoami.rule=Host(`whoami.lannootree.devbitapp.be`) || (Host(`lannootree.devbitapp.be`) && PathPrefix(`/whoami`))'

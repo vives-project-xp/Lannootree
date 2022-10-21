@@ -1,6 +1,6 @@
 import RandomEach from './effects/random_each.js';
 import RandomFull from './effects/random_full.js';
-import RandomFull from './effects/strobe.js';
+import Strobe from './effects/strobe.js';
 
 export default class EffectManager {
 
