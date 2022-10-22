@@ -10,20 +10,18 @@
           clientStore: useClientAPIStore(),
         }
       },
-      // components: {
-      //   vSelect
-      // }
+      components: {
+        vSelect
+      }
     }
     </script>
     
     <template>
-
-      <select v-model="clientStore.status_json.current_effect" @change="clientStore.setEffect(clientStore.status_json.current_effect)">
-        <option v-for="effect in clientStore.status_json.effects" > {{ effect }}</option>
-        
-      </select>
-      
+      <div class="container">
+        <v-select v-model="clientStore.status_json.current_effect" @option:selected="clientStore.setEffect(clientStore.status_json.current_effect)" :options="clientStore.status_json.effects" placeholder="Effects"/>
+      </div>
     </template>
+    
     <style scoped>
       .container{ 
         width: 250px;

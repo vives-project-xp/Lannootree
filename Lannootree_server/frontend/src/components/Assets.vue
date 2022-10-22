@@ -10,22 +10,18 @@
 
         }
       },
-      // components: {
-      //   vSelect
-      // }
+      components: {
+        vSelect
+      }
     }
-    
     </script>
-    
-    <template>
 
+     <template>
       <div class="container">
-        <select v-model="clientStore.status_json.current_asset" @change="clientStore.setAsset(clientStore.status_json.current_asset)">
-          <option v-for="asset in clientStore.status_json.assets" > {{ asset }}</option>
-        </select>
-        <!-- <v-select :options="assets" placeholder="Assets"/> -->
+        <v-select v-model="clientStore.status_json.current_asset" @option:selected="clientStore.setAsset(clientStore.status_json.current_asset)" :options="clientStore.status_json.assets" placeholder="Assets"/>
       </div>
     </template>
+    
     <style scoped>
       .container{
         width: 250px;
