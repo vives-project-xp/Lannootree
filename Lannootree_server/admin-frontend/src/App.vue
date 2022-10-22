@@ -1,19 +1,35 @@
 <script setup lang="ts">
-  import { ref, watch } from 'vue'
+  import { computed, ref, watch } from 'vue'
+  import { useUserStore }  from '@/stores/UserInfo'
 
   const drawer = ref(false);
   const group = ref(null);
 
-  const items = [
-    {
-      title: 'ConfigPanel',
-      value: 'config'
-    },
-    {
-      title: 'LogPanel',
-      value: 'logging'
-    }
-  ];
+  const userInfo = useUserStore();
+
+  
+  const items = computed(() => {    
+    const _routes = [
+      {
+        title: 'ConfigPanel',
+        value: 'config',
+        group: 'admins'
+      },
+      {
+        title: 'LogPanel',
+        value: 'logging',
+        group: 'admins'
+      }
+    ];
+    
+    let routes: { title: string, value: string, group: string }[] = [];
+
+    (userInfo.userGroups as string[]).forEach(group => {
+      routes.push(..._routes.filter(obj => obj.group == group));
+    });
+    
+    return routes;
+  });
 
   watch(group, () => {
     drawer.value = false;
@@ -25,24 +41,31 @@
   <v-app>
     <v-app-bar app color="grey-darken-3">
       <template v-slot:prepend>
-        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" ></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
       </template>
 
-      <v-app-bar-title>Lanootree admin page</v-app-bar-title>
+      <v-app-bar-title>Lannootree</v-app-bar-title>
       
-      <v-btn to="/">
-        <v-icon>mdi-home</v-icon>
-      </v-btn>
-      
-      <v-btn href="https://github.com/vives-project-xp/Lannootree">
-        <v-icon>mdi-github</v-icon>
-      </v-btn>
+      <v-spacer></v-spacer>
+
+      <div
+        v-for="sub in items"
+        :key="sub.value"
+        class="hidden-sm-and-down"
+        >
+        <v-btn
+          :to="sub.value"
+        >
+          {{ sub.title }}
+        </v-btn>
+      </div>
     </v-app-bar>
 
     <v-navigation-drawer 
       v-model="drawer"
       bottom
       temporary
+      class="hidden-md-and-up"
     >
       <v-list>
         <v-list-item
@@ -57,13 +80,45 @@
 
     <v-main>
       <v-container fluid>
-        <router-view></router-view>
+        <router-view v-slot="{ Component }">
+
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+
+        </router-view>
       </v-container>
     </v-main>
 
-    <!-- <v-footer app>
-      
-    </v-footer> -->
+    <v-footer app
+      class="bg-grey-darken-3 text-center d-flex flex-column"
+    >
+      <div>
+        <v-btn
+          class="mx-4"
+          icon="mdi-github"
+          variant="text"
+          href="https://github.com/vives-project-xp/Lannootree"
+        ></v-btn>
+      </div>
+
+      <v-divider></v-divider>
+
+      <div>
+        Lannootree project - {{ new Date().getFullYear() }}
+      </div>
+    </v-footer>
   </v-app>
 </template>
 
+<style scoped>
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s ease-out;
+  }
+</style>

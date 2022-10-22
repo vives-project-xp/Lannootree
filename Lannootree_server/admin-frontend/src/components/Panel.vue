@@ -27,9 +27,6 @@
       'place-items': 'center',
       'background-color': p_panel.value !== null ? 'white' : 'grey',
     }
-    
-    console.log(p_panel.value);
-    
 
     if (p_panel.value !== null && p_panel.value !== undefined) {
       // TODO: make colors more pretty i'm not a visual designer xp
