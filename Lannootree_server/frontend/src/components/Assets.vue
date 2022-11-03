@@ -21,7 +21,7 @@
 
       <div class="container">
         <select v-model="clientStore.status_json.current_asset" @change="clientStore.setAsset(clientStore.status_json.current_asset)">
-          <option v-for="asset in clientStore.status_json.assets" > {{ asset }}</option>
+          <option v-for="(asset, i) in clientStore.status_json.assets" :key="`opt${i}`"> {{ asset }}</option>
         </select>
         <!-- <v-select :options="assets" placeholder="Assets"/> -->
       </div>

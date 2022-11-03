@@ -2,8 +2,9 @@
   import { toRefs } from 'vue';
   import type { PropType } from 'vue'
   import { ref, computed, watch } from 'vue'
-  import type { Panel, Coordinate } from '@/assets/Panel';
+  import { useMouseInElement } from '@vueuse/core'
   import { usePanelGrid } from '@/stores/PanelGrid'
+  import type { Panel, Coordinate } from '@/assets/Panel'
 
   const panelStore = usePanelGrid();
 
@@ -13,6 +14,11 @@
      required: true, 
     }
   });
+
+  const target = ref(null);
+
+  const { elementX, elementY, isOutside, elementHeight, elementWidth } =
+    useMouseInElement(target);
 
   const p_panel = computed(() => {
     return panelStore.panels.getValue(props.coordinate.col, props.coordinate.row);
@@ -43,25 +49,64 @@
     return (p_panel.value !== null && p_panel.value !== undefined) ? true : false;
   });
 
+  const panelTransform = computed(() => {
+    const MAX_ROTATION = 8;
+
+    const rX = (
+      MAX_ROTATION / 2 -
+      (elementY.value / elementHeight.value) * MAX_ROTATION
+    ).toFixed(2);
+
+    const rY = (
+      (elementX.value / elementWidth.value) * MAX_ROTATION -
+      MAX_ROTATION / 2 
+    ).toFixed(2);
+
+    return isOutside.value 
+    ? '' 
+    : `perspective(${elementWidth.value}px) rotateX(${rX}deg) rotateY(${rY}deg)`;
+  });
+
+  const channelFilter = function() {
+    if (panelStore.panels.getValue(props.coordinate.col, props.coordinate.row) === null) return [];
+    let this_panel = panelStore.panels.getValue(props.coordinate.col, props.coordinate.row);
+    let copy_channel: { name: string, shortName: string }[] = JSON.parse(JSON.stringify(panelStore.channels))
+    
+    copy_channel.splice(copy_channel.findIndex(c => c.shortName == this_panel?.channel), 1);
+    
+    return copy_channel;
+  }
+
 </script>
 
 <template>
-  <v-sheet :style="panelStyle" :class="p_panel === null ? 'cell' : ''" @click="!hasPanel ? panelStore.addPanel(props.coordinate) : ''">
-    <v-menu transition="scale-transform" v-if="p_panel !== null">
+  <v-sheet 
+    ref="target"
+    :style="panelStyle" 
+    class="rounded-lg border"
+    :class="p_panel !== null ? 'selected' : 'unselected'" 
+    :elevation="p_panel !== null ? 9 : 0"
+    @click="hasPanel ? null : panelStore.addPanel(props.coordinate)"
+  >
+    <v-menu 
+      v-if="p_panel !== null"
+      transition="scale-transform" 
+    >
 
-      <template v-slot:activator="{ props }">
+      <template 
+        v-slot:activator="{ props }"
+      >
         <v-btn
           color="grey-darken-2"
           v-bind="props"
           icon="mdi-cog"
           size="small"
-          >
-        </v-btn>
+          ></v-btn>
       </template>
 
       <v-list>
         <v-list-item
-          v-for="chan in panelStore.channels"
+          v-for="chan in channelFilter()"
           :key="chan.shortName"
           @click="panelStore.changeChannel(props.coordinate, chan.shortName)"
         >
@@ -70,40 +115,43 @@
       </v-list>
 
     </v-menu>
+
   </v-sheet>
 </template>
 
 <style scoped>
-  .cell:hover {
-    transform: scale(0.90, 0.90);
+  .selected {
+    transform: v-bind(panelTransform);
+    transition: transform 0.25s ease-out;
+    transform-style: preserve-3d;
   }
 
-  .dropdown-toggle::after {
-    display: none;
+  .unselected {
+    animation: reverse-select 0.5s forwards;
   }
 
-  .button {
-    border: none;
-    color: black;
+  .unselected:hover {
+    animation: select 0.5s forwards;
   }
 
-  .dropdown-menu li {
-    position: relative;
+
+  @keyframes select {
+    from {
+      transform: scale(1);
+    }
+    to {
+      transform: scale(0.9);
+      background-color: v-bind(panelStore.channelToColor(panelStore.currentChannel)); 
+    }
   }
 
-  .dropdown-menu .dropdown-submenu {
-    display: none;
-    position: absolute;
-    left: 100%;
-    top: -7px;
-  }
-
-  .dropdown-menu .dropdown-submenu-left {
-    right: 100%;
-    left: auto;
-  }
-
-  .dropdown-menu > li:hover > .dropdown-submenu {
-    display: block;
+  @keyframes reverse-select {
+    from {
+      transform: scale(0.9);
+      background-color: v-bind(panelStore.channelToColor(panelStore.currentChannel)); 
+    }
+    to {
+      transform: scale(1);
+    }
   }
 </style>

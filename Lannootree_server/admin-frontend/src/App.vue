@@ -79,7 +79,7 @@
     </v-navigation-drawer>
 
     <v-main>
-      <v-container fluid>
+      <v-container class="fill-height" fluid>
         <router-view v-slot="{ Component }">
 
           <transition name="fade" mode="out-in">

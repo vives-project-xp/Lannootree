@@ -99,18 +99,34 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     return JSON.stringify(obj, null, 2);
   });
   
+  const changeableChannels = computed(() => {
+    let filter: { name: string, shortName: string}[] = [];
+    channels.forEach((chan: { name: string, shortName: string}) => {
+      if (chan.shortName !== currentChannel.value) filter.push(chan);
+    });
+    
+    return filter;
+  });
+
+  const channelToColor = function (channel: string) {
+    if (channel === 'CA0') return 'red';
+    if (channel === 'CA1') return 'green';
+    if (channel === 'CB0') return 'blue';
+    if (channel === 'CB1') return 'yellow';
+  }
+
   return { 
     // Ref & computed
     panels,
-    // rowCount,
-    // colCount,
     totalPanels,
     channels,
     currentChannel,
+    changeableChannels,
 
     // Methods 
     addPanel,
     changeChannel, 
+    channelToColor,
     toJson,
   };
 
