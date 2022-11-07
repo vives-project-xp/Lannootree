@@ -1,12 +1,14 @@
 <script setup lang="ts">
-  import { toRefs } from 'vue';
   import type { PropType } from 'vue'
+  import type { Coordinate } from '@/assets/Panel'
+
   import { ref, computed, watch } from 'vue'
   import { useMouseInElement } from '@vueuse/core'
   import { usePanelGrid } from '@/stores/PanelGrid'
-  import type { Panel, Coordinate } from '@/assets/Panel'
+  import { useDisplayOptions } from '@/stores/DisplayOptions'
 
   const panelStore = usePanelGrid();
+  const display_options = useDisplayOptions();
 
   const props = defineProps({
     coordinate: {
@@ -61,6 +63,8 @@
       (elementX.value / elementWidth.value) * MAX_ROTATION -
       MAX_ROTATION / 2 
     ).toFixed(2);
+
+    if (!display_options.options.effect_3d) return '';
 
     return isOutside.value 
     ? '' 
