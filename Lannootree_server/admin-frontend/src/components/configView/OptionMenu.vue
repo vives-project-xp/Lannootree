@@ -1,24 +1,11 @@
 <script setup lang="ts">
-  import { computed, ref } from 'vue'
-  import type { DisplayOptions } from '@/assets/DisplayOptions'
+  import { ref } from 'vue'
   import { usePanelGrid } from '@/stores/PanelGrid';
-
-  const props = defineProps({
-    modelValue: {
-      type: Object,
-      required: true
-    }
-  });
+  import { useDisplayOptions } from '@/stores/DisplayOptions';
 
   const tab = ref(null);
   const panelStore =  usePanelGrid();
-
-  const emit = defineEmits(['update:modelValue']);
-
-  const display_options: DisplayOptions = computed({
-    get: () => props.modelValue as DisplayOptions,
-    set: (value) => emit('update:modelValue', value),
-  });
+  const display_options = useDisplayOptions();
 
 </script>
 
@@ -87,14 +74,14 @@
                 label="3d-effect" 
                 class="ml-3 mr-3"
                 color="green"
-                v-model="display_options.effect_3d"
+                v-model="display_options.options.effect_3d"
                 />
 
                 <v-switch 
                 label="show json" 
                 class="ml-3 mr-3"
                 color="green"
-                v-model="display_options.show_json"
+                v-model="display_options.options.show_json"
                 />
               </v-col>
             </v-row>
