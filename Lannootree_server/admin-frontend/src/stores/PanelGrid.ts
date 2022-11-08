@@ -68,14 +68,6 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     },
   ];
 
-  const changeChannel = function(coordinate: Coordinate, channel: string) {
-    let panel = panels.value.getValue(coordinate.col, coordinate.row);
-
-    if (panel !== null && panel !== undefined) {
-      panel.channel = channel;    
-    }
-  }
-
   const changeableChannels = computed(() => {
     let filter: { name: string, shortName: string}[] = [];
     channels.forEach((chan: { name: string, shortName: string}) => {
@@ -84,6 +76,14 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     
     return filter;
   });
+
+  const changeChannel = function(coordinate: Coordinate, channel: string) {
+    let panel = panels.value.getValue(coordinate.col, coordinate.row);
+
+    if (panel !== null && panel !== undefined) {
+      panel.channel = channel;    
+    }
+  }
 
   const channelToColor = function (channel: string) {
     if (channel === 'CA0') return 'red';
@@ -126,13 +126,14 @@ export const usePanelGrid = defineStore('panel-grid', () => {
   return { 
     panels,
     totalPanels,
-    channels,
-    currentChannel,
-    changeableChannels,
-
     addPanel,
+
+    currentChannel,
+    channels,
+    changeableChannels,
     changeChannel, 
     channelToColor,
+
     toJson,
   };
 

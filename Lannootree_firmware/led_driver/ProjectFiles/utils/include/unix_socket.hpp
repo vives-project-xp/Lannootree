@@ -1,15 +1,20 @@
 #pragma once
 
+#include <string>
+#include <thread>
+#include <chrono>
+#include <fstream>
+#include <iostream>
 #include <fcntl.h>
 #include <unistd.h>
+
+#include <vector>
 
 #include <sys/un.h>
 #include <sys/socket.h>
 #include <sys/select.h>
 
-#include <matrix.hpp>
 #include <i_thread_object.hpp>
-#include <lannootree_config.hpp>
 
 namespace Lannootree {
 
@@ -29,12 +34,16 @@ namespace Lannootree {
     public:
       void send_data(uint8_t* data, size_t data_len);
 
+    public:
+      bool client_connected(void) { return _current_sock_fd != 0; };
+
     private:
       void recv_loop(void);
 
     private:
       std::thread _t;
       bool _running = false;
+      std::vector<uint8_t> _buffer;
 
     private:
       int _socket_fd = 0;

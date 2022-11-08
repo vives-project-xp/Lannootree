@@ -7,6 +7,7 @@
 
 #include <lannootree_config.hpp>
 
+#include <logger.hpp>
 #include <led_buffer.hpp>
 #include <unix_socket.hpp>
 #include <led_driver_thread.hpp>

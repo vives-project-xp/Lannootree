@@ -105,7 +105,7 @@
           v-bind="props"
           icon="mdi-cog"
           size="small"
-          ></v-btn>
+        />
       </template>
 
       <v-list>
@@ -137,7 +137,6 @@
   .unselected:hover {
     animation: select 0.5s forwards;
   }
-
 
   @keyframes select {
     from {
