@@ -80,7 +80,7 @@ client.on('message', function (topic, message) {
               {log: {
                 "container": container,
                 "timestamp": timestamp,
-                "message": message
+                "message": message.toString()
               }}
             ));
           }
