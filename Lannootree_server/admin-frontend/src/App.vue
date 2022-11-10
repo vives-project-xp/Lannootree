@@ -1,6 +1,9 @@
 <script setup lang="ts">
+  import { useTheme } from 'vuetify'
   import { computed, ref, watch } from 'vue'
   import { useUserStore }  from '@/stores/UserInfo'
+
+  const theme = useTheme();
 
   const drawer = ref(false);
   const group = ref(null);
@@ -35,11 +38,15 @@
     drawer.value = false;
   });
 
+  const toggleTheme = function () {
+    theme.global.name.value = theme.global.current.value.dark ? 'lightTheme' : 'darkTheme';
+  }
+
 </script>
 
 <template>
   <v-app>
-    <v-app-bar app color="grey-darken-3">
+    <v-app-bar app color="primary">
       <template v-slot:prepend>
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
       </template>
@@ -59,6 +66,24 @@
           {{ sub.title }}
         </v-btn>
       </div>
+
+      <v-tooltip
+        location="bottom"
+      >
+        <template v-slot:activator="{ isActive, props }">
+
+          <v-btn
+            @click="toggleTheme"
+            v-bind="props"
+            v-on="isActive"
+          >
+            <v-icon v-if="theme.global.current.value.dark">mdi-weather-sunny</v-icon>
+            <v-icon v-else>mdi-weather-night</v-icon>
+          </v-btn>
+        </template>
+
+        <span>Toggle theme</span>
+      </v-tooltip>
     </v-app-bar>
 
     <v-navigation-drawer 
@@ -91,7 +116,8 @@
     </v-main>
 
     <v-footer app
-      class="bg-grey-darken-3 text-center d-flex flex-column"
+      class="text-center d-flex flex-column"
+      color="primary"
     >
       <div>
         <v-btn
