@@ -50,6 +50,10 @@ class Matrix<T> {
     this._data.forEach(callbackfn);
   }
 
+  public toArray() {
+    return this._data;
+  }
+
 }
 
 export default Matrix;

@@ -2,7 +2,7 @@
 
 namespace Lannootree {
   
-  Logger::Logger(): _socket("./dev/logging.socket", 50, [](void* arg, uint8_t* data, size_t len) { }) {
+  Logger::Logger(): _socket("./dev/logging.socket", 50, [](void* arg, uint8_t* data, size_t len) {}) {
     _socket.start();
   }
 

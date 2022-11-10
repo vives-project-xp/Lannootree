@@ -1,27 +1,47 @@
 import type { Ref } from 'vue'
-import Matrix from '@/assets/Matrix'
 import { ref, computed } from 'vue'
 import { defineStore } from "pinia"
-import { Panel } from '@/assets/Panel'
-import type { Coordinate } from '@/assets/Panel'
-import type JsonConfig from '@/assets/JsonConfig'
+
+import Matrix from '@/assets/ConfigView/Matrix'
+import { Panel } from '@/assets/ConfigView/Panel'
+import type { Coordinate } from '@/assets/ConfigView/Panel'
+import type JsonConfig from '@/assets/ConfigView/JsonConfig'
 
 export const usePanelGrid = defineStore('panel-grid', () => {
   
   // *---------------------------> Panel related properties <---------------------------* //
   
+  
   const LED_PER_PANEL = 72;
 
   const panels = ref<Matrix<Panel | null>>(new Matrix(3, 3));
   panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
-
+  
   const colCount = computed(() => panels.value.dimention()[0]);
   const rowCount = computed(() => panels.value.dimention()[1]);
-    
+  
   const totalPanels = computed(() => {
     return rowCount.value * colCount.value;
   });
   
+  const connectionPhase = ref(false);
+
+  const connection = ref({
+    from: { col: 0, row: 0},
+    to: { col: 0, row: 0 }
+  });
+
+  const addConnection = function() {
+    let fromPanel = panels.value.getValue(connection.value.from.col, connection.value.from.row);
+    let toPanel = panels.value.getValue(connection.value.to.col, connection.value.to.row);
+
+    if (fromPanel !== null && toPanel !== null) {
+      fromPanel.connection = toPanel;
+    }
+
+    connectionPhase.value = false;
+  }
+
   const addPanel = function(coordinate: Coordinate) {
     let [cols, rows] = panels.value.dimention();
     
@@ -125,6 +145,9 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
   return { 
     panels,
+    connectionPhase,
+    connection,
+    addConnection,
     totalPanels,
     addPanel,
 

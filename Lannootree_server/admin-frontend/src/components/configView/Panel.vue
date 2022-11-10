@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import type { PropType } from 'vue'
-  import type { Coordinate } from '@/assets/Panel'
+  import type { Coordinate } from '@/assets/ConfigView/Panel'
 
   import { ref, computed, watch } from 'vue'
   import { useMouseInElement } from '@vueuse/core'
@@ -71,7 +71,7 @@
     : `perspective(${elementWidth.value}px) rotateX(${rX}deg) rotateY(${rY}deg)`;
   });
 
-  const channelFilter = function() {
+  const channelFilter = computed(() => {
     if (panelStore.panels.getValue(props.coordinate.col, props.coordinate.row) === null) return [];
     let this_panel = panelStore.panels.getValue(props.coordinate.col, props.coordinate.row);
     let copy_channel: { name: string, shortName: string }[] = JSON.parse(JSON.stringify(panelStore.channels))
@@ -79,6 +79,16 @@
     copy_channel.splice(copy_channel.findIndex(c => c.shortName == this_panel?.channel), 1);
     
     return copy_channel;
+  })
+
+  const startConnecting = function() {
+    if (panelStore.connectionPhase) {
+      panelStore.connection.to = props.coordinate;
+      panelStore.addConnection();
+    } else {
+      panelStore.connectionPhase = true;
+      panelStore.connection.from = props.coordinate;
+    }
   }
 
 </script>
@@ -89,8 +99,8 @@
     :style="panelStyle" 
     class="rounded-lg border"
     :class="p_panel !== null ? 'selected' : 'unselected'" 
-    :elevation="p_panel !== null ? 9 : 0"
-    @click="hasPanel ? null : panelStore.addPanel(props.coordinate)"
+    :elevation="p_panel !== null ? 9 : 0"  
+    @click="hasPanel ? startConnecting() : panelStore.addPanel(props.coordinate)"
   >
     <v-menu 
       v-if="p_panel !== null"
@@ -110,7 +120,7 @@
 
       <v-list>
         <v-list-item
-          v-for="chan in channelFilter()"
+          v-for="chan in channelFilter"
           :key="chan.shortName"
           @click="panelStore.changeChannel(props.coordinate, chan.shortName)"
         >
