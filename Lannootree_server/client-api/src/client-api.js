@@ -24,7 +24,7 @@ var options={
 const client = mqtt.connect(options);
 
 client.on('connect', function () {
-    logging("INFO: mqtt connected")
+    logging("[INFO] mqtt connected")
     client.publish('status/client-api', 'Online', {retain: true});
 
     client.subscribe('controller/#');
@@ -39,7 +39,7 @@ var contentJSON;
 const websocket = new WebSocketServer({ port: 3001 });
 
 websocket.on('connection', (ws, req) => {
-    logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
+    logging('[INFO] Websocket connection from: ' + req.headers['x-forwarded-for']);
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
     ws.send(JSON.stringify(statusJSON));
 
@@ -57,7 +57,7 @@ websocket.on('connection', (ws, req) => {
             }
         } 
         catch (error) { 
-            logging("ERROR: Websocket received data exception"); 
+            logging("[ERROR] Websocket received data exception"); 
         }
         
     });
@@ -66,7 +66,7 @@ websocket.on('connection', (ws, req) => {
 
     
     ws.on("close", () => {
-        logging("INFO: Websocket client disconnected");
+        logging("[INFO] Websocket client disconnected");
     });
     // other MQTT___________________________________________________________________________________________
 
@@ -78,7 +78,7 @@ websocket.on('connection', (ws, req) => {
                     ws.send(JSON.stringify(statusJSON));
                 } 
                 catch (error) { 
-                    logging("ERROR: MQTT statusJSON invalid"); 
+                    logging("[ERROR] MQTT statusJSON invalid"); 
                 }
                 break;
             case "lannootree/out":
@@ -93,32 +93,32 @@ websocket.on('connection', (ws, req) => {
 
 // Sending updates_________________________________________
 function stop() {
-    logging('INFO: sending stop');
+    logging('[INFO] sending stop');
     client.publish('controller/stop', JSON.stringify({"value": "stop"}));
 }
 
 function pause() {
-    logging('INFO: sending pause');
+    logging('[INFO] sending pause');
     client.publish('controller/pause', JSON.stringify({"value": "pause"}));
 }
 
 function play() {
-    logging('INFO: sending play');
+    logging('[INFO] sending play');
     client.publish('controller/pause', JSON.stringify({"value": "play"}));
 }
 
 function togglepause() {
-    logging('INFO: sending togglepause');
+    logging('[INFO] sending togglepause');
     client.publish('controller/pause', JSON.stringify({"value": "togglepause"}));
 }
 
 function effect(effect_id) {
-    logging(`INFO: sending set-effect: ${effect_id}`);
+    logging(`[INFO] sending set-effect: ${effect_id}`);
     client.publish('controller/effect', JSON.stringify({"effect_id": effect_id}));
 }
 
 function asset(asset_id) {
-    logging(`INFO: sending set-asset: ${asset_is}`);
+    logging(`[INFO] sending set-asset: ${asset_is}`);
     client.publish('controller/asset', JSON.stringify({"asset_id": asset_id}));
 }
 
@@ -128,18 +128,18 @@ function setcolor(color) {
 
 
 function parseColor(input) {
+    if (!input.match(/#[0-9,A-Z,a-z]{6}/g))logging("[ERROR] Color is not in hex format (#FFFFFF)");
+
+    let hex = input.match(/[^#].{1}/g);
     try {
-        let output = input.substring(4)
-        output = output.split(' ')
-    
-        output[0] = output[0].split('.')[0]
-        output[1] = output[1].split('.')[0]
-        output[2] = output[2].split('.')[0]
-        output[2] = output[2].split(')')[0]
-    
+        let output = [
+            parseInt(hex[0], 16),
+            parseInt(hex[1], 16),
+            parseInt(hex[2], 16)
+        ];
         return output;
     } catch (error) {
-        logging("ERROR: Color parsing from string");
+        logging("[ERROR] Color parsing from string");
     }
     return null;
 }
