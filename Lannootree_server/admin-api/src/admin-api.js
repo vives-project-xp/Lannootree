@@ -7,6 +7,7 @@ import WebSocket, { WebSocketServer } from 'ws';
 
 dotenv.config({ path: '../.env' })
 const websocket = new WebSocketServer({ port: 3000 });
+var statusBuffer = {};
 
 // MQTT___________________________________________________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
@@ -29,6 +30,7 @@ client.on('connect', function () {
     logging("INFO: mqtt connected")
     client.publish('status/admin-api', 'Online', {retain: true});
     client.subscribe('logs/#');
+    client.subscribe('status/#');
 })
     
     
@@ -53,6 +55,21 @@ client.on('message', function (topic, message) {
     let timestamp = date+' '+time;
 
     addLog(container, timestamp, message);
+  }
+  if(topic.startsWith('status')){
+    let container = topic.substring(7);
+    statusBuffer[container] = message.toString();
+
+    websocket.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(
+          {status: {
+            "container": container,
+            "status": message.toString()
+          }}
+        ));
+      }
+    });
   }
 })
 // ________________________________________________________________________________________________________
@@ -93,14 +110,24 @@ websocket.on('connection', (ws, req) => {
 
   db.all(`SELECT * FROM logs ORDER BY id DESC`, [], (err, rows) => {
     rows.forEach(row => {
-            // console.log(row);
-            ws.send(JSON.stringify({log: row}));
+      // console.log(row);
+      ws.send(JSON.stringify({log: row}));
     });
   });
+
+  Object.entries(statusBuffer).forEach(entry => {
+    const [key, value] = entry;
+    ws.send(JSON.stringify(
+      {status: {
+        "container": key,
+        "status": value
+      }}
+    ));
+  });
     
-    ws.on("close", () => {
-        logging("INFO: Websocket client disconnected")
-    });
+  ws.on("close", () => {
+      logging("INFO: Websocket client disconnected")
+  });
 });
 
 
