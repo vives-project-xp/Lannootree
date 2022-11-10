@@ -1,0 +1,17 @@
+{
+  "name": "uploader-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/uploader-api.js",
+    "start": "node src/uploader-api.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mqtt": "^4.3.7"
+  }
+}
