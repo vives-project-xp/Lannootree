@@ -1,16 +1,10 @@
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { defineStore } from "pinia";
 
 export const useContainerLogging = defineStore('container-logging', () => {
 
-  const containers = ref(new Map<string, string[]>());
-
-  containers.value.set("docker-backend", ["Hello", "log"]);
-  containers.value.set("docker-led-driver", ["Hello", "log"]);
-
-  for (let i = 0; i < 100; i++) {
-    containers.value.get("docker-led-driver")?.push(`This is a log message ${i}`)
-  }
+  const containers: Ref<{ name: string, msg: string[] }[]> = ref([]);
+  const statusContainers: Ref<{ name: string, status: string }[]> = ref([]);
 
   const ws = new WebSocket(import.meta.env.VITE_LOGGING_WEBSOCKET);
 
@@ -21,17 +15,38 @@ export const useContainerLogging = defineStore('container-logging', () => {
   ws.onmessage = (event: any) => {
     let data = JSON.parse(event.data.toString());
 
-    if (!containers.value.has(data.container)) {
-      containers.value.set(data.container, []);
-    } else {
-      let containerLog = containers.value.get(data.container);
+    if (data.hasOwnProperty("log")) {
+      let container_id = data.log.container;
+      let container = containers.value.find((c) => c.name == container_id);
+  
+      if (container !== undefined) {
+        container.msg.push(data.log.timestamp + " " + data.log.message);
+      } else {
+        containers.value.push({
+          name: container_id,
+          msg: [data.log.timestamp + " " + data.log.message],
+        })
+      }
+    }
 
-      if (containerLog !== undefined) containerLog.push(data.msg);
+    if (data.hasOwnProperty("status")) {
+      let container_id = data.status.container;
+      let container = statusContainers.value.find((c) => c.name == container_id);
+
+      if (container !== undefined) {
+        container.status = data.status.status;
+      } else {
+        statusContainers.value.push({
+          name: container_id,
+          status: data.status.status
+        });
+      }
     }
   }
 
   return {
-    containers
+    containers,
+    statusContainers
   }
 
 });

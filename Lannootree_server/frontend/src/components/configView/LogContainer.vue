@@ -1,15 +1,22 @@
 <script setup lang="ts">
+  import { computed } from 'vue';
   import type { PropType } from 'vue';
+
 
   const props = defineProps({
     name: {
       type: String,
       required: true
     },
-    msg: {
-      type: Object as PropType<Array<String>>,
+    
+    modelValue: {
+      type: Object as PropType<string[]>,
       required: true
     }
+  });
+
+  const msg = computed(() => {
+    return props.modelValue
   });
 
 </script>
@@ -19,7 +26,7 @@
     <v-card-title>{{ props.name }}</v-card-title>
 
     <div style="height: 300px; overflow: scroll;">
-      <v-list :items="props.msg"></v-list>    
+      <v-list :items="msg"></v-list>    
     </div>
   </v-card>
 </template>
