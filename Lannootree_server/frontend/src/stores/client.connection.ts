@@ -1,10 +1,25 @@
-import { ref } from 'vue';
+import { ref, type Ref } from 'vue';
 import { defineStore } from 'pinia';
+import type MqttStatus from '@/assets/frontendView/mqtt.status.interface';
 
 export const useClientAPIStore = defineStore('client-api-store', () => {
   
   const color_matrix = ref({});
-  const status_json = ref({});
+
+  const status_json: Ref<MqttStatus> = ref({
+    matrix_size: {
+      cols: 0,
+      rows: 0
+    },
+    pause: false,
+    status: "",
+    fade: false,
+    current_effect: "",
+    effects: [],
+    current_asset: "",
+    assets: [],
+    color: ""
+  });
 
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
@@ -39,7 +54,7 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
 
   websocketClient();
 
-  const Pause = function(paused) {
+  const Pause = function(paused: boolean) {
     if(websocketactive.value == true) {
       if(paused) {
         ws.send(JSON.stringify({"pause": true}));
@@ -62,7 +77,7 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     }
   };
 
-  function Color(selectedColor) {
+  function Color(selectedColor: string) {
     if(websocketactive.value == true) {
       
       // console.log(selectedColor);
@@ -71,14 +86,14 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     }
   };
 
-  const setEffect = function (selectedEffect) {
+  const setEffect = function (selectedEffect: string) {
     if(websocketactive.value == true) {
       console.log(selectedEffect)
       ws.send(JSON.stringify({"effect": selectedEffect }));
     };
   };
 
-  const setAsset = function (selectedAsset) {
+  const setAsset = function (selectedAsset: string) {
     if(websocketactive.value == true) {
       console.log(selectedAsset)
       ws.send(JSON.stringify({"asset": selectedAsset }));
