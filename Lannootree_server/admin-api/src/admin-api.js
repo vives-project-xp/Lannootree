@@ -3,9 +3,10 @@ import mqtt from "mqtt";
 import * as fs from 'fs';
 import express from 'express'
 import * as sqlite3 from 'sqlite3';
-import { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 
 dotenv.config({ path: '../.env' })
+const websocket = new WebSocketServer({ port: 3000 });
 
 // MQTT___________________________________________________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
@@ -43,9 +44,7 @@ db.serialize(() => {
 
 
 client.on('message', function (topic, message) {
-  // if (topic) {
-    //  if topic = logs!!
-  // }
+  if(topic.startsWith('logs')){
     let container = topic.substring(5);
 
     let today = new Date();
@@ -54,6 +53,7 @@ client.on('message', function (topic, message) {
     let timestamp = date+' '+time;
 
     addLog(container, timestamp, message);
+  }
 })
 // ________________________________________________________________________________________________________
 
@@ -73,12 +73,23 @@ client.on('message', function (topic, message) {
             order by id DESC
             limit ?
         )`, [`${container}`, `${container}`, numberOfLogsToKeep]);
+
+        websocket.clients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(
+              {log: {
+                "container": container,
+                "timestamp": timestamp,
+                "message": message
+              }}
+            ));
+          }
+        });
     }
 // Websocket log pushing___________________________________________________________________________________________
 
-const websocket = new WebSocketServer({ port: 3000 });
-
 websocket.on('connection', (ws, req) => {
+  logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
 
   db.all(`SELECT * FROM logs ORDER BY id DESC`, [], (err, rows) => {
     rows.forEach(row => {
@@ -92,8 +103,8 @@ websocket.on('connection', (ws, req) => {
     });
 });
 
-});
 
+});
 // express___________________________________________________________________________________________________
 const app = express()
 const port = 3001
