@@ -110,5 +110,9 @@ dist
 *.csr
 *.pwd
 
-
 *.sqlite
+
+
+## temporary files
+
+temp

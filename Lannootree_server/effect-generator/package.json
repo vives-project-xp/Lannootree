@@ -1,0 +1,16 @@
+{
+  "name": "effect-generator",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/effect_generator.js",
+    "start": "node src/effect_generator.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "nodemon": "^2.0.20"
+  },
+  "type": "module"
+}

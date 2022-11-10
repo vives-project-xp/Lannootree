@@ -1,86 +1,146 @@
-<script setup>
-// import Websocket from '../src/assets/api-connection.js';
-import Stop from './components/Stop.vue';
-import Title from './components/Title.vue'
-import Pause from './components/Pause.vue';
-import Effects from './components/Effects.vue';
-import Color from './components/Color.vue';
-import LannootreeGrid from './components/LannootreeGrid.vue';
-// import {effect} from '@/src/assets/api-connection.js';
+<script setup lang="ts">
+  import { useTheme } from 'vuetify'
+  import { computed, ref, watch } from 'vue'
+  import { useUserStore }  from '@/stores/UserInfo'
 
-import Logout from './components/Logout.vue';
-import Assets from './components/Assets.vue';
-// import UserInterface from './components/UserInterface.vue'
+  const theme = useTheme();
+
+  const drawer = ref(false);
+  const group = ref(null);
+
+  const userInfo = useUserStore();
+
+  
+  const items = computed(() => {    
+    const _routes = [
+      {
+        title: 'Controll',
+        value: 'controll',
+        group: 'admins'
+      },
+      {
+        title: 'ConfigPanel',
+        value: 'config',
+        group: 'admins'
+      },
+      {
+        title: 'LogPanel',
+        value: 'logging',
+        group: 'admins'
+      },
+    ];
+    
+    let routes: { title: string, value: string, group: string }[] = [];
+
+    (userInfo.userGroups as string[]).forEach(group => {
+      routes.push(..._routes.filter(obj => obj.group == group));
+    });
+    
+    return routes;
+  });
+
+  watch(group, () => {
+    drawer.value = false;
+  });
+
+  const toggleTheme = function () {
+    theme.global.name.value = theme.global.current.value.dark ? 'lightTheme' : 'darkTheme';
+  }
 
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <v-app>
+    <v-app-bar app color="primary">
+      <template v-slot:prepend>
+        <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
+      </template>
 
-    <div class="wrapper">
-      <Title msg="Lannootree" />
-      <Logout />
-    </div>
-  </header>
-
-  <main>
-
-    <div class="components">
-      <Stop />
-      <Pause />
-      <Effects />
-      <Assets />
+      <v-app-bar-title>Lannootree</v-app-bar-title>
       
-    </div>
+      <v-spacer></v-spacer>
 
-    <div class="componentsrow2">
-
-      <div>
-        <Color />
+      <div
+        v-for="sub in items"
+        :key="sub.value"
+        class="hidden-sm-and-down"
+        >
+        <v-btn
+          :to="sub.value"
+        >
+          {{ sub.title }}
+        </v-btn>
       </div>
 
-      <div>
-        <LannootreeGrid />
-      </div>  
-      
-    </div>
-  <!-- <div class="componentscol2">
 
-  </div> -->
-  </main>
+      <v-btn
+        @click="toggleTheme"
+      >
+        <v-icon v-if="theme.global.current.value.dark">mdi-weather-sunny</v-icon>
+        <v-icon v-else>mdi-weather-night</v-icon>
+      </v-btn>
+
+    </v-app-bar>
+
+    <v-navigation-drawer 
+      v-model="drawer"
+      bottom
+      temporary
+      class="hidden-md-and-up"
+    >
+      <v-list>
+        <v-list-item
+          v-for="sub in items"
+          :key="sub.value"
+          :to="sub.value">
+
+            {{ sub.title }}
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <v-main>
+      <v-container class="fill-height" fluid>
+        <router-view v-slot="{ Component }">
+
+          <transition name="fade" mode="out-in">
+            <component :is="Component" />
+          </transition>
+
+        </router-view>
+      </v-container>
+    </v-main>
+
+    <v-footer app
+      class="text-center d-flex flex-column"
+      color="primary"
+    >
+      <div>
+        <v-btn
+          class="mx-4"
+          icon="mdi-github"
+          variant="text"
+          href="https://github.com/vives-project-xp/Lannootree"
+        ></v-btn>
+      </div>
+
+      <v-divider></v-divider>
+
+      <div>
+        Lannootree project - {{ new Date().getFullYear() }}
+      </div>
+    </v-footer>
+  </v-app>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
   }
 
-  main {
-    min-height: 400px;
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s ease-out;
   }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-}
 </style>
