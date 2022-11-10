@@ -86,8 +86,6 @@ websocket.on('connection', (ws, req) => {
             ws.send(JSON.stringify({log: row}));
     });
   });
-
-    ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
     
     ws.on("close", () => {
         logging("INFO: Websocket client disconnected")
