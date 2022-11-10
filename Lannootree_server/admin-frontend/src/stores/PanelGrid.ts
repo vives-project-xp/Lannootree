@@ -44,7 +44,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
   const addPanel = function(coordinate: Coordinate) {
     let [cols, rows] = panels.value.dimention();
-    
+
     if (coordinate.col == 0 || coordinate.row == 0 || coordinate.col == cols - 1 || coordinate.row == rows - 1) {
       let resize = {
         col: (coordinate.col == 0 || coordinate.col == cols - 1) ? cols + 1 : cols,
@@ -62,6 +62,15 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     
     else {
       panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
+    }
+
+    [cols, rows] = panels.value.dimention();
+
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        let p = panels.value.getValue(col, row);
+        if (p !== null && p !== undefined) p.coordinate = { col: col, row: row };
+      }
     }
   };
 

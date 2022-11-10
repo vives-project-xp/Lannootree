@@ -1,10 +1,12 @@
 <script setup lang="ts">
+  import { useTheme } from 'vuetify'
   import { computed, ref } from 'vue';
-  import { useElementSize, useMouseInElement } from '@vueuse/core';
   import { usePanelGrid } from '@/stores/PanelGrid';
+  import { useElementSize, useMouseInElement } from '@vueuse/core';
   import PanelVue from '@/components/configView/Panel.vue';
   import type { Coordinate, Panel } from '@/assets/ConfigView/Panel';
 
+  const theme = useTheme();
   const panelStore = usePanelGrid();
 
   const boxSize = computed(() => {
@@ -94,7 +96,7 @@
         :y1="line.from.y"
         :x2="line.to.x"
         :y2="line.to.y"
-        stroke="black"
+        :stroke="theme.current.value.dark ? 'white' : 'black'"
         stroke-witdh="2px"
       />
     </svg>
@@ -105,7 +107,7 @@
         :y1="coordinateToCenterPositionPx(panelStore.connection.from).y"
         :x2="elementX"
         :y2="elementY"
-        stroke="black"
+        :stroke="theme.current.value.dark ? 'white' : 'black'"
         stroke-witdh="6px"
       />
     </svg>
