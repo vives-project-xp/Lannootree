@@ -1,15 +1,86 @@
 import type { Ref } from 'vue'
-import Matrix from '@/assets/Matrix'
 import { ref, computed } from 'vue'
 import { defineStore } from "pinia"
-import { Panel } from '@/assets/Panel'
-import type { Coordinate } from '@/assets/Panel'
-import type JsonConfig from '@/assets/JsonConfig'
+
+import Matrix from '@/assets/ConfigView/Matrix'
+import { Panel } from '@/assets/ConfigView/Panel'
+import type { Coordinate } from '@/assets/ConfigView/Panel'
+import type JsonConfig from '@/assets/ConfigView/JsonConfig'
 
 export const usePanelGrid = defineStore('panel-grid', () => {
-
+  
+  // *---------------------------> Panel related properties <---------------------------* //
+  
+  
   const LED_PER_PANEL = 72;
 
+  const panels = ref<Matrix<Panel | null>>(new Matrix(3, 3));
+  panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
+  
+  const colCount = computed(() => panels.value.dimention()[0]);
+  const rowCount = computed(() => panels.value.dimention()[1]);
+  
+  const totalPanels = computed(() => {
+    return rowCount.value * colCount.value;
+  });
+  
+  const connectionPhase = ref(false);
+
+  const connection = ref({
+    from: { col: 0, row: 0},
+    to: { col: 0, row: 0 }
+  });
+
+  const addConnection = function() {
+    let fromPanel = panels.value.getValue(connection.value.from.col, connection.value.from.row);
+    let toPanel = panels.value.getValue(connection.value.to.col, connection.value.to.row);
+
+    if (fromPanel !== null && toPanel !== null) {
+      fromPanel.connection = toPanel;
+    }
+
+    connectionPhase.value = false;
+  }
+
+  const addPanel = function(coordinate: Coordinate) {
+    let [cols, rows] = panels.value.dimention();
+
+    if (coordinate.col == 0 || coordinate.row == 0 || coordinate.col == cols - 1 || coordinate.row == rows - 1) {
+      let resize = {
+        col: (coordinate.col == 0 || coordinate.col == cols - 1) ? cols + 1 : cols,
+        row: (coordinate.row == 0 || coordinate.row == rows - 1) ? rows + 1 : rows
+      };
+      
+      let shift = {
+        col: coordinate.col == 0 ? 1 : 0,
+        row: coordinate.row == 0 ? 1 : 0
+      };
+      
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
+      panels.value = panels.value.resize(resize.col, resize.row, shift);
+    }
+    
+    else {
+      panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
+    }
+
+    [cols, rows] = panels.value.dimention();
+
+    for (let col = 0; col < cols; col++) {
+      for (let row = 0; row < rows; row++) {
+        let p = panels.value.getValue(col, row);
+        if (p !== null && p !== undefined) p.coordinate = { col: col, row: row };
+      }
+    }
+  };
+
+  // *------------------------------------------------------------------------------------* //
+
+  
+  // *---------------------------> Channel related properties <---------------------------* //
+  
+  const currentChannel = ref("CA0");
+  
   const channels =[
     {
       name: 'Channel A0',
@@ -26,41 +97,14 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     },
   ];
 
-  const currentChannel = ref("CA0");
-
-  const panels = ref<Matrix<Panel | null>>(new Matrix(3, 3));
-  panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
-
-  // This doesn't update for some reason 
-  const colCount = computed(() => panels.value.dimention()[0]);
-  const rowCount = computed(() => panels.value.dimention()[1]);
-
-  const totalPanels = computed(() => {
-    return rowCount.value * colCount.value;
+  const changeableChannels = computed(() => {
+    let filter: { name: string, shortName: string}[] = [];
+    channels.forEach((chan: { name: string, shortName: string}) => {
+      if (chan.shortName !== currentChannel.value) filter.push(chan);
+    });
+    
+    return filter;
   });
-
-  const addPanel = function(coordinate: Coordinate) {
-    let [cols, rows] = panels.value.dimention();
-
-    if (coordinate.col == 0 || coordinate.row == 0 || coordinate.col == cols - 1 || coordinate.row == rows - 1) {
-      let resize = {
-        col: (coordinate.col == 0 || coordinate.col == cols - 1) ? cols + 1 : cols,
-        row: (coordinate.row == 0 || coordinate.row == rows - 1) ? rows + 1 : rows
-      };
-
-      let shift = {
-        col: coordinate.col == 0 ? 1 : 0,
-        row: coordinate.row == 0 ? 1 : 0
-      };
-
-      panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
-      panels.value = panels.value.resize(resize.col, resize.row, shift);
-    }
-
-    else {
-      panels.value.setValue(coordinate.col, coordinate.row, new Panel(coordinate));
-    }
-  };
 
   const changeChannel = function(coordinate: Coordinate, channel: string) {
     let panel = panels.value.getValue(coordinate.col, coordinate.row);
@@ -69,6 +113,15 @@ export const usePanelGrid = defineStore('panel-grid', () => {
       panel.channel = channel;    
     }
   }
+
+  const channelToColor = function (channel: string) {
+    if (channel === 'CA0') return 'red';
+    if (channel === 'CA1') return 'green';
+    if (channel === 'CB0') return 'blue';
+    if (channel === 'CB1') return 'yellow';
+  }
+
+  // *------------------------------------------------------------------------------------* //
 
   const toJson = computed(() => {
     let inUseChannels: string[] = [];
@@ -98,19 +151,21 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
     return JSON.stringify(obj, null, 2);
   });
-  
-  return { 
-    // Ref & computed
-    panels,
-    // rowCount,
-    // colCount,
-    totalPanels,
-    channels,
-    currentChannel,
 
-    // Methods 
+  return { 
+    panels,
+    connectionPhase,
+    connection,
+    addConnection,
+    totalPanels,
     addPanel,
+
+    currentChannel,
+    channels,
+    changeableChannels,
     changeChannel, 
+    channelToColor,
+
     toJson,
   };
 

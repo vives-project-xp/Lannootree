@@ -16,9 +16,11 @@ namespace Lannootree {
     for (auto [chan, mem] : _channel_mem) delete mem;
   }
 
+  #include <logger.hpp>
+
   void LannooTree::start(void) {
     log(logo);
-    info_log("Starting lannootree firmware");
+    info_log("Starting lannootree firmware\n");
 
     auto handel = [](int signum) {
       std::lock_guard lck(mtx);
@@ -28,10 +30,10 @@ namespace Lannootree {
     signal(SIGINT, handel);
     signal(SIGTERM, handel);
 
-    info_log("Reading config file...");
+    info_log("Reading config file...\n");
     std::ifstream f(JSON_FILE_PATH);
     config = json::parse(f);
-    info_log("Cleaning up...");
+    info_log("Cleaning up...\n");
     f.close();
 
     initialize_memory(config);    
@@ -46,11 +48,11 @@ namespace Lannootree {
     std::unique_lock lock(mtx);
     shutdown_request.wait(lock);
 
-    info_log("Waiting for threads to join...");
+    info_log("Waiting for threads to join...\n");
     led_driver.stop();
     matrix_socket.stop();
 
-    info_log("Lannootree gracefully shut down");
+    info_log("Lannootree gracefully shut down\n");
   }
 
   void LannooTree::initialize_memory(json &config) {
@@ -92,13 +94,13 @@ namespace Lannootree {
       // Creation of led control block
       _controllers.push_back(create_ws2811(config, 10, 18, 19, isChannelA ? "CA" : "CB"));
 
-      info_log((isChannelA ? "Using channel A" : "Not using channel A"));
+      info_log((isChannelA ? "Using channel A" : "Not using channel A") << "\n");
 
       // Creation of led buffers
       if (_controllers.at(0)->channel[0].count > 0)
         _channel_mem[isChannelA ? "CA0" : "CB0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
 
-      info_log("ChanA0 led count: " << _controllers.at(0)->channel[0].count);
+      info_log("ChanA0 led count: " << _controllers.at(0)->channel[0].count << "\n");
 
       if (_controllers.at(0)->channel[1].count > 0)
         _channel_mem[isChannelA ? "CA1" : "CB1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
@@ -108,7 +110,7 @@ namespace Lannootree {
     // Initialize led control blocks
     for (auto c : _controllers) {
       if (ws2811_init(c) != WS2811_SUCCESS) {
-        error_log("Failed to init ws2811");
+        error_log("Failed to init ws2811\n");
       }
     }
   }

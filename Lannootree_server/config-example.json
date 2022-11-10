@@ -1,0 +1,62 @@
+{
+  "panelCount": 4,
+  "totalLeds": 288,
+  "dimentions": {
+    "col": 18,
+    "row": 18
+  },
+  "inUseChannels": [
+    "CA0"
+  ],
+  "channels": {
+    "CA0": {
+      "ledCount": 288,
+      "head": "1603746070332",
+      "cells": [
+        {
+          "uuid": "521464934126",
+          "active": true,
+          "channel": "CA0",
+          "coordinate": {
+            "col": 1,
+            "row": 1
+          },
+          "diabled": true
+        },
+        {
+          "uuid": "1603746070332",
+          "active": true,
+          "channel": "CA0",
+          "connection": "1605537514600",
+          "coordinate": {
+            "col": 1,
+            "row": 2
+          },
+          "diabled": true
+        },
+        {
+          "uuid": "1605537514600",
+          "active": true,
+          "channel": "CA0",
+          "connection": "163467899295",
+          "coordinate": {
+            "col": 2,
+            "row": 1
+          },
+          "diabled": true
+        },
+        {
+          "uuid": "163467899295",
+          "active": true,
+          "channel": "CA0",
+          "connection": "521464934126",
+          "coordinate": {
+            "col": 2,
+            "row": 2
+          },
+          "diabled": true
+        }
+      ]
+    }
+  }
+}

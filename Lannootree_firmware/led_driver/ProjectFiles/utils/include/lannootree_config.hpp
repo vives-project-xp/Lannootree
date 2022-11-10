@@ -12,25 +12,26 @@
 
 #include <queue.hpp>
 #include <color.hpp>
+#include <logger.hpp>
 #include <terminal_colors.hpp>
 
 #ifndef DISABLE_LOG
-  #define log(...) std::cout << __VA_ARGS__ << std::endl
-  #define info_log(...) std::cout << "[INFO] " << __VA_ARGS__ << std::endl
-  #define warn_log(...) std::cout << F_YELLOW << "[WARN] " << __VA_ARGS__ << RESET_COLOR << std::endl
-  #define error_log(...) std::cerr << F_RED << "[ERROR] " << __VA_ARGS__ << RESET_COLOR << std::endl
+  #define log(...) Logger::Get()(LogType::DEFAULT) << __VA_ARGS__
+  #define info_log(...) Logger::Get()(LogType::INFO) << __VA_ARGS__
+  #define warn_log(...) Logger::Get()(LogType::WARN) << __VA_ARGS__
+  #define error_log(...) Logger::Get()(LogType::ERROR) << __VA_ARGS__
 #else
   #define log(...)
   #define info_log(...)
   #define warn_log(...)
-  // Todo: maby write errors to a log file instead
   #define error_log(...)
 #endif
 
 #define PANEL_LED_COUNT 72
 #define STRIP_TYPE      WS2811_STRIP_GRB      
 
-#define JSON_FILE_PATH "../config.json"
+// #define JSON_FILE_PATH ""
+#define JSON_FILE_PATH "/home/joey/Documents/School/2022_2023/ProjectWeek/Lannootree/Lannootree_firmware/led_driver/config.json"
 
 static const char* logo =
 "  _                                   _                  \n"
@@ -47,4 +48,4 @@ static const char* logo =
 "      |_| |_|_|  |_| |_| |_|\\_/\\_/ \\__,_|_|  \\___|       \n"
 "                                                         \n"
 "                                                         \n"
-"                       VERSION[1.1]                       \n";
+"                       VERSION[1.2]                       \n";

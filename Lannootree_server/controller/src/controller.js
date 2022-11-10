@@ -1,8 +1,8 @@
 import Color from './color.js';
-import EffectManager from "./effect_manager.js";
+import EffectManager from "./effect_manager/effect_manager.js";
 import JsonGenerator from "./json_generator.js"
 import MatrixParser  from './matrixParser.js';
-import LedDriver from './led-driver.js';
+import DevCheck from './dev.js';
 
 import mqtt from "mqtt";
 import fs from "fs";
@@ -10,12 +10,18 @@ import dotenv from "dotenv";
 dotenv.config({ path: '../.env' });
 
 const debug = false;
-const leddriver_connection = false;
-const framerate = 30;
-const frontend_framerate = 10;
+const framerate = process.env.CONTROLLER_FRAMERATE;
+const frontend_framerate = process.env.CONTROLLER_FRONTEND_FRAMERATE;
+var production_server = process.env.PRODUCTION_SERVER
+const developement_time = process.env.CONTROLLER_DEV_SECONDS;
 
-// Socket client
-const leddriver = new LedDriver(leddriver_connection);
+
+var instanceName = "controller";
+if (typeof production_server == 'undefined') {
+  production_server = false;
+  instanceName = "controller-dev";
+}
+const devCheck = new DevCheck(production_server, developement_time);
 
 // MQTT______________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
@@ -27,29 +33,54 @@ var options = {
   rejectUnauthorized : true,
   ca:caFile,
   will: {
-      topic: "status/controller",
+      topic: "status/" + instanceName,
       payload: "Offline",
       retain: true
   }
 };
 const client = mqtt.connect(options);
 
+const topics = [
+  "controller/pause",
+  "controller/stop",
+  "controller/setcolor",
+  "controller/effect",
+  "controller/fade",
+  "controller/asset",
+  "controller/config"
+]
 
 client.on('connect', function () {
   logging("INFO: mqtt connected");
-  client.publish('status/controller', 'Online', {retain: true});
-  client.subscribe("controller/pause");
-  client.subscribe("controller/stop");
-  client.subscribe("controller/setcolor");
-  client.subscribe("controller/effect");
-  client.subscribe("controller/fade");
-  client.subscribe("controller/asset");
-  client.subscribe("controller/config");
-  sendStatus();
+  client.subscribe("status/controller-dev");
+  
+  devCheck.on('startup', () => {
+    topics.forEach(topic => {
+      client.subscribe(topic);
+    });
+    client.publish("status/" + instanceName, 'Online', {retain: true});
+    logging("INFO: controller started")
+    sendStatus();
+  });
+  
+  devCheck.on('sleep', () => {
+    client.publish("status/" + instanceName, 'Sleep', {retain: true});
+    topics.forEach(topic => {
+      client.unsubscribe(topic);
+    });
+    logging("WARNING: a dev controller started, going to sleep mode")
+  });
+  
+  devCheck.on('timer', () => {
+    client.publish("status/" + instanceName, 'Starting', {retain: true});
+    logging(`INFO: dev controller went offline, starting in ${developement_time} seconds`)
+  });
+
+  devCheck.Start();
 });
 
 client.on('error', function(error) {
-  console.log("ERROR: mqtt:  " + error);
+  logging("ERROR: mqtt:  " + error);
 });
 
 client.on('message', function (topic, message) {
@@ -59,7 +90,10 @@ client.on('message', function (topic, message) {
   } catch (error) {
     data = message;
   }
+  
+
   switch (topic) {
+    case "status/controller-dev": devCheck.Update(data); break;
     case "controller/pause": pause(data.value); break;
     case "controller/stop": stop(); break;
     case "controller/setcolor": set_color_full(data.red, data.green, data.blue); break;
@@ -71,9 +105,10 @@ client.on('message', function (topic, message) {
       logging("WARNING: overwriting old json config file");
       updateMatrixFromFile();
       break;
-    default: logging("INFO: MQTT Unknown topic: " + topic, true);
   }
-  sendStatus();
+  if (topic == "status/" + instanceName  && message == "restart") {
+    crashApp("restarted via mqtt command");
+  }
 });
 
 // CONTROLLER______________________________________________________________
@@ -166,7 +201,8 @@ function stop() {
   effect_manager.stop();
   set_color_full(0,0,0);
   activeData = null;
-  logging("INFO: controller stopped");
+  sendStatus();
+  logging("INFO: clearing all leds (stop)");
 }
 
 function set_color_full(red, green, blue) {
@@ -183,6 +219,7 @@ function set_color_full(red, green, blue) {
       }
     }
   }
+  sendStatus();
 }
 
 function play_effect(effect_id) {
@@ -190,12 +227,14 @@ function play_effect(effect_id) {
     pause("play");
     status = "effect";
     effect_manager.set_effect(effect_id, get_matrixsize(), speed_modifier);
+    sendStatus();
     logging("INFO: Set effect:" + effect_id);
   }
 }
 
 function set_fade(fade) {
   if(status = "effect") effect_manager.set_fade(fade);
+  sendStatus();
   logging("INFO: set fade:" + fade);
 }
 
@@ -212,13 +251,15 @@ function PushMatrix() {
     default:
       break;
   }
-  leddriver.frame_to_ledcontroller(ledmatrix);
   logging(MatrixParser.frame_to_string(ledmatrix), true);
+  // client.publish('lannootree/processor/out', response);
 }
 
 function PushMatrix_frontend() {
-  let response = JSON.stringify(MatrixParser.frame_to_json(ledmatrix));
-  client.publish('lannootree/out', response);
+  if (devCheck.Online()) {
+    let response = JSON.stringify(MatrixParser.frame_to_json(ledmatrix));
+    client.publish('lannootree/out', response);
+  }
 }
 
 setInterval(() => {PushMatrix()}, (Math.round(1000/framerate)));
@@ -228,7 +269,7 @@ setInterval(() => {PushMatrix_frontend()}, (Math.round(1000/frontend_framerate))
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
     console.log(message);
-    client.publish('logs/controller', message);
+    client.publish('logs/' + instanceName, message);
   }
   else if(msgdebug && debug) {
     console.log(message);
@@ -236,7 +277,8 @@ function logging(message, msgdebug = false) {
 }
 
 function crashApp(message) {
-  client.publish('logs/controller', 'FATAL: ' + message, (error) => {
+  console.log('FATAL: ' + message);
+  client.publish('logs/' + instanceName, 'FATAL: ' + message, (error) => {
     process.exit(1);
   })
 }
