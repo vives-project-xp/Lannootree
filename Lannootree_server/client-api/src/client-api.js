@@ -1,6 +1,6 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 import { WebSocketServer } from 'ws';
-import mqtt from "mqtt"
+import mqtt from "mqtt";
 import * as fs from 'fs';
 
 dotenv.config({ path: '../.env' })
@@ -20,7 +20,7 @@ var options={
         payload: "Offline",
         retain: true
     }
-}
+};
 const client = mqtt.connect(options);
 
 client.on('connect', function () {
@@ -29,7 +29,7 @@ client.on('connect', function () {
 
     client.subscribe('controller/#');
     client.subscribe('lannootree/out');
-})
+});
 
 // msg buffer___________________________________________________________________________________________
 var statusJSON;
@@ -66,7 +66,7 @@ websocket.on('connection', (ws, req) => {
 
     
     ws.on("close", () => {
-        logging("INFO: Websocket client disconnected")
+        logging("INFO: Websocket client disconnected");
     });
     // other MQTT___________________________________________________________________________________________
 
@@ -74,7 +74,7 @@ websocket.on('connection', (ws, req) => {
         switch (topic) {
             case "controller/status":
                 try {
-                    statusJSON = JSON.parse(message)
+                    statusJSON = JSON.parse(message);
                     ws.send(JSON.stringify(statusJSON));
                 } 
                 catch (error) { 
@@ -147,10 +147,10 @@ function parseColor(input) {
 
 function logging(message, msgdebug = false){
     if (!msgdebug) {
-      console.log(message);
-      client.publish('logs/client-api', message);
+        console.log(message);
+        client.publish('logs/client-api', message);
     }
     else if(msgdebug && debug) {
-      console.log(message);
+        console.log(message);
     }
-  }
+}
