@@ -38,7 +38,7 @@ client.on('connect', function () {
 // ___________________________________________________________________________________________________
 // Log parser
 // ___________________________________________________________________________________________________
-const db = new sqlite3.default.Database('logs.sqlite');
+const db = new sqlite3.default.Database('./db/logs.sqlite');
 const numberOfLogsToKeep = process.env.ADMIN_API_NUMBER_OF_LOGS_TO_KEEP
 
 db.serialize(() => {
