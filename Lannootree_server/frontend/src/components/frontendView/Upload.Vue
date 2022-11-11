@@ -16,6 +16,14 @@ import axios from 'axios'
         this.loading[i] = true
         setTimeout(() => (this.loading[i] = false), 3000)
       },
+      post (files) {
+        // console.log(this.files)
+        axios.post('/post', this.files, {
+          headers: {
+            "content-Type": "multipart/form-data",
+          }
+        })
+      }
     },
   }
 </script>
@@ -24,7 +32,7 @@ import axios from 'axios'
   <v-row>
     <v-file-input
       v-model="files"
-      accept="image/png, image/jpeg, image/bmp, video/mp4, video/mov"
+      accept="image/png, image/jpeg, image/bmp, video/mp4, video/quicktime"
       color="#00BD7E"
       counter
       label="Upload media"
@@ -39,7 +47,7 @@ import axios from 'axios'
         <template v-for="(fileName, index) in fileNames" :key="fileName">
           <v-chip
             v-if="index < 4 "
-            color="00BD7E"
+            color="#00BD7E"
             label
             size="small"
             class="mr-2"
@@ -59,9 +67,9 @@ import axios from 'axios'
     <v-btn
       :loading="loading[4]"
       :disabled="loading[4]"
-      color="blue-grey"
+      color="#00BD7E"
       icon="mdi-cloud-upload"
-      @click="load(4)"
+      @click="load(4); post();"
     ></v-btn>
 </v-row>
   </template>
