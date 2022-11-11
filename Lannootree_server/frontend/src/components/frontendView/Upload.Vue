@@ -17,6 +17,7 @@ import axios from 'axios'
         setTimeout(() => (this.loading[i] = false), 3000)
       },
       post (files) {
+        //van hieruit zouden de files moeten worden verstuurd
         // console.log(this.files)
         axios.post('/post', this.files, {
           headers: {
