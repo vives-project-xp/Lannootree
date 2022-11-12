@@ -14,9 +14,8 @@ def buffer_plot_and_get():
   buf.seek(0)
   return Image.open(buf)
 
-panelDimentions = (4, 4)
+panelDimentions = (8, 8)
 N = (panelDimentions[0] * panelDimentions[1]) * 72
-sqrtN = int(np.sqrt(N))
 
 img_file = 'homer.gif'
 img_path = './img/'
@@ -32,7 +31,7 @@ with Image.open(img_path + img_file) as i:
     while True:
       print(f"Processing frame[{j}]")
       i.seek(i.tell() + 1)
-      img = i.resize([sqrtN * 8, sqrtN * 8])
+      img = i.resize([panelDimentions[0] * 9 * 8, panelDimentions[1] * 9 * 8])
       
       # TODO: Read config for this
       panels = []
@@ -93,7 +92,6 @@ with Image.open(img_path + img_file) as i:
       plt.scatter(x_points, y_points, 100, c = newc/255)
       plt.gca().invert_yaxis()
       plt.axis('equal')
-
 
       images.append(buffer_plot_and_get())
 

@@ -1,6 +1,6 @@
 # Has to store points in picture
 import numpy as np
-# import cupy as cp
+import cupy as cp
 from PIL import Image
 import functools
 
@@ -8,8 +8,8 @@ def dist(x1, y1, x2, y2, xp):
   d = xp.sqrt((x2 - x1)**2 + (y2 - y1)**2)
   return d
 
-vdist = functools.partial(dist, xp=np) # Uncomment when using numpy
-# vdist = functools.partial(dist, xp=cp) # Uncomment when using cupy
+# vdist = functools.partial(dist, xp=np) # Uncomment when using numpy
+vdist = functools.partial(dist, xp=cp) # Uncomment when using cupy
 
 class Panel:
   def __init__(self, coordinate, image, panel_dimentions) -> None:
@@ -93,11 +93,11 @@ class Panel:
     vxx = np.tile(xx, [len(newx), len(yy), 1])
     vyy = np.transpose(np.tile(yy, [len(newx), len(xx), 1]), (0, 2, 1))
 
-    distances = vdist(vnewx, vnewy, vxx, vyy) # Uncomment when using numpy
-    # distances = vdist(cp.array(vnewx), cp.array(vnewy), cp.array(vxx), cp.array(vyy)) # Uncomment when using cupy
+    # distances = vdist(vnewx, vnewy, vxx, vyy) # Uncomment when using numpy
+    distances = vdist(cp.array(vnewx), cp.array(vnewy), cp.array(vxx), cp.array(vyy)) # Uncomment when using cupy
     
-    mind = np.argmin(distances, 0) # Uncomment when using numpy
-    # mind = np.argmin(distances.get(), 0) # Uncomment when using cupy
+    # mind = np.argmin(distances, 0) # Uncomment when using numpy
+    mind = np.argmin(distances.get(), 0) # Uncomment when using cupy
 
     imr = self.im[:,:,0]
     img = self.im[:,:,1]
