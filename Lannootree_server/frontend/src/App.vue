@@ -19,6 +19,11 @@
         group: 'admins'
       },
       {
+        title: 'Upload',
+        value: 'upload',
+        group: 'admins'
+      },
+      {
         title: 'ConfigPanel',
         value: 'config',
         group: 'admins'
@@ -28,6 +33,7 @@
         value: 'logging',
         group: 'admins'
       },
+      
     ];
     
     let routes: { title: string, value: string, group: string }[] = [];
