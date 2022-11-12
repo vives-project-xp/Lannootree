@@ -19,7 +19,7 @@ import axios from 'axios'
       post (files) {
         //van hieruit zouden de files moeten worden verstuurd
         // console.log(this.files)
-        axios.post('/post', this.files, {
+        axios.post('upload/post', this.files, {
           headers: {
             "content-Type": "multipart/form-data",
           }
@@ -71,6 +71,7 @@ import axios from 'axios'
       color="#00BD7E"
       icon="mdi-cloud-upload"
       @click="load(4); post();"
+      class="ml-1"
     ></v-btn>
 </v-row>
   </template>
