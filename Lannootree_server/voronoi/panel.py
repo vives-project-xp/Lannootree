@@ -23,13 +23,21 @@ class Panel:
     self.__generate_points__()
   
   def __generate_points__(self):
+    # for x in range(self.N):
+    #   for y in range(self.N):
+    #     if ((x == 1 or x == 4 or x == 7) and (y == 1 or y == 4 or y == 7)): continue
+    #     _x = (x * ((self.im.shape[0] // self.panel_dimentions[0]) // self.N)) + (self.coordinate[0] * (self.im.shape[0] // self.panel_dimentions[0]))
+    #     _y = (y * ((self.im.shape[1] // self.panel_dimentions[1]) // self.N)) + (self.coordinate[1] * (self.im.shape[1] // self.panel_dimentions[1]))
+    #     self.points.append((_x, _y))
+
     for x in range(self.N):
       for y in range(self.N):
         if ((x == 1 or x == 4 or x == 7) and (y == 1 or y == 4 or y == 7)): continue
-        _x = (x * ((self.im.shape[0] // self.panel_dimentions[0]) // self.N)) + (self.coordinate[0] * (self.im.shape[0] // self.panel_dimentions[0])) + np.random.randint(0, 1)
-        _y = (y * ((self.im.shape[1] // self.panel_dimentions[1]) // self.N)) + (self.coordinate[1] * (self.im.shape[1] // self.panel_dimentions[1])) + np.random.randint(0, 1)
-        self.points.append((_x, _y))
 
+        _x = (x * (self.im.shape[0] // self.N))
+        _y = (y * (self.im.shape[1] // self.N))
+
+        self.points.append((_x, _y))
 
     # for i in range(72):
     #   x_min = self.coordinate[0] * (self.im.shape[0] // self.panel_dimentions[0])
@@ -48,6 +56,19 @@ class Panel:
     _x_coords = []
     _y_coords = []
 
+    x_offset = self.im.shape[0]
+    y_offset = self.im.shape[1]
+
+    for p in self.points:
+      _x_coords.append(p[0] + (self.coordinate[0] * x_offset))
+      _y_coords.append(p[1] + (self.coordinate[1] * y_offset))
+
+    return _x_coords, _y_coords
+
+  def __get_points__(self):
+    _x_coords = []
+    _y_coords = []
+
     for p in self.points:
       _x_coords.append(p[0])
       _y_coords.append(p[1])
@@ -59,7 +80,7 @@ class Panel:
     xx = np.arange(0, nx, 1)
     yy = np.arange(0, ny, 1) 
 
-    newx, newy = self.get_points()
+    newx, newy = self.__get_points__()
 
     newx = np.array(newx)
     newy = np.array(newy)

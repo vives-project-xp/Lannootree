@@ -32,14 +32,26 @@ with Image.open(img_path + img_file) as i:
     while True:
       print(f"Processing frame[{j}]")
       i.seek(i.tell() + 1)
-      img = i.resize([sqrtN * 16, sqrtN * 16])
+      img = i.resize([sqrtN * 8, sqrtN * 8])
       
       # TODO: Read config for this
       panels = []
 
       for x in range(panelDimentions[0]):
         for y in range(panelDimentions[1]):
-          panels.append(panel.Panel((x, y), img, panelDimentions))
+          x_offset = img.size[0] // panelDimentions[0]
+          y_offset = img.size[1] // panelDimentions[1]
+
+          box = (
+            (x * x_offset),
+            (y * y_offset),
+            (x * x_offset) + x_offset,
+            (y * y_offset) + y_offset
+          )
+
+          imgc = img.crop(box)
+
+          panels.append(panel.Panel((x, y), imgc, panelDimentions))
 
       x_points = []
       y_points = []
@@ -50,6 +62,7 @@ with Image.open(img_path + img_file) as i:
 
       for p in panels:
         _x, _y = p.get_points()
+
         x_points.extend(_x)
         y_points.extend(_y)
 
