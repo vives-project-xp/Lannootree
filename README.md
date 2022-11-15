@@ -1,7 +1,7 @@
 # Lannootree
 
 ## Cloning git repo
-yoooooooooooooooooo
+
 ```bash
 git clone git@github.com:vives-project-xp/Lannootree.git
 ```
