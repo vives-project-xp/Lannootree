@@ -8,7 +8,7 @@ import dotenv from "dotenv";
 dotenv.config({ path: '../.env' });
 
 const debug = false;
-const leddriver_connection = true;
+const leddriver_connection = false;
 const framerate = 30;
 const frontend_framerate = 10;
 
@@ -32,23 +32,64 @@ var options = {
 };
 const client = mqtt.connect(options);
 
-
 client.on('connect', function () {
   logging("INFO: mqtt connected");
-  client.publish('status/controller', 'Online', {retain: true});
-  client.subscribe("lannootree/out");
+  client.publish('status/led-client', 'Online', {retain: true});
+  client.subscribe("ledpanel/control");
 });
 
 client.on('error', function(error) {
   logging("ERROR: mqtt:  " + error);
 });
 
+var activeStreamTopic = null;
 client.on('message', function (topic, message) {
- if (topic == "lannootree/out") {
-  leddriver.frame_to_ledcontroller(JSON.parse(message.toString()));
- }
+  let data = message;
+  try {
+    data = JSON.parse(message.toString());
+  } catch (error) {
+    data = message;
+  }
+  switch (topic) {
+    case "ledpanel/control":
+      switch(data.command) {
+        case "pause": pause_leds(); break;
+        case "play": play_leds(); break;
+        case "stop": stop_leds(); break;
+        case "color": set_color(data.red, data.green, data.blue); break;
+        case "stream": play_stream(data.stream); break;
+      }
+      break;
+    case "ledpanel/stream": devCheck.Update(data); break;
+    case activeStreamTopic:
+      leddriver.frame_to_ledcontroller(data);
+      break;
+  }
+  
 });
 
+function pause_leds() {
+  console.log("LED client paused leds");
+}
+
+function play_leds() {
+  console.log("LED client resumed leds");
+}
+
+function stop_leds() {
+  console.log("LED client stopped leds");
+}
+
+function set_color(red, green, blue) {
+  console.log(`LED client set color (${red},${green},${blue})`);
+}
+
+function play_stream(streamID) {
+  if(activeStreamTopic != null) client.unsubscribe(activeStreamTopic);
+  activeStreamTopic = streamID;
+  client.subscribe(streamID);
+  console.log(`LED client subscribed to "${streamID}"`);
+}
 
 // Live update__________________________________________________________________________
 // function PushMatrix() {
