@@ -6,7 +6,7 @@
 </script>
     
 <template>
-  <div class="d-flex align-center jutify-center">
+  <div class="d-flex align-center justify-center">
     <v-select
       :items="clientStore.status_json.effects"
       label="Effect"
