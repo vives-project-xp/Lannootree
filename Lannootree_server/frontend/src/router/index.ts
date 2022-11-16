@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ConfigViewVue from '@/views/configView/ConfigView.vue'
 import ControlViewVue from '@/views/frontendView/ControlView.vue'
-import UploadViewVue from '@/views/frontendView/UploadView.vue'
+// import UploadViewVue from '@/views/frontendView/UploadView.vue'
 import LoggingViewVue from '@/views/configView/LoggingView.vue'
 
 
