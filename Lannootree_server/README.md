@@ -17,6 +17,6 @@ Follow [this guide](mqtt/README.md) in the mqtt directory.
 
 ## Deploy all containers
 
-```
+```bash
 docker-compose up -d
 ```

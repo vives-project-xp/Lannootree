@@ -1,6 +1,7 @@
 # Lannootree firmware
 
 ## Setup
+
 - Install necessary tools
 
   ```bash
@@ -8,7 +9,9 @@
   sudo apt install build-essential -y
   sudo apt install cmake -y
   ```
+
 - Build project
+
   ```bash
   mkdir build
   cd build
@@ -28,6 +31,5 @@ This need to be binded to a volume so it can be accessed.
 docker build lannootee:latest  .
 docker run -v "$(pwd)/dev/":/lannootree/dev/ lannootree
 ```
+
 ## Communication over socket
-
-
