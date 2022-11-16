@@ -22,11 +22,11 @@ const router = createRouter({
       path: "/controll",
       name: "controll",
       component: ControlViewVue
-    },
-    {
-      path: "/upload",
-      name: "upload",
-      component: UploadViewVue
+    // },
+    // {
+    //   path: "/upload",
+    //   name: "upload",
+    //   component: UploadViewVue
     }
   ]
 })
