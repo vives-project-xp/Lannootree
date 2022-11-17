@@ -1,8 +1,4 @@
 import { MqttClient } from 'mqtt'
-import LedDriver from './driver-connection.js'
-
-const USE_LEDDRIVER_CONNETION = false;
-const leddriver = new LedDriver(USE_LEDDRIVER_CONNETION);
 
 export function pause_leds() {
   console.log("LED client paused leds");
