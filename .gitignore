@@ -111,8 +111,3 @@ dist
 *.pwd
 
 *.sqlite
-
-
-## temporary files
-
-temp
