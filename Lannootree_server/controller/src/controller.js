@@ -88,9 +88,9 @@ client.on('message', function (topic, message) {
         case "play": play_leds(); break;
         case "stop": stop_leds(); break;
         case "color": set_color(data.red, data.green, data.blue); break;
-        case "play_gif": play_gif(data.gif_number); break;
         case "show_media": set_media(data.media_name); break;
-        case "play_effect": set_effect(data.effect_name); break;
+        // case "play_effect": set_effect(data.effect_name); break;
+        case "play_effect": play_gif(data.effect_name); break;
       }
     case "status/controller-dev": devCheck.Update(data); break;
   }
