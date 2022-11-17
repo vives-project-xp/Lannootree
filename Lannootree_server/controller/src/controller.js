@@ -89,7 +89,8 @@ client.on('message', function (topic, message) {
         case "stop": stop_leds(); break;
         case "color": set_color(data.red, data.green, data.blue); break;
         case "show_media": set_media(data.media_name); break;
-        case "play_effect": set_effect(data.effect_name); break;
+        // case "play_effect": set_effect(data.effect_name); break;
+        case "play_effect": play_gif(data.effect_name); break;
       }
     case "status/controller-dev": devCheck.Update(data); break;
   }
@@ -132,6 +133,15 @@ function set_color(red, green, blue) {
   activeData = "(" + red + "," + green + "," + blue + ")";
   sendStatus();
   logging(`INFO: static color (${red},${green},${blue}) set`);
+}
+
+function play_gif(gif_number) {
+  // Check storage if media (media_name) is ready
+  activeData = "gif_" + gif_number;
+  activeStream = null;
+  client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": gif_number}));
+  sendStatus();
+  logging(`INFO: playing gif ${gif_number}`);
 }
 
 function set_media(media_name) {

@@ -94,17 +94,17 @@ websocket.on('connection', (ws, req) => {
 // Sending updates_________________________________________
 function stop() {
     logging('[INFO] sending stop');
-    client.publish('controller/stop', JSON.stringify({"value": "stop"}));
+    client.publish('controller/in', JSON.stringify({"command": "stop"}));
 }
 
 function pause() {
     logging('[INFO] sending pause');
-    client.publish('controller/pause', JSON.stringify({"value": "pause"}));
+    client.publish('controller/in', JSON.stringify({"command": "pause"}));
 }
 
 function play() {
     logging('[INFO] sending play');
-    client.publish('controller/pause', JSON.stringify({"value": "play"}));
+    client.publish('controller/in', JSON.stringify({"command": "play"}));
 }
 
 function togglepause() {
@@ -114,7 +114,7 @@ function togglepause() {
 
 function effect(effect_id) {
     logging(`[INFO] sending set-effect: ${effect_id}`);
-    client.publish('controller/effect', JSON.stringify({"effect_id": effect_id}));
+    client.publish('controller/in', JSON.stringify({"command": "play_effect", "effect_name": effect_id}));
 }
 
 function asset(asset_id) {
@@ -123,9 +123,8 @@ function asset(asset_id) {
 }
 
 function setcolor(color) {
-    client.publish('controller/setcolor', JSON.stringify({"red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
+    client.publish('controller/in', JSON.stringify({"command": "color", "red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
 }
-
 
 function parseColor(input) {
     if (!input.match(/#[0-9,A-Z,a-z]{6}/g))logging("[ERROR] Color is not in hex format (#FFFFFF)");

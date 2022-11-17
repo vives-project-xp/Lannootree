@@ -57,6 +57,7 @@ client.on('message', function (topic, message) {
         case "play": play_leds(); break;
         case "stop": stop_leds(); break;
         case "color": set_color(data.red, data.green, data.blue); break;
+        case "gif": play_gif(data.gif_number); break;
         case "stream": play_stream(data.stream); break;
       }
       break;
@@ -82,6 +83,10 @@ function stop_leds() {
 
 function set_color(red, green, blue) {
   console.log(`LED client set color (${red},${green},${blue})`);
+}
+
+function play_gif(gif_number) {
+  console.log(`LED client play gif ${gif_number}`);
 }
 
 function play_stream(streamID) {
