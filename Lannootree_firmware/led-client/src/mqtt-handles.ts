@@ -7,7 +7,7 @@ export function pause_leds() {
 
 export function play_leds() {
   console.log("LED client resumed leds");
-  // gifPlayer.start();
+  gifPlayer.start();
 }
 
 export function stop_leds() {
@@ -22,6 +22,7 @@ export function set_color(red: number, green: number, blue: number) {
 export function play_gif(gif_number: number) {
   console.log(`LED client play gif ${gif_number}`);
   gifPlayer.set_gif(gif_number);
+  gifPlayer.start();
 }
 
 var activeStreamTopic: string | null = null;

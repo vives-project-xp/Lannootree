@@ -1,16 +1,15 @@
 import readGifs from './gifs.js'
 import LedDriver from '../driver-connection.js'
 
-const USE_LEDDRIVER_CONNETION = true;
+const USE_LEDDRIVER_CONNETION = false;
 const leddriver = new LedDriver(USE_LEDDRIVER_CONNETION);
-
-var signal: any = null;
-var pauseSignal: any = null;
-var cancel: any = null;
 
 class GifPlayer {
   private current = 0;
   private Gifs: Object[] = [];
+  private running: boolean = false;
+  private paused: boolean = false;
+  private effectChanged: boolean = false;
 
   constructor() {
     this.Gifs.push(...readGifs()); 
@@ -20,38 +19,46 @@ class GifPlayer {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async loop(cancelSignal: any, pauseSignal: any) {
-    let frame = 0;
-    let Gif: any = this.Gifs[this.current];
-    let Frames = Object.keys(Gif);
-    
-    let loop = true;
-    signal.then(() => loop = false);
+  async start() {
+    this.running = true;
 
-    while (loop) {
-      leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
-      frame = (frame + 1) % Frames.length;      
-      await this.sleep(60);
+
+    while (this.running) {
+      let frame = 0;
+      let Gif: any = this.Gifs[this.current];
+      let Frames = Object.keys(Gif);
+      this.effectChanged = false;
+
+      while (this.running) {
+        while (this.paused) await this.sleep(0);
+
+        leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
+        frame = (frame + 1) % Frames.length;
+
+        if (frame == Frames.length - 1 && this.effectChanged) break;
+
+        await this.sleep(50);
+      }
     }
   }
 
-  start() {
-    signal = new Promise(resolve => cancel = resolve);
-    this.loop(signal, pauseSignal);
-  }
-
   set_gif(index: number) {
-    if (index >= 0 && index < this.Gifs.length) {
-      this.stop()
+    if (index > 0 && index < this.Gifs.length) {
       this.current = index;
-      this.start()
+      this.effectChanged = true;
     } 
   }
 
   stop() {
-    if (cancel !== null) cancel();
-    cancel = null;
-    signal = null;
+    this.running = false;
+  }
+
+  pause() {
+    this.paused = true;
+  }
+
+  play() {
+    this.paused = false;
   }
 
 }
