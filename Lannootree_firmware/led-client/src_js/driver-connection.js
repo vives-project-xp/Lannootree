@@ -1,5 +1,4 @@
 import net from "net";
-import { serialize } from 'v8';
 
 export default class LedDriver {
 

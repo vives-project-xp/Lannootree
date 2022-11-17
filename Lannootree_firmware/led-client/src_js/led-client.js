@@ -42,7 +42,6 @@ client.on('error', function(error) {
   logging("ERROR: mqtt:  " + error);
 });
 
-var activeStreamTopic = null;
 client.on('message', function (topic, message) {
   let data = message;
   try {
@@ -122,6 +121,7 @@ function play_stream(streamID) {
 // setInterval(() => {PushMatrix_frontend()}, (Math.round(1000/frontend_framerate)));
 
 // general__________________________________________________________________
+
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
     console.log(message);
