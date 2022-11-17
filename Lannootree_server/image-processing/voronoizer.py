@@ -50,7 +50,7 @@ def draw_voronoi(img, facets, indices) :
 
   return list(cstring)
 
-img_file = "Vives.gif"
+img_file = "rickroll-roll.gif"
 frames = imageio.mimread(f"./img/{img_file}")
 
 # init sizes
