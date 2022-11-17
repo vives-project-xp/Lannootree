@@ -9,8 +9,9 @@
     
 <template>
   <div class="d-flex align-center justify-center">
+    {{current}}
     <v-select
-      v-model="current" 
+      v-model="current"
       label="Effect"
       :items="clientStore.status_json.effects"
       @update:modelValue="clientStore.setEffect(current)"
@@ -19,4 +20,3 @@
     ></v-select>
   </div>
 </template>
-    
