@@ -86,10 +86,10 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     }
   };
 
-  const setEffect = function () {
+  const setEffect = function (effect: string) {
     if(websocketactive.value == true) {
       console.log(status_json.value)
-      ws.send(JSON.stringify({"effect": status_json.effects}));
+      ws.send(JSON.stringify({"effect": effect}));
     };
   };
 
