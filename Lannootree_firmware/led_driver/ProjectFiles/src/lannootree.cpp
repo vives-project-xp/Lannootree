@@ -56,7 +56,10 @@ namespace Lannootree {
   }
 
   void LannooTree::initialize_memory(json &config) {
-    bool ca0, ca1, cb0, cb1 = false;
+    bool ca0 = false;
+    bool ca1 = false;
+    bool cb0 = false;
+    bool cb1 = false;
 
     for (std::string c : config["inUseChannels"]) {
       if (c.compare("CA0") == 0)
