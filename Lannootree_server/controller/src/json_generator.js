@@ -3,7 +3,11 @@ export default class JsonGenerator {
     return {
       "status": status,
       "active_data": activeData,
-      "active_stream": activeStream
+      "active_stream": activeStream,
+
+      "pause": paused,
+      "current_effect": active_effect,
+      "effects": effects
     };
   }
 }
