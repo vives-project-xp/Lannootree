@@ -105,9 +105,13 @@ var status = "stop";
 var activeData = null;
 var activeStream = null;
 
+var paused = true;  // later opvragen aan ledclient, niet lokaal bijhouden
+var playing_gif = 0;  // Later ook verwijderen
+
 function pause_leds() {
   client.publish('ledpanel/control', JSON.stringify({"command": "pause"}));
   status = "pause";
+  paused = true;
   sendStatus();
   logging("INFO: LEDS paused");
 }
@@ -115,6 +119,7 @@ function pause_leds() {
 function play_leds() {
   client.publish('ledpanel/control', JSON.stringify({"command": "play"}));
   status = "playing";
+  paused = false;
   sendStatus();
   logging("INFO: LEDS resumed");
 }
@@ -124,6 +129,8 @@ function stop_leds() {
   status = "stop";
   activeData = null;
   activeStream = null;
+  paused = true;
+  playing_gif = null;
   sendStatus();
   logging("INFO: stopped media");
 }
@@ -140,6 +147,7 @@ function play_gif(gif_number) {
   activeData = "gif_" + gif_number;
   activeStream = null;
   client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": gif_number}));
+  playing_gif = gif_number;
   sendStatus();
   logging(`INFO: playing gif ${gif_number}`);
 }
@@ -201,7 +209,10 @@ function sendStatus() {
   let obj = JsonGenerator.statusToJson(
     status,
     activeData,
-    activeStream
+    activeStream,
+    paused,
+    playing_gif,
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]   // totally DRY
   );
   client.publish('controller/status', JSON.stringify(obj));
 }

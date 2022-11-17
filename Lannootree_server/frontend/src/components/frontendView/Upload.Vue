@@ -33,7 +33,7 @@ import axios from 'axios'
   <v-row>
     <v-file-input
       v-model="files"
-      accept="image/png, image/jpeg, image/bmp, video/mp4, video/quicktime"
+      accept="image/png, image/jpeg, image/gif, image/bmp, video/mp4, video/quicktime"
       color="#00BD7E"
       counter
       label="Upload media"
