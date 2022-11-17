@@ -1,42 +1,67 @@
-const net = require('net');
+import net from 'net'
+import mqtt from 'mqtt'
+import fs from 'fs'
 
-// const client = net.createConnection("/var/run/lannootree.socket");
-const client = net.createConnection("./logging.socket");
+const caFile = fs.readFileSync("./ca.crt");
+var options={
+  clientId:"test-ledriver" + Math.random().toString(16).substring(2, 8),
+  port: 8883,
+  host: "lannootree.devbitapp.be",
+  protocol:'mqtts',
+  rejectUnauthorized : true,
+  ca:caFile,
+  will: {
+    topic: "status/test-leddriver",
+    payload: "Offline",
+    retain: false
+  }
+};
 
-client.on("connect", () => {
+const mqttClient = mqtt.connect(options);
+
+mqttClient.on('connect', () => {
+  mqttClient.publish("status/test-leddriver", "Online");
+});
+
+const client = net.createConnection("../led_driver/build/dev/lannootree.socket");
+const logClient = net.createConnection("../led_driver/build/dev/logging.socket");
+
+logClient.on("connect", () => {
   console.log("Connected to socket");
+  mqttClient.publish("status/leddriver", 'Online');
 });
 
-client.on('data', (data) => {
-  console.log(data);
+logClient.on('data', (data) => {
+  let msg = (data.toString()).split('\n');
+  msg.forEach(m => {
+    if (m !== "") {
+      mqttClient.publish("logs/leddriver", m);
+    }
+  });
 });
 
-client.on('error', (err) => {
+logClient.on('error', (err) => {
   console.log(err);
 })
 
 
-// let i = 0;
-// console.time("240 fps");
-// const interval2 = setInterval(() => {
-//   let color = {
-//     r: Math.floor((Math.random() * 129)),
-//     g: Math.floor((Math.random() * 129)),
-//     b: Math.floor((Math.random() * 129))
-//   }
-//   let random = Math.floor((Math.random() * 129));
-//   let matrix = new Array(288 * 3)
-//   .fill(0)
-//   .map(e => random);
+let raw = fs.readFileSync('./data_json.json')
+let homerGif = JSON.parse(raw);
 
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
+let homerFrames = Object.keys(homerGif);
 
-//   client.write(Uint8Array.from(matrix));
+console.log(homerFrames);
 
-//   // if (i++ > 60) {
-//   //   console.timeEnd("240 fps");
-//   //   clearInterval(interval2);
-//   //   client.destroy();
-//   // }
-// }, 100);
+let frame = 0;
+while (true) {
+  console.log(`Sending frame ${frame}: [${homerGif[homerFrames[frame]][0]}, ${homerGif[homerFrames[frame]][1]}, ${homerGif[homerFrames[frame]][2]}]`);
 
+  client.write(Uint8Array.from(homerGif[homerFrames[frame]]))
+
+  frame = (frame + 1) % homerFrames.length;
+  await sleep(250);
+}

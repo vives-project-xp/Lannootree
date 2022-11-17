@@ -45,10 +45,10 @@ namespace Lannootree {
   }
 
   void UnixSocket::stop(void) {
+    _running = false;
     if (_current_sock_fd) {
       close(_current_sock_fd);
     }
-    _running = false;
     _t.join();
   }
 
