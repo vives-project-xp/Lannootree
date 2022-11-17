@@ -3,8 +3,8 @@ services:
   led_driver:
     command: --privileged
     image: led_driver:latest
-    # build: 
-    #   context: ./led_driver
+    build: 
+      context: ./led_driver
     restart: always
     volumes:
       - /var/run/:/lannootree/dev
@@ -13,12 +13,12 @@ services:
       - /dev/gpiomem:/dev/gpiomem
       - /proc/cpuinfo:/proc/cpuinfo
 
-  # controller:
-  #   build:
-  #     context: ./controller 
-  #   env_file:
-  #     - .env
-  #   restart: always
-  #   volumes:
-  #     - ./config.json:/config.json
-  #     - ./ca_crt/ca.crt:/app/ca.crt
+  controller:
+    build:
+      context: ./controller 
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./config.json:/config.json
+      - ./ca_crt/ca.crt:/app/ca.crt
