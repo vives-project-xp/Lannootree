@@ -9,8 +9,8 @@
 
 <template>
   <v-btn
-    :icon="clientStore.status_json.pause ? 'mdi-pause' : 'mdi-play'"
-    :color="clientStore.status_json.pause ? 'red' : 'green'"
-    @click="clientStore.status_json.pause ? clientStore.Pause(true) : clientStore.Pause(false)"    
+    :icon="clientStore.status_json.pause ? 'mdi-play' : 'mdi-pause'"
+    :color="clientStore.status_json.pause ? 'green' : 'red'"
+    @click="clientStore.status_json.pause ?  clientStore.Pause(false) : clientStore.Pause(true)"    
   />
 </template>
