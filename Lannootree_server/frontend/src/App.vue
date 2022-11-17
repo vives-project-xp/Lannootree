@@ -10,6 +10,7 @@
 
   const userInfo = useUserStore();
 
+  const logoutUrl = import.meta.env.VITE_LOGOUT_URL;
   
   const items = computed(() => {    
     const _routes = [
@@ -84,6 +85,15 @@
       >
         <v-icon v-if="theme.global.current.value.dark">mdi-weather-sunny</v-icon>
         <v-icon v-else>mdi-weather-night</v-icon>
+      </v-btn>
+      
+      <v-btn 
+        color="red"
+        variant="outlined"
+        :href="logoutUrl" 
+        class="linkbutton"
+      >
+        Logout
       </v-btn>
 
     </v-app-bar>

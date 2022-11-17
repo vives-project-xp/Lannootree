@@ -6,8 +6,6 @@
   import Color from '@/components/frontendView/Color.vue'
   import LannootreeGrid from '@/components/frontendView/LannootreeGrid.vue'
   import Title from '@/components/frontendView/Title.vue'
-  import Logout from '@/components/frontendView/Logout.vue'
-
   import logo from '@/assets/frontendView/logo.svg'
 
 </script>
