@@ -35,8 +35,8 @@ namespace Lannootree {
   }
 
   UnixSocket::~UnixSocket() {
-    if (_socket_fd) close(_socket_fd);
-    if (access(_socket_path.c_str(), F_OK) != -1) unlink(_socket_path.c_str());
+    // close(_socket_fd);
+    // unlink(_socket_path.c_str());
   }
 
   void UnixSocket::start(void) {
@@ -46,9 +46,8 @@ namespace Lannootree {
 
   void UnixSocket::stop(void) {
     _running = false;
-    if (_current_sock_fd) {
-      close(_current_sock_fd);
-    }
+    close(_current_sock_fd);
+    unlink(_socket_path.c_str());
     _t.join();
   }
 

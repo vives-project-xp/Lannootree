@@ -27,16 +27,12 @@ class GifPlayer {
     let loop = true;
     signal.then(() => loop = false);
 
-    console.log("starting loop")
-
     while (loop) {
       leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
       frame = (frame + 1) % Frames.length;
 
       await this.sleep(50);
     }
-
-    console.log("loop stoped");
   }
 
   start() {

@@ -50,6 +50,7 @@ namespace Lannootree {
     info_log("Waiting for threads to join...\n");
     led_driver.stop();
     matrix_socket.stop();
+    Logger::Get().stop();
 
     info_log("Lannootree gracefully shut down\n");
   }

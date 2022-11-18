@@ -33,6 +33,11 @@ namespace Lannootree {
       ~Logger();
 
     public:
+      void stop(void) { 
+        _socket.stop();
+      }
+
+    public:
       friend std::string prep_level(Logger& l);
 
     public:
