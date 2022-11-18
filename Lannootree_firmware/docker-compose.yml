@@ -14,16 +14,15 @@ services:
       - /dev/gpiomem:/dev/gpiomem
       - /proc/cpuinfo:/proc/cpuinfo
 
-  controller:
+  led-client:
     image: led-client:latest
     build:
       context: ./led-client
+    privileged: true
+    restart: always
     env_file:
       - .env
-    restart: always
     volumes:
       - ${PWD}/config.json:/config.json
       - ${PWD}/ca_crt/ca.crt:/app/ca.crt
       - /var/run/:/var/run/
-    depends_on:
-      - led-driver

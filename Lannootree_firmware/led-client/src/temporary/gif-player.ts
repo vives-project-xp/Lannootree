@@ -4,15 +4,12 @@ import LedDriver from '../driver-connection.js'
 const USE_LEDDRIVER_CONNETION = true;
 const leddriver = new LedDriver(USE_LEDDRIVER_CONNETION);
 
-var cancel: any;
-var signal: any;
+var cancel: any = null;
+var signal: any = null;
 
 class GifPlayer {
   private current = 0;
   private Gifs: Object[] = [];
-  private running: boolean = false;
-  private paused: boolean = false;
-  private effectChanged: boolean = false;
 
   constructor() {
     this.Gifs.push(...readGifs()); 
@@ -22,7 +19,7 @@ class GifPlayer {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async loop() {
+  async loop(signal: any) {
     let frame = 0;
     let Gif: any = this.Gifs[this.current];
     let Frames = Object.keys(Gif);
@@ -30,30 +27,33 @@ class GifPlayer {
     let loop = true;
     signal.then(() => loop = false);
 
+    console.log("starting loop")
+
     while (loop) {
       leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
       frame = (frame + 1) % Frames.length;
 
       await this.sleep(50);
     }
+
+    console.log("loop stoped");
   }
 
   start() {
     signal = new Promise(resolve => cancel = resolve);
-    this.loop();
+    this.loop(signal);
   }
 
   set_gif(index: number) {
-    this.stop();
     if (index > 0 && index < this.Gifs.length) {
+      this.stop();
       this.current = index;
-      this.effectChanged = true;
+      this.start();
     } 
-    this.start();
   }
 
   stop() {
-    cancel();
+    if (cancel !== null) cancel();
   }
 
   pause() {
