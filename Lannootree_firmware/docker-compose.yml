@@ -1,12 +1,13 @@
 version: "3"
 services:
   led_driver:
-    command: --privileged
-    image: led_driver:latest
+    image: led-driver:latest
     build: 
       context: ./led_driver
+    privileged: true
     restart: always
     volumes:
+      - ./config.json=/lannootree/config.json
       - /var/run/:/lannootree/dev
       - /dev/mem:/dev/mem
       - /dev/vcio:/dev/vcio
@@ -14,8 +15,9 @@ services:
       - /proc/cpuinfo:/proc/cpuinfo
 
   controller:
+    image: led-client:latest
     build:
-      context: ./controller 
+      context: ./led-client
     env_file:
       - .env
     restart: always

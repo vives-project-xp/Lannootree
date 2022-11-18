@@ -11,8 +11,6 @@ set(THREADS_PREFER_PTHREAD_FLAG TRUE)
 set(BUILD_SHARED ON)
 set(BUILD_TEST OFF)
 
-# add_compile_options(-g)
-
 find_package(Threads REQUIRED)
 
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/rpi_ws281x)
