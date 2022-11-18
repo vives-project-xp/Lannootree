@@ -1,4 +1,5 @@
 #include <lannootree.hpp>
+#include <logger.hpp>
 
 namespace { // Used for signal handeling
   std::mutex mtx;
@@ -15,8 +16,6 @@ namespace Lannootree {
     for (auto c : _controllers) delete c;
     for (auto [chan, mem] : _channel_mem) delete mem;
   }
-
-  #include <logger.hpp>
 
   void LannooTree::start(void) {
     log(logo);

@@ -50,7 +50,7 @@ def draw_voronoi(img, facets, indices) :
 
   return list(cstring)
 
-img_file = "rickroll-roll.gif"
+img_file = "trippycolor.gif"
 frames = imageio.mimread(f"./img/{img_file}")
 
 # init sizes
@@ -155,5 +155,3 @@ for frame in frames:
 imageio.mimsave(f'./img_processed/proccesed_{img_file}', images)
 with open(f"./processed_json/{img_file}.json", "w") as f:
   json.dump(homer, f, indent=2)
-
-

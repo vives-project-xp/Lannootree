@@ -1,7 +1,7 @@
 import readGifs from './gifs.js'
 import LedDriver from '../driver-connection.js'
 
-const USE_LEDDRIVER_CONNETION = false;
+const USE_LEDDRIVER_CONNETION = true;
 const leddriver = new LedDriver(USE_LEDDRIVER_CONNETION);
 
 class GifPlayer {
@@ -43,6 +43,7 @@ class GifPlayer {
   }
 
   set_gif(index: number) {
+    console.log("setgif");
     if (index > 0 && index < this.Gifs.length) {
       this.current = index;
       this.effectChanged = true;
@@ -50,14 +51,17 @@ class GifPlayer {
   }
 
   stop() {
+    console.log("Stopgif")
     this.running = false;
   }
 
   pause() {
+    console.log("pause gif")
     this.paused = true;
   }
 
   play() {
+    console.log("play gif")
     this.paused = false;
   }
 

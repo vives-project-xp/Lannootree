@@ -1,13 +1,13 @@
 version: "3"
 services:
-  led_driver:
+  led-driver:
     image: led-driver:latest
     build: 
       context: ./led_driver
     privileged: true
     restart: always
     volumes:
-      - ./config.json=/lannootree/config.json
+      - ${PWD}/config.json:/lannootree/config.json
       - /var/run/:/lannootree/dev
       - /dev/mem:/dev/mem
       - /dev/vcio:/dev/vcio
@@ -22,5 +22,8 @@ services:
       - .env
     restart: always
     volumes:
-      - ./config.json:/config.json
-      - ./ca_crt/ca.crt:/app/ca.crt
+      - ${PWD}/config.json:/config.json
+      - ${PWD}/ca_crt/ca.crt:/app/ca.crt
+      - /var/run/:/var/run/
+    depends_on:
+      - led-driver
