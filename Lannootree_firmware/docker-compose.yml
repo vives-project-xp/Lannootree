@@ -23,6 +23,7 @@ services:
     env_file:
       - .env
     volumes:
+      - ${PWD}/led-client/src/temporary/processed/:/app/processed/
       - ${PWD}/config.json:/config.json
       - ${PWD}/ca_crt/ca.crt:/app/ca.crt
       - /var/run/:/var/run/
