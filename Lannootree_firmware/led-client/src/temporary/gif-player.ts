@@ -4,6 +4,9 @@ import LedDriver from '../driver-connection.js'
 const USE_LEDDRIVER_CONNETION = true;
 const leddriver = new LedDriver(USE_LEDDRIVER_CONNETION);
 
+var cancel: any;
+var signal: any;
+
 class GifPlayer {
   private current = 0;
   private Gifs: Object[] = [];
@@ -19,50 +22,46 @@ class GifPlayer {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  async start() {
-    this.running = true;
+  async loop() {
+    let frame = 0;
+    let Gif: any = this.Gifs[this.current];
+    let Frames = Object.keys(Gif);
 
+    let loop = true;
+    signal.then(() => loop = false);
 
-    while (this.running) {
-      let frame = 0;
-      let Gif: any = this.Gifs[this.current];
-      let Frames = Object.keys(Gif);
-      this.effectChanged = false;
+    while (loop) {
+      leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
+      frame = (frame + 1) % Frames.length;
 
-      while (this.running) {
-        while (this.paused) await this.sleep(0);
-
-        leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
-        frame = (frame + 1) % Frames.length;
-
-        if (frame == Frames.length - 1 && this.effectChanged) break;
-
-        await this.sleep(50);
-      }
+      await this.sleep(50);
     }
   }
 
+  start() {
+    signal = new Promise(resolve => cancel = resolve);
+    this.loop();
+  }
+
   set_gif(index: number) {
-    console.log("setgif");
+    this.stop();
     if (index > 0 && index < this.Gifs.length) {
       this.current = index;
       this.effectChanged = true;
     } 
+    this.start();
   }
 
   stop() {
-    console.log("Stopgif")
-    this.running = false;
+    cancel();
   }
 
   pause() {
     console.log("pause gif")
-    this.paused = true;
   }
 
   play() {
     console.log("play gif")
-    this.paused = false;
   }
 
 }
