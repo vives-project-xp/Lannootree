@@ -8,3 +8,4 @@ const FRONTEND_FRAMERATE = 10;
 
 const { client, logging } = createMqttClient();
 
+logging('Led client started', false);

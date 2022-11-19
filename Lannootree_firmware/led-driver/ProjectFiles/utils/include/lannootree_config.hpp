@@ -30,7 +30,7 @@
 #define PANEL_LED_COUNT 72
 #define STRIP_TYPE      WS2811_STRIP_GRB      
 
-#define JSON_FILE_PATH "/home/joey/Documents/School/2022_2023/ProjectWeek/Lannootree/Lannootree_firmware/config.json"
+#define JSON_FILE_PATH ""
 
 static const char* logo =
 "  _                                   _                  \n"

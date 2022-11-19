@@ -4,7 +4,7 @@ import mqtt from 'mqtt'
 import * as handel from './mqtt-handles.js'
 
 export default () => {
-  const caCert  = fs.readFileSync("ca.crt");
+  const caCert  = fs.readFileSync("./ca.crt");
   const options: mqtt.IClientOptions = {
     clientId: "led-client" + Math.random().toString(16).substring(2, 8),
     port: Number(process.env.MQTT_BROKER_PORT),
@@ -25,7 +25,7 @@ export default () => {
   function logging(message: string, msgdebug: boolean = false) {
     if (!msgdebug) {
       console.log(message);
-      client.publish('logs/controller', message);
+      client.publish('logs/led-client', message);
     }
     else if(msgdebug) {
       console.log(message);
