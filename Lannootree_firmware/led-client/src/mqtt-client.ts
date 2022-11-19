@@ -1,74 +1,86 @@
 import fs from 'fs'
 import mqtt from 'mqtt'
-
+import dotenv from 'dotenv'
 import * as handel from './mqtt-handles.js'
 
-export default () => {
-  const caCert  = fs.readFileSync("./ca.crt");
-  const options: mqtt.IClientOptions = {
-    clientId: "led-client" + Math.random().toString(16).substring(2, 8),
+dotenv.config({ path: '../.env' });
+
+class LannooTreeMqttClient {
+
+  private client: mqtt.Client;
+  private caCert: Buffer = fs.readFileSync('./ca.crt');
+  private mqttOptions: mqtt.IClientOptions = {
+    clientId: `led-client${Math.random().toString().substring(2, 8)}`,
     port: Number(process.env.MQTT_BROKER_PORT),
     host: process.env.MQTT_BROKER_URL,
     protocol: 'mqtts',
-    rejectUnauthorized : true,
-    ca: caCert,
+    rejectUnauthorized: true,
+    ca: this.caCert,
     will: {
       qos: 2,
-      topic: "status/led-client",
-      payload: "Offline",
+      topic: 'status/led-client',
+      payload: 'Offline',
       retain: true
     }
   };
 
-  const client = mqtt.connect(options);
+  private subscribeTopics = [
+    'ledpanel/control',
+  ];
 
-  function logging(message: string, msgdebug: boolean = false) {
-    if (!msgdebug) {
-      console.log(message);
-      client.publish('logs/led-client', message);
-    }
-    else if(msgdebug) {
-      console.log(message);
-    }
-  }
-
-  client.on('connect', function () {
-    logging("INFO: mqtt connected");
-    client.publish('status/led-client', 'Online', {retain: true});
-    client.subscribe("ledpanel/control");
-  });
-  
-  client.on('error', function(error) {
-    logging("ERROR: mqtt:  " + error);
-  });
-
-  const ledpanelControllMap = new Map<string, any>([
-    ["pause", handel.pause_leds],
-    ["play",  handel.play_leds],
-    ["stop",  handel.stop_leds],
-    ["gif",   handel.play_gif],
-    ["color", handel.set_color],
-    // ["stream", handel.play_stream]
+  private messageTopicMap: Map<string, Map<string, (data: any) => void>> = new Map([
+    [ // Topics
+      "ledpanel/control",
+      new Map( 
+      [ // Commands for ledpanel/controll topic
+        ["pause", handel.pause_leds],
+        ["play",  handel.play_leds],
+        ["stop",  handel.stop_leds],
+        ["gif",   handel.play_gif],
+        ["color", handel.set_color],
+      ])
+    ]
   ]);
 
-  client.on('message', (topic, message) => {
-    let data: any = message;
+  constructor() {
+    this.client = mqtt.connect(this.mqttOptions);
+    this.client.on('connect', this.connectCallback);
+  }
 
-    try {
-      data = JSON.parse(message.toString());
-    } catch (error) {
-      data = message;
-    }
+  log = (message: string, debug: boolean = false) => {
+    if (!debug) this.client.publish('logs/led-client', message); 
+    console.log(message);
+  };
 
-    switch (topic) {
-      case "ledpanel/control": {
-        if (ledpanelControllMap.has(data.command))
-          ledpanelControllMap.get(data.command)(data);
-        
-        break;
+  private subscribeToTopics = () => {
+    this.subscribeTopics.forEach(topic => this.client.subscribe(topic));
+  };
+
+  private connectCallback = () => {
+    this.log('Connected to mqtt');
+    this.subscribeToTopics();
+    this.client.publish('status/led-client', 'Online', { retain: true });
+    this.client.on('error', this.errorCallback);
+    this.client.on('message', this.messageCallback);
+  };
+
+  private errorCallback = (error: Error) => {
+    console.log(`ERROR mqtt: ${error}`);
+  };
+
+  private messageCallback = (topic: string, message: Buffer) => {
+    let data = JSON.parse(message.toString());
+    
+    if (this.messageTopicMap.has(topic)) {
+      let topicMap = this.messageTopicMap.get(topic);
+
+      if (topicMap?.has(data.command)) {
+        let command = topicMap.get(data.command);
+        if (command !== undefined) command(data);
       }
     }
-  });
+  };
 
-  return { client, logging };
 }
+
+export const client = new LannooTreeMqttClient();
