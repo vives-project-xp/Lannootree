@@ -42,30 +42,32 @@ export default () => {
     logging("ERROR: mqtt:  " + error);
   });
 
+  const ledpanelControllMap = new Map<string, any>([
+    ["pause", handel.pause_leds],
+    ["play",  handel.play_leds],
+    ["stop",  handel.stop_leds],
+    ["gif",   handel.play_gif],
+    ["color", handel.set_color],
+    // ["stream", handel.play_stream]
+  ]);
+
   client.on('message', (topic, message) => {
     let data: any = message;
+
     try {
       data = JSON.parse(message.toString());
     } catch (error) {
       data = message;
     }
+
     switch (topic) {
-      case "ledpanel/control":
-        switch(data.command) {
-          case "pause": handel.pause_leds(); break;
-          case "play": handel.play_leds(); break;
-          case "stop": handel.stop_leds(); break;
-          case "color": handel.set_color(data.red, data.green, data.blue); break;
-          case "gif": handel.play_gif(data.gif_number); break;
-          case "stream": handel.play_stream(data.stream, client); break;
-        }
+      case "ledpanel/control": {
+        if (ledpanelControllMap.has(data.command))
+          ledpanelControllMap.get(data.command)(data);
+        
         break;
-      // case "ledpanel/stream": devCheck.Update(data); break;
-      // case activeStreamTopic:
-      //   leddriver.frame_to_ledcontroller(data);
-      //   break;
+      }
     }
-    
   });
 
   return { client, logging };

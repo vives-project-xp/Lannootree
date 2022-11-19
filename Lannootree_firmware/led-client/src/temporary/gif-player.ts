@@ -1,63 +1,93 @@
 import readGifs from './gifs.js'
+import EventEmitter from 'events';
 import LedDriver from '../driver-connection.js'
 
-const USE_LEDDRIVER_CONNETION = true;
-const leddriver = new LedDriver(USE_LEDDRIVER_CONNETION);
+class _GifPlayer extends EventEmitter {
 
-var cancel: any = null;
-var signal: any = null;
-
-class GifPlayer {
-  private current = 0;
   private Gifs: Object[] = [];
+  private leddriver: LedDriver;
+  private currentGif: number = 0;
 
   constructor() {
-    this.Gifs.push(...readGifs()); 
+    super()
+    this.Gifs.push(...readGifs());
+    this.leddriver = new LedDriver(false);
   }
 
-  sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async loop(signal: any) {
+  async loop() {
     let frame = 0;
-    let Gif: any = this.Gifs[this.current];
-    let Frames = Object.keys(Gif);
+    let Gif: any = this.Gifs[this.currentGif];
+    let Frames: string[] = Object.keys(Gif);
 
-    let loop = true;
-    signal.then(() => loop = false);
+    let running = true;
 
-    while (loop) {
-      leddriver.frame_to_ledcontroller(Gif[Frames[frame]])
+    let unpause: any = null;
+    let pause: any = null;
+
+    this.on('stop',  () => {
+      this.emit('play');
+      running = false;
+    });
+    
+    this.on('pause', () => {
+      if (pause === null) {
+        pause = new Promise(res => unpause = res);
+      }
+    });
+
+    this.on('play',  () => {
+      if (unpause !== null) {
+        unpause();
+        pause = null;
+        unpause = null;
+      }
+    });
+
+    while (running) {
+      this.leddriver.frame_to_ledcontroller(Gif[Frames[frame]]);
       frame = (frame + 1) % Frames.length;
 
-      await this.sleep(50);
-    }
-  }
+      if (pause !== null) await pause;
 
-  start() {
-    signal = new Promise(resolve => cancel = resolve);
-    this.loop(signal);
+      await new Promise(resolve => setTimeout(resolve, 50));
+    }
   }
 
   set_gif(index: number) {
     if (index > 0 && index < this.Gifs.length) {
-      this.stop();
-      this.current = index;
-      this.start();
-    } 
+      this.currentGif = index;
+    }
+  }
+
+}
+
+class GifPlayer {
+  private _gifPlayer: _GifPlayer;
+
+  constructor() {
+    this._gifPlayer = new _GifPlayer();
+  }
+
+  start() {
+    this._gifPlayer.loop();
   }
 
   stop() {
-    if (cancel !== null) cancel();
+    this._gifPlayer.emit('stop');
   }
 
   pause() {
-    console.log("pause gif")
+    this._gifPlayer.emit('pause');
   }
 
   play() {
-    console.log("play gif")
+    this._gifPlayer.emit('play');
+  }
+
+  set_gif(index: number) {
+    this.stop();
+    this._gifPlayer.set_gif(index);
+    this.start();
   }
 
 }
