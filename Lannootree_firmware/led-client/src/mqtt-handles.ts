@@ -14,7 +14,7 @@ export function stop_leds() {
 }
 
 export function play_gif(data: any) {
-  console.log(`LED client play gif ${data.gif_number}`);
+  gifPlayer.set_gif(data.gif_number);
 }
 
 export function set_color(data: any) {

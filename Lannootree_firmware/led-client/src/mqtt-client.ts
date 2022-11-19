@@ -8,7 +8,7 @@ dotenv.config({ path: '../.env' });
 class LannooTreeMqttClient {
 
   private client: mqtt.Client;
-  private caCert: Buffer = fs.readFileSync('./ca.crt');
+  private caCert: Buffer = fs.readFileSync('./ca_crt/ca.crt');
   private mqttOptions: mqtt.IClientOptions = {
     clientId: `led-client${Math.random().toString().substring(2, 8)}`,
     port: Number(process.env.MQTT_BROKER_PORT),
@@ -58,7 +58,9 @@ class LannooTreeMqttClient {
 
   private connectCallback = () => {
     this.log('Connected to mqtt');
+    
     this.subscribeToTopics();
+
     this.client.publish('status/led-client', 'Online', { retain: true });
     this.client.on('error', this.errorCallback);
     this.client.on('message', this.messageCallback);

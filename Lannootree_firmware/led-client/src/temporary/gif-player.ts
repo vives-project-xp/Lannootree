@@ -10,8 +10,9 @@ class _GifPlayer extends EventEmitter {
 
   constructor() {
     super()
+    
     this.Gifs.push(...readGifs());
-    this.leddriver = new LedDriver(false);
+    this.leddriver = new LedDriver(true);
   }
 
   async loop() {
@@ -54,7 +55,7 @@ class _GifPlayer extends EventEmitter {
   }
 
   set_gif(index: number) {
-    if (index > 0 && index < this.Gifs.length) {
+    if (index >= 0 && index < this.Gifs.length) {
       this.currentGif = index;
     }
   }
