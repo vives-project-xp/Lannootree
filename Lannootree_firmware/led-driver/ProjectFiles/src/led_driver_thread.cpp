@@ -17,9 +17,11 @@ namespace Lannootree {
 
     std::for_each(_channel_mem->begin(), _channel_mem->end(), [](std::pair<std::string, LedBuffer *> key_value) {
       auto [chan, buff] = key_value;
+      std::cout << "Shutting down " << chan << std::endl;
       buff->shutdown();
     });
 
+    std::cout << "joining thread" << std::endl;
     _t.join();
   }
 
