@@ -1,4 +1,4 @@
-import Effect from '../effect.js';
+import Effect from '../../effect.js';
 
 export default class Strobe extends Effect {
 
@@ -6,15 +6,14 @@ export default class Strobe extends Effect {
   framespeed_ms = 1;
   iSOn = false;
 
+  endOfEffect = false;
+
   nextframe() {
     let color = 0;
-    if (this.iSOn) {
-      color = 255;
-    }
-    else {
-      color = 0;
-    }
+    if (this.iSOn) color = 255;
+    else color = 0;
     this.iSOn = !this.iSOn;
+    if(!this.isOn) this.endOfEffect = true;
 
     this.currentmatrix = this.generate_matrix(this.nextmatrix);
     for(var i = 0; i < this.nextmatrix.length; i++) {
@@ -24,4 +23,14 @@ export default class Strobe extends Effect {
     }
     return this.currentmatrix;
   }
+
+  endOfEffect() {
+    return this.endOfEffect;
+  }
+
+
+
+
+
+
 }
