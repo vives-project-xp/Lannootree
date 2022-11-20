@@ -14,6 +14,12 @@ namespace Lannootree {
 
   void LedDriverThread::stop(void) {
     _running = false;
+
+    std::for_each(_channel_mem->begin(), _channel_mem->end(), [](std::pair<std::string, LedBuffer *> key_value) {
+      auto [chan, buff] = key_value;
+      buff->shutdown();
+    });
+
     _t.join();
   }
 
@@ -24,7 +30,9 @@ namespace Lannootree {
 
       for (auto c : *_controllers) {
 
-        _channel_mem->at("CA0")->mem_read(c->channel[0].leds);
+        bool success = _channel_mem->at("CA0")->mem_read(c->channel[0].leds);
+
+        if (!success) break;
 
         ret = ws2811_render(c, 
           [](void* arg){ 

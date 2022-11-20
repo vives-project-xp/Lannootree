@@ -16,11 +16,14 @@ namespace Lannootree {
       ~LedBuffer();
 
     public:
-      void mem_write(uint32_t* data, size_t len);
-      void mem_read(uint32_t* data);
+      bool mem_write(uint32_t* data, size_t len);
+      bool mem_read(uint32_t* data);
 
     public:
       void swap() noexcept;
+
+    public:
+      void shutdown();
 
     private:
       uint32_t* _buff0;
@@ -40,6 +43,9 @@ namespace Lannootree {
 
     private:
       semaphore _write_sem;
+
+    private:
+      bool _shutdown = false;
 
   };
 

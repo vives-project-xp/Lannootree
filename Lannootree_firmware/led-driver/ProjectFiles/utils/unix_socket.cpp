@@ -34,10 +34,7 @@ namespace Lannootree {
     std::cout << std::endl;
   }
 
-  UnixSocket::~UnixSocket() {
-    // close(_socket_fd);
-    // unlink(_socket_path.c_str());
-  }
+  UnixSocket::~UnixSocket() {}
 
   void UnixSocket::start(void) {
     _running = true;
@@ -46,7 +43,7 @@ namespace Lannootree {
 
   void UnixSocket::stop(void) {
     _running = false;
-    close(_current_sock_fd);
+    close(_socket_fd);
     unlink(_socket_path.c_str());
     _t.join();
   }
