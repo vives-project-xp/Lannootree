@@ -1,6 +1,5 @@
 #pragma once
 
-#include <matrix.hpp>
 #include <led_buffer.hpp>
 #include <lannootree_config.hpp>
 

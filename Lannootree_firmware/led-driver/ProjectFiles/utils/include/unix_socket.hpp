@@ -14,8 +14,6 @@
 #include <sys/socket.h>
 #include <sys/select.h>
 
-#include <i_thread_object.hpp>
-
 namespace Lannootree {
 
   typedef void (*socket_callback_t)(void* arg, uint8_t* data, size_t data_len);

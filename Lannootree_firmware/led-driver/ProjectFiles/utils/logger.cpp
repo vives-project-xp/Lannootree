@@ -6,7 +6,9 @@ namespace Lannootree {
     _socket.start();
   }
 
-  Logger::~Logger() {}
+  Logger::~Logger() {
+    _socket.stop();
+  }
 
   std::string prep_level(Logger& l) {
     switch (l._current_logtype) {

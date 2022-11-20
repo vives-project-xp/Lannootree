@@ -43,8 +43,14 @@ namespace Lannootree {
 
   void UnixSocket::stop(void) {
     _running = false;
+    if (_current_sock_fd) {
+      close(_current_sock_fd);
+    }
+
     close(_socket_fd);
+    
     unlink(_socket_path.c_str());
+    
     _t.join();
   }
 
