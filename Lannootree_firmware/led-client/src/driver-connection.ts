@@ -7,7 +7,7 @@ export default class LedDriver {
 
   constructor(leddriver_connection: boolean) {
     this.leddriver_connection = leddriver_connection;
-    if (leddriver_connection) this.socket = net.createConnection('../led_driver/build/dev/lannootree.socket');
+    if (leddriver_connection) this.socket = net.createConnection('/var/run/lannootree.socket');
   }
 
   frame_to_ledcontroller(data: number[]) {
