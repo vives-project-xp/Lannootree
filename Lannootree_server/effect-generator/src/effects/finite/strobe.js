@@ -2,10 +2,15 @@ import Effect from '../../effect.js';
 
 export default class Strobe extends Effect {
 
-  fade = false;
-  framespeed_ms = 1;
-  isOn = false;
+  //general variables:
+  name = "strobe";
+  framespeed = 1;  // in hundreds of a second  (1*0.01s = 0.01s = 10ms)
+  
+  // finite effects specific variables:
   endEffect = false;
+
+  // effect specific variables (effect memory)
+  isOn = false;
 
   nextframe() {
     let color = 0;

@@ -2,8 +2,12 @@ import Effect from '../../effect.js';
 
 export default class RandomEach extends Effect {
 
-  fade = true;
-  framespeed_ms = 15;
+  //general variables:
+  name = "random_each";
+  framespeed = 10;  // in hundreds of a second  (10*0.01s = 0.1s = 100ms)
+
+  // infinite effects specific variables:
+  number_of_frames = 100;
 
   nextframe() {
     this.previousmatrix = this.generate_matrix(this.currentmatrix);

@@ -6,8 +6,6 @@ export default class Effect {
   previousmatrix;
   currentmatrix;
   nextmatrix;
-  fade_counter = 0;
-  intervalID = undefined;
 
   constructor(matrixsize) {
     this.previousmatrix = Array.from(Array(Math.abs(matrixsize[0])), () => new Array(Math.abs(matrixsize[1])));

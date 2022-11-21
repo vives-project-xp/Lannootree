@@ -1,4 +1,4 @@
-import MatrixGenerator from './matrix_generator.js';
+import EffectsToGif from './effects_to_gif.js';
 
-const manager = new MatrixGenerator;
-manager.generate_frames([10, 10]);
+const manager = new EffectsToGif;
+manager.generate_gifs([10, 10], 10);
