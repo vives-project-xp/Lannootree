@@ -79,7 +79,8 @@ namespace Lannootree {
    */
   void LedBuffer::shutdown() {
     _shutdown = true;
-    swap();
+    _swaped_buffers.notify_all();
+    _write_sem.release();
   }
 
 }

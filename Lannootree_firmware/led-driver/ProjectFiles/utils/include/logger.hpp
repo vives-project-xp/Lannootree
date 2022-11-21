@@ -33,11 +33,6 @@ namespace Lannootree {
       ~Logger();
 
     public:
-      void stop(void) { 
-        _socket.stop();
-      }
-
-    public:
       friend std::string prep_level(Logger& l);
 
     public:
@@ -46,7 +41,7 @@ namespace Lannootree {
 
       inline Logger& operator()(LogType type) {
         Get()._current_logtype = type;
-        Get()._o_stream << prep_level(*this) << ": ";
+        Get()._o_stream << prep_level(*this);
         return *this;
       }
 

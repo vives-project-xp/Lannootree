@@ -22,12 +22,14 @@ namespace Lannootree {
     info_log("Starting lannootree firmware\n");
 
     auto handel = [](int signum) {
+      std::cout << "signal received: " << signum << std::endl;
       std::lock_guard lck(mtx);
       shutdown_request.notify_all();
     };
 
     signal(SIGINT, handel);
     signal(SIGTERM, handel);
+    signal(SIGKILL, handel);
 
     info_log("Reading config file...\n");
     std::ifstream f(JSON_FILE_PATH);
@@ -40,8 +42,8 @@ namespace Lannootree {
     LedDriverThread led_driver(&_channel_mem, &_controllers);
     led_driver.start();
 
-    UnixSocket matrix_socket("./dev/lannootree.socket", 288 * 3, socket_callback, &_channel_mem);
-    matrix_socket.start();
+    UnixSocket lannootree_socket("./dev/lannootree.socket", 288 * 3, socket_callback, &_channel_mem);
+    lannootree_socket.start();
 
     // Wait for shutdown signal
     std::unique_lock lock(mtx);
@@ -49,8 +51,7 @@ namespace Lannootree {
 
     info_log("Waiting for threads to join...\n");
     led_driver.stop();
-    matrix_socket.stop();
-    Logger::Get().stop();
+    lannootree_socket.stop();
 
     info_log("Lannootree gracefully shut down\n");
   }

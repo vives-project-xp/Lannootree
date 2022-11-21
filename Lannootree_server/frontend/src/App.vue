@@ -89,9 +89,9 @@
       
       <v-btn 
         color="red"
-        variant="outlined"
+        :variant="theme.global.current.value.dark ? 'outlined' : 'flat'"
         :href="logoutUrl" 
-        class="linkbutton"
+        class="ml-2"
       >
         Logout
       </v-btn>

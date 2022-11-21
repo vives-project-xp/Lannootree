@@ -1,11 +1,15 @@
 import fs from 'fs'
+import net from 'net'
 import mqtt from 'mqtt'
 import dotenv from 'dotenv'
+import process from 'process'
 import * as handel from './mqtt-handles.js'
 
 dotenv.config({ path: '../.env' });
 
 class LannooTreeMqttClient {
+
+  private driverSocket: net.Socket = new net.Socket();
 
   private client: mqtt.Client;
   private caCert: Buffer = fs.readFileSync('./ca_crt/ca.crt');
@@ -59,6 +63,35 @@ class LannooTreeMqttClient {
   private connectCallback = () => {
     this.log('Connected to mqtt');
     
+    process.on('SIGTERM', () => {
+      this.client.publish('status/led-driver', 'Offline', { retain: true });
+    });
+
+    this.driverSocket = net.createConnection('/var/run/logging.socket');
+
+    this.driverSocket.on('connect', () => {
+      this.log("Connected to led-driver");
+      this.client.publish('status/led-driver', 'Online', { retain: true });
+    });
+
+    this.driverSocket.on('end', () => {
+      this.log("Connection to led-driver-log ended");
+      this.client.publish('status/led-driver', 'Offline', { retain: true });
+    });
+
+    this.driverSocket.on('data', (data) => {
+      let dataString = data.toString();
+      let dataStrings = dataString.split('\n');
+
+      dataStrings.forEach((msg) => {
+        this.client.publish('logs/led-driver', msg);
+      });
+    });
+
+    this.driverSocket.on('error', (err) => {
+      this.log("Error connecting to led-driver-logging");
+    });
+
     this.subscribeToTopics();
 
     this.client.publish('status/led-client', 'Online', { retain: true });

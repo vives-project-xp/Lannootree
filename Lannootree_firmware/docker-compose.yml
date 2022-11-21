@@ -3,7 +3,7 @@ services:
   led-driver:
     image: led-driver:latest
     build: 
-      context: ./led_driver
+      context: ./led-driver
     privileged: true
     restart: always
     volumes:
@@ -20,6 +20,8 @@ services:
       context: ./led-client
     privileged: true
     restart: always
+    depends_on:
+      - led-driver
     env_file:
       - .env
     volumes:
