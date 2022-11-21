@@ -4,17 +4,21 @@ export default class Strobe extends Effect {
 
   fade = false;
   framespeed_ms = 1;
-  iSOn = false;
-
-  endOfEffect = false;
+  isOn = false;
+  endEffect = false;
 
   nextframe() {
     let color = 0;
-    if (this.iSOn) color = 255;
+    if (this.isOn) color = 255;
     else color = 0;
-    this.iSOn = !this.iSOn;
-    if(!this.isOn) this.endOfEffect = true;
+    if(this.initialFrame) this.initialFrame = false;
+    else {
+      if(!this.isOn) this.endEffect = true;
+      else this.endEffect = false;
+    }
+    this.isOn = !this.isOn;
 
+    this.previousmatrix = this.generate_matrix(this.currentmatrix);
     this.currentmatrix = this.generate_matrix(this.nextmatrix);
     for(var i = 0; i < this.nextmatrix.length; i++) {
       for(var j = 0; j < this.nextmatrix[i].length; j++) {
@@ -25,12 +29,7 @@ export default class Strobe extends Effect {
   }
 
   endOfEffect() {
-    return this.endOfEffect;
+    return this.endEffect;
   }
-
-
-
-
-
 
 }

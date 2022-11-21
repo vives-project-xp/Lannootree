@@ -2,6 +2,7 @@ import Color from './color.js';
 
 export default class Effect {
 
+  initialFrame = true;
   previousmatrix;
   currentmatrix;
   nextmatrix;
@@ -19,6 +20,14 @@ export default class Effect {
         this.nextmatrix[i][j] = new Color(0,0,0);
       }
     }
+  }
+
+  get_previousmatrix() {
+    return this.previousmatrix;
+  }
+
+  get_currentmatrix() {
+    return this.currentmatrix;
   }
 
   get_currentmatrix() {

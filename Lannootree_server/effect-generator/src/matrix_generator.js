@@ -17,15 +17,21 @@ export default class MatrixGenerator {
       new Strobe(matrixsize)
     ];
     for (const effect of infinite_effects) {
-      for(var i = 0; i < 1000; i++) {
+      effect.nextframe();
+      const NUMBEROFFRAMES = 10;
+      for(var i = 0; i < NUMBEROFFRAMES; i++) {
         effect.nextframe();
         console.log(MatrixParser.frame_to_string(effect.get_currentmatrix()));
       }
     }
     for (const effect of finite_effects) {
-      while(!effect.endOfEffect()) {
+      effect.nextframe();
+      const NUMBEROFITERATIONS = 5;
+      let endOfEffectCount = 0;
+      while(endOfEffectCount < NUMBEROFITERATIONS) {
         effect.nextframe();
         console.log(MatrixParser.frame_to_string(effect.get_currentmatrix()));
+        if(effect.endOfEffect()) endOfEffectCount++;
       }
     }
   }

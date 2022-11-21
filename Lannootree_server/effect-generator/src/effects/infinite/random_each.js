@@ -6,6 +6,7 @@ export default class RandomEach extends Effect {
   framespeed_ms = 15;
 
   nextframe() {
+    this.previousmatrix = this.generate_matrix(this.currentmatrix);
     this.currentmatrix = this.generate_matrix(this.nextmatrix);
     for(var i = 0; i < this.nextmatrix.length; i++) {
       for(var j = 0; j < this.nextmatrix[i].length; j++) {
