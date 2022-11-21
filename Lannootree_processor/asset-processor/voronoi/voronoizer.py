@@ -21,16 +21,29 @@ images = []
 
 def draw_voronoi(img, facets, indices) :
   colors = []
+
   for i in range(len(facets)) :
+    # Convert facets to int32
     ifacet = facets[i].astype(np.int32)
+
+    # Create mask for polygon
     mask = np.zeros_like(gray)
     cv2.fillPoly(mask,[ifacet.astype(np.int32)],(255))
+
+    # Get masked values
     values = frame[np.where(mask == 255)]
+
+    # Calculate average color
     color = (np.average(values,axis=0))
-    cor_color = (np.power(color/255,2.4)*255).astype(int) # gamma correction
+    
+    # Gamma correction
+    cor_color = (np.power(color/255,2.4)*255).astype(int) 
     colors.append(cor_color)
+
+    # Fill in polygon with average color
     cv2.fillConvexPoly(img, ifacet, color, cv2.LINE_AA, 0)
   
+  # Save image
   buf = io.BytesIO()
 
   fig = plt.figure()
@@ -41,6 +54,7 @@ def draw_voronoi(img, facets, indices) :
 
   images.append(Image.open(buf))
 
+  # Add data in correct way
   cstring = []
   for i in np.argsort(indices):
     cor_color = colors[i]
@@ -50,7 +64,8 @@ def draw_voronoi(img, facets, indices) :
 
   return list(cstring)
 
-img_file = "black.gif"
+# Read in image
+img_file = "homer.gif"
 frames = imageio.mimread(f"./img/{img_file}")
 
 # init sizes
@@ -70,11 +85,12 @@ prim_unit = np.array([[83.08, 368.57],
                       [101.12, 298.58],
                       [137.07, 275.03]])
 
+# Create panel coordinates
 panel = np.zeros((9*prim_unit.shape[0],2))
 for i in range(3):
   for j in range(3):
     idx = prim_unit.shape[0]*(i+j*3)
-    panel[idx:idx+prim_unit.shape[0],:] = prim_unit+np.tile([i*dsubx, -j*dsuby],[prim_unit.shape[0],1])
+    panel[idx:idx+prim_unit.shape[0],:] = prim_unit+np.tile([i*dsubx, -j*dsuby], [prim_unit.shape[0], 1])
 
 # sort by x cord
 panel = panel[np.argsort(panel[:,0]),:]
@@ -84,44 +100,55 @@ for xs in unique_xs:
   jdxs = np.argsort(panel[idxs,1])
   panel[np.min(idxs):np.min(idxs)+len(idxs),1] = panel[idxs[jdxs],1]
 
+
+# Create current configuration
 screen = np.zeros((4*panel.shape[0],2))
 for i in range(2):
   for j in range(2):
     idx = panel.shape[0]*(i+j*2)
     screen[idx:idx+panel.shape[0],:] = panel+np.tile([i*dx, (1-j)*dy],[panel.shape[0],1])
-      
+
+
+# Make positive
 x0 = np.min(screen[:,0])
 y0 = np.min(screen[:,1])
 
-screen = screen-np.array([x0,y0])
+screen = screen - np.array([x0,y0])
 
+# Scale to image
 xm = np.max(screen[:,0])
 ym = np.max(screen[:,1])
 
-scale = np.min([size[0]/ym,size[1]/xm])*0.9
+scale = np.min([size[0]/ym, size[1]/xm]) * 0.9
 
-screen = screen*scale
+screen = screen * scale
 
+# Shift screen right up
 xt = np.abs(np.max(screen[:,0])-size[1])/2
 yt = np.abs(np.max(screen[:,1])-size[0])/2
 
-screen = screen+np.array([xt,yt])
+screen = screen + np.array([xt,yt])
 
+# Indexes for color data
 panel_LED_indexes = np.array([ 0, 22, 46, 20, 44, 61, 21, 45, 62,  1, 23, 47, 19, 43, 63, 18, 42,
        60,  2, 24, 48, 17, 41, 64,  3, 25, 49, 16, 40, 59, 26, 50, 65,  4,
        39, 58, 15, 38, 66, 14, 37, 57,  5, 27, 51, 13, 36, 67,  6, 28, 56,
        12, 35, 68, 29, 52, 69,  7, 30, 55, 11, 34, 70,  9, 32, 54,  8, 31,
        53, 10, 33, 71])
 
+# Led indexes for configuration
 screen_LED_indexes = np.zeros(4*panel_LED_indexes.shape[0],dtype=int)
 for i in range(4):
   screen_LED_indexes[panel_LED_indexes.shape[0]*i:panel_LED_indexes.shape[0]*i+panel_LED_indexes.shape[0]] = panel_LED_indexes+panel_LED_indexes.shape[0]*i
 
 points = screen
 
+# Image size
 rect = (0, 0, size[1], size[0])
+
 # Create an instance of Subdiv2Dq
 subdiv = cv2.Subdiv2D(rect)
+
 # Insert points into subdiv
 for p in points :
     subdiv.insert(tuple(p))
@@ -131,11 +158,13 @@ img_voronoi = np.zeros(frames[0].shape, dtype = frames[0].dtype)
 ( facets, centers) = subdiv.getVoronoiFacetList([]) 
 
 datagram = []
-
 homer = dict()
+
+import time
 
 i = 0
 for frame in frames:
+  start = time.time()
   gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
   image_height, image_width, _ = frame.shape
@@ -150,6 +179,8 @@ for frame in frames:
 
   datagram.append(bytearray(cstring))
   i+=1
+  end = time.time()
+  print(f"Frame too {(end - start) * 1000} ms to render")
 
 
 imageio.mimsave(f'./img_processed/proccesed_{img_file}', images)
