@@ -108,7 +108,7 @@ client.on('message', function (topic, message) {
 websocket.on('connection', (ws, req) => {
   logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
 
-  db.all(`SELECT * FROM logs ORDER BY id DESC`, [], (err, rows) => {
+  db.all(`SELECT * FROM logs ORDER BY id ASC`, [], (err, rows) => {
     rows.forEach(row => {
       // console.log(row);
       ws.send(JSON.stringify({log: row}));
