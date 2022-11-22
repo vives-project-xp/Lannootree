@@ -3,19 +3,25 @@
 Created on Mon Sep 26 11:34:20 2022
 
 @author: u0110583
+
+Edited by: Joey De Smet
 """
 
-import imageio
-import numpy as np
-import cv2
+import os
 import io
-from PIL import Image
-
+import cv2
 import json
-
+import imageio
+import argparse
+import numpy as np
+from PIL import Image
 from matplotlib import pyplot as plt
-from matplotlib.collections import LineCollection
-import matplotlib.patches as patches
+
+parser = argparse.ArgumentParser()
+parser.add_argument('-i', '--image', type=str, required=True, help='Path to image file')
+parser.add_argument('-c', '--config', type=str, help='Path to config.json file (Currently not implemented)')
+
+args = parser.parse_args()
 
 images = []
 
@@ -65,8 +71,10 @@ def draw_voronoi(img, facets, indices) :
   return list(cstring)
 
 # Read in image
-img_file = "homer.gif"
-frames = imageio.mimread(f"./img/{img_file}")
+img_path = args.image
+img_file = img_path.replace('\\', '/').split('/')[-1]
+
+frames = imageio.mimread(img_path)
 
 # init sizes
 size = frames[0].shape
@@ -157,14 +165,12 @@ for p in points :
 img_voronoi = np.zeros(frames[0].shape, dtype = frames[0].dtype)
 ( facets, centers) = subdiv.getVoronoiFacetList([]) 
 
-datagram = []
-homer = dict()
+processed = dict()
+np_processed = [[] for i in range(len(frames))]
 
-import time
+for i, frame in enumerate(frames):
+  print(f'processing frame [{i + 1}/{len(frames)}]')
 
-i = 0
-for frame in frames:
-  start = time.time()
   gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
   image_height, image_width, _ = frame.shape
@@ -174,15 +180,26 @@ for frame in frames:
   data_to_send = []
   for c in cstring:
     data_to_send.append(int(c))
+    np_processed[i].append(int(c))
 
-  homer[f"frame{i}"] = data_to_send
+  processed[f"frame{i}"] = data_to_send
 
-  datagram.append(bytearray(cstring))
-  i+=1
-  end = time.time()
-  print(f"Frame too {(end - start) * 1000} ms to render")
+print("Done... saving data")
 
+np_processed = np.array(np_processed)
+
+if not os.path.exists('./img_processed'):
+  os.mkdir('img_processed')
+
+if not os.path.exists('./processed_json'):
+  os.mkdir('processed_json')
+
+if not os.path.exists('./numpy_store'):
+  os.mkdir('numpy_store')
+
+with open(f"./numpy_store/np_{img_file}.npy", 'wb') as f:
+  np.save(f, np_processed)
 
 imageio.mimsave(f'./img_processed/proccesed_{img_file}', images)
 with open(f"./processed_json/{img_file}.json", "w") as f:
-  json.dump(homer, f, indent=2)
+  json.dump(processed, f, indent=2)

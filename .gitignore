@@ -15,7 +15,7 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Remove gifs and processed gifs
 *.gif
 *.gif.json
-
+numpy_store/
 
 # Runtime data
 pids
