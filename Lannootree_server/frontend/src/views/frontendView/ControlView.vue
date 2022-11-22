@@ -49,17 +49,11 @@
 
     <v-row>
       <v-col 
-        cols="6"
+        cols="10"
+        offset="1"
         class="d-flex justify-center align-center"
       >
         <Color/>
-      </v-col>
-
-      <v-col 
-        cols="6"
-        class="d-flex justify-center align-center"
-      >
-        <LannootreeGrid/>
       </v-col>
     </v-row>
   </div>
