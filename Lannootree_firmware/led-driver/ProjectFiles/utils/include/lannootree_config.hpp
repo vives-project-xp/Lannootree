@@ -30,7 +30,7 @@
 #define PANEL_LED_COUNT 72
 #define STRIP_TYPE      WS2811_STRIP_GRB      
 
-#define JSON_FILE_PATH "../../config.json"
+#define JSON_FILE_PATH ""
 
 static const char* logo =
 "  _                                   _                  \n"
@@ -47,4 +47,4 @@ static const char* logo =
 "      |_| |_|_|  |_| |_| |_|\\_/\\_/ \\__,_|_|  \\___|       \n"
 "                                                         \n"
 "                                                         \n"
-"                       VERSION[1.3]                       \n";
+"                       VERSION[1.4]                       \n";

@@ -1,11 +1,12 @@
 <script setup lang="ts">
-  import type { PropType } from 'vue'
-  import type { Coordinate } from '@/assets/ConfigView/Panel'
-
   import { ref, computed, watch } from 'vue'
-  import { useMouseInElement } from '@vueuse/core'
+  import { useMouseInElement, onLongPress } from '@vueuse/core'
+  
   import { usePanelGrid } from '@/stores/PanelGrid'
   import { useDisplayOptions } from '@/stores/DisplayOptions'
+  
+  import type { PropType } from 'vue'
+  import type { Coordinate } from '@/assets/ConfigView/Panel'
 
   const panelStore = usePanelGrid();
   const display_options = useDisplayOptions();
@@ -17,15 +18,33 @@
     }
   });
 
-  const target = ref(null);
+  const longPressed = ref(false);
+  const target = ref<HTMLElement | null>(null);
+  const { elementX, elementY, isOutside, elementHeight, elementWidth } = useMouseInElement(target);
 
-  const { elementX, elementY, isOutside, elementHeight, elementWidth } =
-    useMouseInElement(target);
+  // Callback for longpress event
+  const onLongPressCallbackHook = function (e: PointerEvent) {
+    // Start connection phase
+    if (!panelStore.connectionPhase) {
+      longPressed.value = true;
+      panelStore.connectionPhase = true;
+      panelStore.connection.from = props.coordinate;
+    }
+  }
 
+  // Add listener to panel and fire when mouse was down for 250ms
+  onLongPress(
+    target,
+    onLongPressCallbackHook,
+    { modifiers: { prevent: true }, delay: 250 }
+  );
+
+  // Return panel object reference based on coordinate
   const p_panel = computed(() => {
     return panelStore.panels.getValue(props.coordinate.col, props.coordinate.row);
   });
 
+  // Just some styling
   const panelStyle = computed(() => {
     let panelStylez = {
       width: '100%',
@@ -47,10 +66,12 @@
     return panelStylez;
   }); 
 
+  // Checks if panel is not null | undefined
   const hasPanel = computed(() => {
     return (p_panel.value !== null && p_panel.value !== undefined) ? true : false;
   });
 
+  // Calculates transform for 3D effect
   const panelTransform = computed(() => {
     const MAX_ROTATION = 8;
 
@@ -71,6 +92,7 @@
     : `perspective(${elementWidth.value}px) rotateX(${rX}deg) rotateY(${rY}deg)`;
   });
 
+  // Just removes panel's channel form chanel list
   const channelFilter = computed(() => {
     if (panelStore.panels.getValue(props.coordinate.col, props.coordinate.row) === null) return [];
     let this_panel = panelStore.panels.getValue(props.coordinate.col, props.coordinate.row);
@@ -81,13 +103,27 @@
     return copy_channel;
   })
 
-  const startConnecting = function() {
-    if (panelStore.connectionPhase) {
+  // Click event on the panel
+  const panelClickEvent = function () {
+    if (hasPanel && panelStore.connectionPhase) {
+      if (longPressed.value) {
+        longPressed.value = false;
+        return;
+      }
+
+      let fromCoordinate = panelStore.connection.from;
+      let from = panelStore.panels.getValue(fromCoordinate.col, fromCoordinate.row);
+      
+      // Do not connect to other channels
+      if (p_panel.value?.channel !== from?.channel) return;
+
       panelStore.connection.to = props.coordinate;
       panelStore.addConnection();
-    } else {
-      panelStore.connectionPhase = true;
-      panelStore.connection.from = props.coordinate;
+    }
+
+    // Only add panel when not in connection pahse to prevent unwanted clicks 
+    else if (!panelStore.connectionPhase) {
+      panelStore.addPanel(props.coordinate);
     }
   }
 
@@ -97,11 +133,12 @@
   <v-sheet 
     ref="target"
     :style="panelStyle" 
+    @click="panelClickEvent"
     class="rounded-lg border"
     :class="p_panel !== null ? 'selected' : 'unselected'" 
     :elevation="p_panel !== null ? 9 : 0"  
-    @click="hasPanel ? startConnecting() : panelStore.addPanel(props.coordinate)"
   >
+
     <v-menu 
       v-if="p_panel !== null"
       transition="scale-transform" 

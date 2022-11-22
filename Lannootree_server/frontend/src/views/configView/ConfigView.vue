@@ -3,10 +3,22 @@
   import OptionMenu from '@/components/configView/OptionMenu.vue'
   import PanelTableVue from '@/components/configView/PanelTable.vue'
   
+  import { useClipboard } from '@vueuse/core';
   import { notify } from '@kyvg/vue3-notification'
+  import { usePanelGrid } from '@/stores/PanelGrid';
   import { useDisplayOptions } from '@/stores/DisplayOptions'
 
+  const panelStore = usePanelGrid();
   const display_options = useDisplayOptions();
+
+  const { text, copy, copied, isSupported } = useClipboard({ source: panelStore.toJson });
+
+  const copyToClipboard = function() {
+    copy(panelStore.toJson);
+    notify({
+      title: 'Copied to clipboard'
+    });
+  }
 
 </script>
 
@@ -32,7 +44,9 @@
         cols="4"
         class="d-flex align-center justify-center"
       >
-        <JsonData/>
+        <JsonData
+          @click="copyToClipboard"
+        />
       </v-col>
     </v-row>
 

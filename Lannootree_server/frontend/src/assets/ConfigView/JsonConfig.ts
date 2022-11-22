@@ -3,8 +3,8 @@ import type { Coordinate } from "./Panel";
 
 export interface Channel {
   ledCount: number;
-  head: null | string;
-  cells: GridCell[];
+  head: undefined | string;
+  cells: { uuid: string | undefined; coordinate: Coordinate | undefined; connection: string | undefined } | { uuid: string | undefined; coordinate: Coordinate | undefined; }[];
 }
 
 export default interface JsonConfig {

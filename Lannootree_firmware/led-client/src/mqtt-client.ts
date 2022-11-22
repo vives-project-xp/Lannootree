@@ -51,6 +51,10 @@ class LannooTreeMqttClient {
     this.client.on('connect', this.connectCallback);
   }
 
+  send(topic: string, msg: string) {
+    this.client.publish(topic, msg);
+  }
+
   log = (message: string, debug: boolean = false) => {
     if (!debug) this.client.publish('logs/led-client', message); 
     console.log(message);
