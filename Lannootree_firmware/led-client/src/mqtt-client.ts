@@ -124,6 +124,11 @@ class LannooTreeMqttClient {
         let command = topicMap.get(data.command);
         if (command !== undefined) command(data);
       }
+
+      else if (topic == 'controller/config') {
+        let command = topicMap?.get('config');
+        if (command !== undefined) command(data);
+      }
     }
   };
 
