@@ -30,7 +30,7 @@ class LannooTreeMqttClient {
 
   private subscribeTopics = [
     'ledpanel/control',
-    "controller/config"
+    'controller/config'
   ];
 
   private messageTopicMap: Map<string, Map<string, (data: any) => void>> = new Map([
@@ -46,7 +46,7 @@ class LannooTreeMqttClient {
       ])
     ], 
     [
-      "controller/config",
+      'controller/config',
       new Map([
         ["config", handel.change_config]
       ])
