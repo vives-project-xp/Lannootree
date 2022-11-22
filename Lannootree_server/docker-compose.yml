@@ -143,8 +143,8 @@ services:
     env_file:
       - ./githook/githook.env
     volumes:
-        - ./githook/scripts:/code/hooks
-        - ../:/Lannootree
+        - ./githook/scripts:/code
+        - ../:/home/ubuntu/Lannootree #Set to directory of repo! also change this in the deploy script
         - /var/run/docker.sock:/var/run/docker.sock
     environment:
         # - WEBHOOK_SECRET=${WEBHOOK_SECRET}
