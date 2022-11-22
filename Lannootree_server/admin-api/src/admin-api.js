@@ -124,7 +124,17 @@ websocket.on('connection', (ws, req) => {
       }}
     ));
   });
-    
+
+  ws.on("message", (data) => {
+    let message = JSON.parse(data.toString());
+
+    if (message.type === 'config') {
+      logging(`Received config: ${message.config}`)
+      client.publish('controller/config', JSON.stringify(message.config));
+    }
+
+  })
+
   ws.on("close", () => {
       logging("INFO: Websocket client disconnected")
   });
@@ -140,7 +150,6 @@ app.use(express.json())
 app.post('/admin/config', async (req, res) => {
 
     logging("INFO: recieved new json from: "  + req.headers['x-forwarded-for']);
-    client.publish('controller/config', JSON.stringify({requestBody: req.body}));
     
     res.sendStatus(200);
 });
