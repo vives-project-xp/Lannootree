@@ -144,6 +144,7 @@ services:
       - ./githook/githook.env
     volumes:
         - ./githook/scripts:/code/hooks
+        - ../:/Lannootree
         - /var/run/docker.sock:/var/run/docker.sock
     environment:
         # - WEBHOOK_SECRET=${WEBHOOK_SECRET}
