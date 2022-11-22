@@ -111,22 +111,22 @@ void IRAM_ATTR isr_button_gif12() {
 void setup () {
 	Serial.begin (115200);
   MQTTFlag=-1;
-  pinMode(32, INPUT_PULLUP);attachInterrupt(32, isr_button_pause, FALLING);  // button_pause (PIN 32)
-  pinMode(33, INPUT_PULLUP);attachInterrupt(33, isr_button_play, FALLING);   // button_play (PIN 33)
-  pinMode(25, INPUT_PULLUP);attachInterrupt(25, isr_button_stop, FALLING);   // button_stop (PIN 25)
-  pinMode(26, INPUT_PULLUP);attachInterrupt(26, isr_button_gif0, FALLING);   // button_gif0 (PIN 26)
-  pinMode(27, INPUT_PULLUP);attachInterrupt(27, isr_button_gif1, FALLING);   // button_gif1 (PIN 27)
-  pinMode(14, INPUT_PULLUP);attachInterrupt(14, isr_button_gif2, FALLING);   // button_gif2 (PIN 14)
-  pinMode(13, INPUT_PULLUP);attachInterrupt(13, isr_button_gif3, FALLING);   // button_gif3 (PIN 13)
-  pinMode(23, INPUT_PULLUP);attachInterrupt(23, isr_button_gif4, FALLING);   // button_gif4 (PIN 23)
-  pinMode(22, INPUT_PULLUP);attachInterrupt(22, isr_button_gif5, FALLING);   // button_gif5 (PIN 22)
-  pinMode(21, INPUT_PULLUP);attachInterrupt(21, isr_button_gif6, FALLING);   // button_gif6 (PIN 21)
-  pinMode(19, INPUT_PULLUP);attachInterrupt(19, isr_button_gif7, FALLING);   // button_gif7 (PIN 19)
-  pinMode(18, INPUT_PULLUP);attachInterrupt(18, isr_button_gif8, FALLING);   // button_gif8 (PIN 18)
-  pinMode(5, INPUT_PULLUP);attachInterrupt(5, isr_button_gif9, FALLING);     // button_gif9 (PIN 5)
-  pinMode(17, INPUT_PULLUP);attachInterrupt(17, isr_button_gif10, FALLING);  // button_gif10 (PIN 17)
-  pinMode(16, INPUT_PULLUP);attachInterrupt(16, isr_button_gif11, FALLING);  // button_gif11 (PIN 16)
-  pinMode(4, INPUT_PULLUP);attachInterrupt(4, isr_button_gif12, FALLING);    // button_gif12 (PIN 4)
+  pinMode(25, INPUT_PULLUP);attachInterrupt(25, isr_button_pause, FALLING);  // button_pause
+  pinMode(21, INPUT_PULLUP);attachInterrupt(21, isr_button_play, FALLING);   // button_play
+  pinMode(19, INPUT_PULLUP);attachInterrupt(19, isr_button_stop, FALLING);   // button_stop
+  pinMode(26, INPUT_PULLUP);attachInterrupt(26, isr_button_gif0, FALLING);   // button_gif0
+  pinMode(13, INPUT_PULLUP);attachInterrupt(13, isr_button_gif1, FALLING);   // button_gif1
+  pinMode(4, INPUT_PULLUP);attachInterrupt(4, isr_button_gif2, FALLING);     // button_gif2
+  pinMode(32, INPUT_PULLUP);attachInterrupt(32, isr_button_gif3, FALLING);   // button_gif3
+  pinMode(23, INPUT_PULLUP);attachInterrupt(23, isr_button_gif4, FALLING);   // button_gif4
+  pinMode(14, INPUT_PULLUP);attachInterrupt(14, isr_button_gif5, FALLING);   // button_gif5
+  pinMode(16, INPUT_PULLUP);attachInterrupt(16, isr_button_gif6, FALLING);   // button_gif6
+  pinMode(33, INPUT_PULLUP);attachInterrupt(33, isr_button_gif7, FALLING);   // button_gif7
+  pinMode(22, INPUT_PULLUP);attachInterrupt(22, isr_button_gif8, FALLING);   // button_gif8
+  pinMode(27, INPUT_PULLUP);attachInterrupt(27, isr_button_gif9, FALLING);   // button_gif9
+  pinMode(17, INPUT_PULLUP);attachInterrupt(17, isr_button_gif10, FALLING);  // button_gif10
+  pinMode(18, INPUT_PULLUP);attachInterrupt(18, isr_button_gif11, FALLING);  // button_gif11
+  pinMode(5, INPUT_PULLUP);attachInterrupt(5, isr_button_gif12, FALLING);    // button_gif12
 
   // WIFI SETUP
 	WiFi.mode (WIFI_MODE_STA);
