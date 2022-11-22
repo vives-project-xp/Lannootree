@@ -35,7 +35,7 @@ export function set_color(data: any) {
 }
 
 export function change_config(data: any) {
-  console.log(data);
+  fs.writeFileSync('./config.json', data);
 }
 
 // var activeStreamTopic: string | null = null;
