@@ -26,6 +26,6 @@ services:
       - .env
     volumes:
       - ${PWD}/led-client/processed/:/app/processed/
-      - ${PWD}/config.json:/config.json
+      - ${PWD}/config.json:/app/config.json
       - ${PWD}/ca_crt/:/app/ca_crt/
       - /var/run/:/var/run/
