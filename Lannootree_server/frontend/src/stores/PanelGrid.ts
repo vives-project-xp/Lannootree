@@ -197,6 +197,11 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
       } while (current?.connection.uuid !== current?.uuid);
 
+      cells.push({
+        uuid: current?.uuid,
+        coordinate: current?.coordinate,
+      });
+
       obj.channels[chan] = {
         ledCount: ledCount,
         head: head?.uuid,
