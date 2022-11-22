@@ -46,7 +46,8 @@ export const useContainerLogging = defineStore('container-logging', () => {
 
   return {
     containers,
-    statusContainers
+    statusContainers,
+    ws
   }
 
 });
