@@ -30,6 +30,7 @@ class LannooTreeMqttClient {
 
   private subscribeTopics = [
     'ledpanel/control',
+    'controller/config'
   ];
 
   private messageTopicMap: Map<string, Map<string, (data: any) => void>> = new Map([
@@ -42,6 +43,12 @@ class LannooTreeMqttClient {
         ["stop",  handel.stop_leds],
         ["gif",   handel.play_gif],
         ["color", handel.set_color],
+      ])
+    ], 
+    [
+      'controller/config',
+      new Map([
+        ["config", handel.change_config]
       ])
     ]
   ]);
@@ -115,6 +122,11 @@ class LannooTreeMqttClient {
 
       if (topicMap?.has(data.command)) {
         let command = topicMap.get(data.command);
+        if (command !== undefined) command(data);
+      }
+
+      else if (topic == 'controller/config') {
+        let command = topicMap?.get('config');
         if (command !== undefined) command(data);
       }
     }

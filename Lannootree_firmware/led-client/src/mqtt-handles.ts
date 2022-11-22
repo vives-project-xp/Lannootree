@@ -34,6 +34,10 @@ export function set_color(data: any) {
   ledDriver.frame_to_ledcontroller(cString);
 }
 
+export function change_config(data: any) {
+  fs.writeFileSync('./config.json', data);
+}
+
 // var activeStreamTopic: string | null = null;
 
 // export function play_stream(streamID: string, client: MqttClient) {

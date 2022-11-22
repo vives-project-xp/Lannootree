@@ -23,7 +23,7 @@ class _GifPlayer extends EventEmitter {
     let unpause: any = null;
     let pause: any = null;
 
-    this.on('stop',  () => {
+    this.once('stop',  () => {
       this.emit('play');
       running = false;
     });
@@ -50,6 +50,9 @@ class _GifPlayer extends EventEmitter {
 
       await new Promise(resolve => setTimeout(resolve, 50));
     }
+
+    this.removeAllListeners('pause');
+    this.removeAllListeners('play');
   }
 
   set_gif(index: number) {
