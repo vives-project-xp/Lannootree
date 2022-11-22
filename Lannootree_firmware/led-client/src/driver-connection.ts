@@ -1,6 +1,6 @@
 import net from 'net'
 
-export default class LedDriver {
+class LedDriver {
 
   private leddriver_connection: boolean = false;
   private socket: net.Socket = new net.Socket();
@@ -17,3 +17,5 @@ export default class LedDriver {
   }
 
 }
+
+export const ledDriver = new LedDriver(true);

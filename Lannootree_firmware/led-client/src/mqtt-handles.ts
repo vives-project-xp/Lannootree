@@ -1,5 +1,8 @@
-import { MqttClient } from 'mqtt'
+import fs from 'fs'
+import { ledDriver } from './driver-connection.js'
 import { gifPlayer } from './temporary/gif-player.js'
+
+const config = JSON.parse(fs.readFileSync('./config.json').toString());
 
 export function pause_leds() {
   gifPlayer.pause();
@@ -18,7 +21,17 @@ export function play_gif(data: any) {
 }
 
 export function set_color(data: any) {
-  console.log(`LED client set color (${data.red},${data.green},${data.blue})`);
+  gifPlayer.stop();
+
+  let cString = new Array<number>(config.channels.CA0.ledCount * 3);
+  
+  for (let i = 0; i < cString.length; i += 3) {
+    cString[i + 0] = data.red;
+    cString[i + 1] = data.green;
+    cString[i + 2] = data.blue;
+  }
+
+  ledDriver.frame_to_ledcontroller(cString);
 }
 
 // var activeStreamTopic: string | null = null;
