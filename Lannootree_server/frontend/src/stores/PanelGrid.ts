@@ -1,4 +1,3 @@
-import type { Ref } from 'vue'
 import { ref, computed } from 'vue'
 import { defineStore } from "pinia"
 
@@ -6,11 +5,11 @@ import Matrix from '@/assets/ConfigView/Matrix'
 import { Panel } from '@/assets/ConfigView/Panel'
 import type { Coordinate } from '@/assets/ConfigView/Panel'
 import type JsonConfig from '@/assets/ConfigView/JsonConfig'
+import type { Channel } from '@/assets/ConfigView/JsonConfig'
 
 export const usePanelGrid = defineStore('panel-grid', () => {
   
   // *---------------------------> Panel related properties <---------------------------* //
-  
   
   const LED_PER_PANEL = 72;
 
@@ -37,6 +36,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
     if (fromPanel !== null && toPanel !== null) {
       fromPanel.connection = toPanel;
+      toPanel.parentConnection = fromPanel;
     }
 
     connectionPhase.value = false;
@@ -109,6 +109,27 @@ export const usePanelGrid = defineStore('panel-grid', () => {
   const changeChannel = function(coordinate: Coordinate, channel: string) {
     let panel = panels.value.getValue(coordinate.col, coordinate.row);
 
+    if (panel?.connection !== panel) {
+      // Remove all connection going forward
+      let current: Panel | null | undefined = panel;
+      let next: Panel | null | undefined = current?.connection;
+
+      do {
+        if (current) current.connection = current;
+        if (next) next.parentConnection = null;
+        
+        current = next;
+        next = current?.connection;
+
+      } while (current?.uuid !== current?.connection.uuid);
+
+      // Remove connection to parentConnection
+      if (panel && panel.parentConnection) {
+        panel.parentConnection.connection = panel?.parentConnection,
+        panel.parentConnection = null;
+      }
+    }
+
     if (panel !== null && panel !== undefined) {
       panel.channel = channel;    
     }
@@ -127,10 +148,12 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     let inUseChannels: string[] = [];
     let panelCount: number = 0;
 
+    // Find all unique channels
     panels.value.forEach((panel: Panel | null) => {
       if (panel !== null && !inUseChannels.find(c => c == panel.channel)) inUseChannels.push(panel.channel);
     });
 
+    // Count panels
     panels.value.forEach((panel: Panel | null) => {
       if (panel !== null) panelCount++;
     });
@@ -149,8 +172,43 @@ export const usePanelGrid = defineStore('panel-grid', () => {
       }
     };
 
+    obj.inUseChannels.forEach(chan => {
+      let panelsInChannel = panels.value.toArray().filter(p => {
+        if (p) return p.channel == chan;
+        return false;
+      });
+
+      let ledCount = panelsInChannel.length * 72;
+      let head = panelsInChannel.find(p => p?.parentConnection === null);
+      let cells = [];
+
+      let current = head;
+      let next = current?.connection;
+
+      do {
+        cells.push({
+          uuid: current?.uuid,
+          coordinate: current?.coordinate,
+          connection: next?.uuid
+        });
+
+        current = next;
+        next = current?.connection;
+
+      } while (current?.connection.uuid !== current?.uuid);
+
+      obj.channels[chan] = {
+        ledCount: ledCount,
+        head: head?.uuid,
+        cells: cells
+      };
+
+    });
+
     return JSON.stringify(obj, null, 2);
   });
+
+  changeChannel({ col: 1, row: 1 }, "CA0");
 
   return { 
     panels,
