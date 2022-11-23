@@ -13,14 +13,13 @@ services:
       - 1883:1883
       - 8883:8883
   
-  node-red:
+  nodered:
     image: nodered/node-red:latest
+    restart: always
     environment:
       - TZ=Europe/Brussels
-    networks:
-      - node-red-net
     volumes:
-      - ./nodered:/data    
+      - nodered:/data    
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.nodered.rule=Host(`nodered.lannootree.devbitapp.be`)'
@@ -192,3 +191,4 @@ services:
 
 volumes:
   log-database:
+  nodered:
