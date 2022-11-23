@@ -40,7 +40,7 @@ Run the script [generate_certs.sh](generate_certs.sh)
 sh generate_certs.sh
 ```
 
-Important: The Common Name needs to be the domain name for the ca! The other common names are the names of the server and clients.
+Important: The Common Name of the ca and server needs to be the domain name! The other common names are names for clients.
 [guide used to make this part](http://www.steves-internet-guide.com/mosquitto-tls/)
 
 ## client certificates (certs)
