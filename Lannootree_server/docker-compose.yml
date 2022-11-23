@@ -19,7 +19,9 @@ services:
     environment:
       - TZ=Europe/Brussels
     volumes:
-      - nodered:/data    
+      - nodered:/data
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client:/app/clientcert:ro"  
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.nodered.rule=Host(`nodered.lannootree.devbitapp.be`)'
