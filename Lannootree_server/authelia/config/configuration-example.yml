@@ -23,10 +23,15 @@ authentication_backend:
       memory: 64
       
 access_control:
-  default_policy: one_factor
+  default_policy: deny
   rules:
-    - domain: lannootree.devbitapp.be
+    # Rules applied to everyone
+    - domain: 'lannootree.devbitapp.be'
       policy: one_factor
+    - domain: '*.lannootree.devbitapp.be'
+      policy: one_factor
+      subject:
+      - ["group:admins"]
 
 session:
   name: authelia_session
