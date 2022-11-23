@@ -14,3 +14,6 @@ openssl x509 -req -in ./server/server.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CA
 # Generate client certificate but don't sign. because clients 
 openssl genrsa -out ./client/client.key 2048
 openssl req -new -out ./client/client.csr -key ./client/client.key
+
+# Sign using this command
+# openssl x509 -req -in ./signed_clients/client.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./signed_clients/client.crt -days 3650
