@@ -9,7 +9,7 @@ dotenv.config({ path: '../.env' })
 
 var caFile = fs.readFileSync("ca.crt");
 var options={
-  clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
+  clientId:"client-api_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
   host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',

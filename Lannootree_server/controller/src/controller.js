@@ -22,7 +22,7 @@ const devCheck = new DevCheck(production_server, developement_time);
 // MQTT______________________________________________________________
 var caFile = fs.readFileSync("./ca.crt");
 var options = {
-  clientId:"controller" + Math.random().toString(16).substring(2, 8),
+  clientId:"controller_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
   host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
