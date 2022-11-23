@@ -12,7 +12,7 @@ var statusBuffer = {};
 // MQTT___________________________________________________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
 var mqttOptions={
-  clientId:"admin-api" + Math.random().toString(16).substring(2, 8),
+  clientId:"admin-api_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
   host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
