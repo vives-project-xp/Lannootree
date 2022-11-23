@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed, watch } from 'vue';
+  import { ref } from 'vue';
   import { storeToRefs } from 'pinia';
   import { useContainerLogging } from '@/stores/container.logging'
   import LogContainer from '@/components/configView/LogContainer.vue';
@@ -7,6 +7,8 @@
   const loggingContainers = useContainerLogging();
 
   const { containers, statusContainers } = storeToRefs(loggingContainers);
+
+  const items = ref([]);
 
   const chipColor = function (status: string) {
     if (status === "Online") return 'green';

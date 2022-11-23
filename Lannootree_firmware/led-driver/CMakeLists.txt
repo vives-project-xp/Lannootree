@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(Lannootree_firmware VERSION 1.2)
+project(Lannootree_firmware VERSION 1.4)
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/ProjectFiles/utils/include/lannootree_config.hpp.in ${CMAKE_CURRENT_LIST_DIR}/ProjectFiles/utils/include/lannootree_config.hpp)
 

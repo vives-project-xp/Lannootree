@@ -11,7 +11,7 @@ class _GifPlayer extends EventEmitter {
   constructor() {
     super()
     
-    this.Gifs.push(...readGifs());
+    this.Gifs.push(...readGifs().Gifs);
     this.leddriver = new LedDriver(true);
   }
 

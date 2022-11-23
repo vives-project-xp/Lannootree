@@ -11,6 +11,7 @@ export class Panel {
   public channel: string;
   public coordinate: Coordinate;
   
+  public parentConnection: Panel | null;
   public connection: Panel;
 
   public canConnect: boolean;
@@ -23,6 +24,7 @@ export class Panel {
     this.channel = PanelStore.currentChannel;
     this.coordinate = coordinate;
     
+    this.parentConnection = null;
     this.connection = this;
 
     this.canConnect = false;
