@@ -5,7 +5,8 @@ services:
     restart: always
     user: "1001:1001"
     volumes:
-      - ./mqtt/config:/mosquitto/config
+      - ./mqtt:/mosquitto/config
+      - ../certs:/certs
     ports:
       - 1883:1883
       - 8883:8883
@@ -14,7 +15,7 @@ services:
     image: "nginx:alpine"
     restart: always
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/usr/share/nginx/html/ca.crt:ro"
+      - "../certs/ca/ca.crt:/usr/share/nginx/html/ca.crt:ro"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.certificate-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
@@ -90,7 +91,7 @@ services:
       context: ./client-api
     restart: always
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
     env_file:
       - .env
     labels:
@@ -109,7 +110,7 @@ services:
       context: ./admin-api
     restart: always
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"    
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"    
       - "log-database:/app/db"
     env_file:
       - .env
@@ -134,7 +135,7 @@ services:
     restart: always
     volumes:
       - ./config.json:/config.json
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
 
   githook:
     restart: unless-stopped    
