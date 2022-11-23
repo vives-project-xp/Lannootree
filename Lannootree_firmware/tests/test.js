@@ -23,7 +23,7 @@ import fs from 'fs'
 //   mqttClient.publish("status/test-leddriver", "Online");
 // });
 
-const client = net.createConnection("../led_driver/build/dev/lannootree.socket");
+const client = net.createConnection("/var/run/lannootree.socket");
 // const logClient = net.createConnection("../led_driver/build/dev/logging.socket");
 
 // logClient.on("connect", () => {

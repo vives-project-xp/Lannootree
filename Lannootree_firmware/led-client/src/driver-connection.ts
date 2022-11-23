@@ -1,13 +1,13 @@
 import net from 'net'
 
-export default class LedDriver {
+class LedDriver {
 
   private leddriver_connection: boolean = false;
   private socket: net.Socket = new net.Socket();
 
   constructor(leddriver_connection: boolean) {
     this.leddriver_connection = leddriver_connection;
-    if (leddriver_connection) this.socket = net.createConnection('../led_driver/build/dev/lannootree.socket');
+    if (leddriver_connection) this.socket = net.createConnection('/var/run/lannootree.socket');
   }
 
   frame_to_ledcontroller(data: number[]) {
@@ -17,3 +17,5 @@ export default class LedDriver {
   }
 
 }
+
+export const ledDriver = new LedDriver(true);
