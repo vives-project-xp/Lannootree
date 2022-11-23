@@ -54,6 +54,24 @@ import router from './router';
   const toggleTheme = function () {
     theme.global.name.value = theme.global.current.value.dark ? 'lightTheme' : 'darkTheme';
   }
+  // Hotkeys 1,2,3,4 
+  window.addEventListener('keydown', (e)=>{
+    var key = e.which || e.keyCode;
+    switch(key) {
+      case 49:
+        router.push('/controll');
+        break;
+      case 50:
+      router.push('/upload');
+        break;
+      case 51:
+      router.push('/config');
+        break;
+      case 52:
+      router.push('/logging');
+        break;
+    }
+});
 </script>
 
 <template>
