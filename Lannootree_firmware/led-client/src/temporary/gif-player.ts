@@ -1,18 +1,16 @@
 import readGifs from './gifs.js'
 import EventEmitter from 'events';
-import LedDriver from '../driver-connection.js'
+import { ledDriver } from '../driver-connection.js'
 
 class _GifPlayer extends EventEmitter {
 
   private Gifs: Object[] = [];
-  private leddriver: LedDriver;
   private currentGif: number = 0;
 
   constructor() {
     super()
     
     this.Gifs.push(...readGifs().Gifs);
-    this.leddriver = new LedDriver(true);
   }
 
   async loop() {
@@ -25,7 +23,7 @@ class _GifPlayer extends EventEmitter {
     let unpause: any = null;
     let pause: any = null;
 
-    this.on('stop',  () => {
+    this.once('stop',  () => {
       this.emit('play');
       running = false;
     });
@@ -45,13 +43,16 @@ class _GifPlayer extends EventEmitter {
     });
 
     while (running) {
-      this.leddriver.frame_to_ledcontroller(Gif[Frames[frame]]);
+      ledDriver.frame_to_ledcontroller(Gif[Frames[frame]]);
       frame = (frame + 1) % Frames.length;
 
       if (pause !== null) await pause;
 
       await new Promise(resolve => setTimeout(resolve, 50));
     }
+
+    this.removeAllListeners('pause');
+    this.removeAllListeners('play');
   }
 
   set_gif(index: number) {
