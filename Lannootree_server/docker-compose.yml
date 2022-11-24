@@ -130,6 +130,8 @@ services:
       - TZ=Europe/Brussels
     volumes:
       - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
     env_file:
       - .env
     labels:
@@ -150,7 +152,9 @@ services:
     environment:
       - TZ=Europe/Brussels
     volumes:
-      - "../certs/ca/ca.crt:/app/ca.crt:ro"    
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"         
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
       - "log-database:/app/db"
     env_file:
       - .env
@@ -176,7 +180,9 @@ services:
     restart: always
     volumes:
       - ./config.json:/config.json
-      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"     
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
 
   githook:
     restart: unless-stopped    
