@@ -24,9 +24,10 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
 
+
   const websocketClient = function () {
     ws.onopen = () => {
-      console.log("we are connected to the client-API");
+      console.log("[INFO] we are connected to the client-API");
       websocketactive.value = true;
     };
 
@@ -112,4 +113,8 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     setEffect,
     setAsset,
   };
+
+
 });
+
+

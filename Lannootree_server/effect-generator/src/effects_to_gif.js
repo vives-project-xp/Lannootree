@@ -54,7 +54,7 @@ export default class EffectsToGif {
       total_gif_frames.push(frame);
     }
     GifUtil.write(`${filename}.gif`, total_gif_frames, { loops: 1 }).then(gif => {
-      console.log(`READY:\t${filename}.gif  (frames: ${gif.frames.length}, frame_delay: ${framedelay*10}ms, duration: ${gif.frames.length*(framedelay/100)}s, format: ${width}x${height}px -> ${gif.width}x${gif.height}px, size: ${(gif.buffer.byteLength/1024).toFixed(2)}kB)`);
+      logging(`[READY] \t${filename}.gif  (frames: ${gif.frames.length}, frame_delay: ${framedelay*10}ms, duration: ${gif.frames.length*(framedelay/100)}s, format: ${width}x${height}px -> ${gif.width}x${gif.height}px, size: ${(gif.buffer.byteLength/1024).toFixed(2)}kB)`);
     });
   }
 
