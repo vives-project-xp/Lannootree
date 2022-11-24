@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref } from 'vue'
   import { usePanelGrid } from '@/stores/PanelGrid';
-  
+
   const panelStore = usePanelGrid();
   
   const _fun_ = ref(false);
@@ -10,10 +10,9 @@
 </script>
 
 <template>
-   <!-- <div class="json_display" @click="copyToClipboard" :style="validConfig ? { cursor: 'copy' } : { cursor: 'not-allowed' }"> -->
-    <div class="d-flex align-center justify-center" @click.ctrl="_fun_ = !_fun_" >
+    <div class="d-flex align-center justify-center" @click.ctrl="_fun_ = !_fun_">
         <pre v-highlightjs v-if="!_fun_">
-          <code class="javascript" style="border-radius: 25px">{{ panelStore.toJson }}</code>
+          <code class="javascript" style="border-radius: 25px; max-height: 400px;">{{ panelStore.toJson }}</code>
         </pre>
         
         <pre class="truk" v-else>

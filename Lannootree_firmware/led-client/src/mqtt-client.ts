@@ -1,72 +1,137 @@
 import fs from 'fs'
+import net from 'net'
 import mqtt from 'mqtt'
-
+import dotenv from 'dotenv'
+import process from 'process'
 import * as handel from './mqtt-handles.js'
 
-export default () => {
-  const caCert  = fs.readFileSync("ca.crt");
-  const options: mqtt.IClientOptions = {
-    clientId: "led-client" + Math.random().toString(16).substring(2, 8),
+dotenv.config({ path: '../.env' });
+
+class LannooTreeMqttClient {
+
+  private driverSocket: net.Socket = new net.Socket();
+
+  private client: mqtt.Client;
+  private caCert: Buffer = fs.readFileSync('./ca_crt/ca.crt');
+  private mqttOptions: mqtt.IClientOptions = {
+    clientId: `led-client_${Math.random().toString().substring(2, 8)}`,
     port: Number(process.env.MQTT_BROKER_PORT),
     host: process.env.MQTT_BROKER_URL,
     protocol: 'mqtts',
-    rejectUnauthorized : true,
-    ca: caCert,
+    rejectUnauthorized: true,
+    ca: this.caCert,
     will: {
       qos: 2,
-      topic: "status/led-client",
-      payload: "Offline",
+      topic: 'status/led-client',
+      payload: 'Offline',
       retain: true
     }
   };
 
-  const client = mqtt.connect(options);
+  private subscribeTopics = [
+    'ledpanel/control',
+    'controller/config'
+  ];
 
-  function logging(message: string, msgdebug: boolean = false) {
-    if (!msgdebug) {
-      console.log(message);
-      client.publish('logs/controller', message);
-    }
-    else if(msgdebug) {
-      console.log(message);
-    }
+  private messageTopicMap: Map<string, Map<string, (data: any) => void>> = new Map([
+    [ // Topics
+      "ledpanel/control",
+      new Map( 
+      [ // Commands for ledpanel/controll topic
+        ["pause", handel.pause_leds],
+        ["play",  handel.play_leds],
+        ["stop",  handel.stop_leds],
+        ["gif",   handel.play_gif],
+        ["color", handel.set_color],
+      ])
+    ], 
+    [
+      'controller/config',
+      new Map([
+        ["config", handel.change_config]
+      ])
+    ]
+  ]);
+
+  constructor() {
+    this.client = mqtt.connect(this.mqttOptions);
+    this.client.on('connect', this.connectCallback);
   }
 
-  client.on('connect', function () {
-    logging("INFO: mqtt connected");
-    client.publish('status/led-client', 'Online', {retain: true});
-    client.subscribe("ledpanel/control");
-  });
-  
-  client.on('error', function(error) {
-    logging("ERROR: mqtt:  " + error);
-  });
+  send(topic: string, msg: string) {
+    this.client.publish(topic, msg);
+  }
 
-  client.on('message', (topic, message) => {
-    let data: any = message;
-    try {
-      data = JSON.parse(message.toString());
-    } catch (error) {
-      data = message;
-    }
-    switch (topic) {
-      case "ledpanel/control":
-        switch(data.command) {
-          case "pause": handel.pause_leds(); break;
-          case "play": handel.play_leds(); break;
-          case "stop": handel.stop_leds(); break;
-          case "color": handel.set_color(data.red, data.green, data.blue); break;
-          case "gif": handel.play_gif(data.gif_number); break;
-          case "stream": handel.play_stream(data.stream, client); break;
-        }
-        break;
-      // case "ledpanel/stream": devCheck.Update(data); break;
-      // case activeStreamTopic:
-      //   leddriver.frame_to_ledcontroller(data);
-      //   break;
-    }
+  log = (message: string, debug: boolean = false) => {
+    if (!debug) this.client.publish('logs/led-client', message); 
+    console.log(message);
+  };
+
+  private subscribeToTopics = () => {
+    this.subscribeTopics.forEach(topic => this.client.subscribe(topic));
+  };
+
+  private connectCallback = () => {
+    this.log('Connected to mqtt');
     
-  });
+    process.on('SIGTERM', () => {
+      this.client.publish('status/led-driver', 'Offline', { retain: true });
+    });
 
-  return { client, logging };
+    this.driverSocket = net.createConnection('/var/run/logging.socket');
+
+    this.driverSocket.on('connect', () => {
+      this.log("Connected to led-driver");
+      this.client.publish('status/led-driver', 'Online', { retain: true });
+    });
+
+    this.driverSocket.on('end', () => {
+      this.log("Connection to led-driver-log ended");
+      this.client.publish('status/led-driver', 'Offline', { retain: true });
+    });
+
+    this.driverSocket.on('data', (data) => {
+      let dataString = data.toString();
+      let dataStrings = dataString.split('\n');
+
+      dataStrings.forEach((msg) => {
+        this.client.publish('logs/led-driver', msg);
+      });
+    });
+
+    this.driverSocket.on('error', (err) => {
+      this.log("Error connecting to led-driver-logging");
+    });
+
+    this.subscribeToTopics();
+
+    this.client.publish('status/led-client', 'Online', { retain: true });
+    this.client.on('error', this.errorCallback);
+    this.client.on('message', this.messageCallback);
+  };
+
+  private errorCallback = (error: Error) => {
+    console.log(`ERROR mqtt: ${error}`);
+  };
+
+  private messageCallback = (topic: string, message: Buffer) => {
+    let data = JSON.parse(message.toString());
+    
+    if (this.messageTopicMap.has(topic)) {
+      let topicMap = this.messageTopicMap.get(topic);
+
+      if (topicMap?.has(data.command)) {
+        let command = topicMap.get(data.command);
+        if (command !== undefined) command(data);
+      }
+
+      else if (topic == 'controller/config') {
+        let command = topicMap?.get('config');
+        if (command !== undefined) command(data);
+      }
+    }
+  };
+
 }
+
+export const client = new LannooTreeMqttClient();

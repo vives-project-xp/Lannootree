@@ -22,7 +22,7 @@ const devCheck = new DevCheck(production_server, developement_time);
 // MQTT______________________________________________________________
 var caFile = fs.readFileSync("./ca.crt");
 var options = {
-  clientId:"controller" + Math.random().toString(16).substring(2, 8),
+  clientId:"controller_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
   host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
@@ -212,7 +212,7 @@ function sendStatus() {
     activeStream,
     paused,
     playing_gif,
-    [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]   // totally DRY
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]   // totally DRY
   );
   client.publish('controller/status', JSON.stringify(obj));
 }
