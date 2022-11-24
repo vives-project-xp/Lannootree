@@ -33,8 +33,8 @@ void IRAM_ATTR isr_button2() {
 void setup () {
 	Serial.begin (115200);
   MQTTFlag=0;
-  pinMode(21, INPUT_PULLUP);attachInterrupt(21, isr_button1, FALLING);
-  pinMode(20, INPUT_PULLUP);attachInterrupt(20, isr_button2, FALLING);
+  pinMode(3, INPUT_PULLUP);attachInterrupt(3, isr_button1, FALLING);
+  pinMode(10, INPUT_PULLUP);attachInterrupt(10, isr_button2, FALLING);
 
   // WIFI SETUP
 	WiFi.mode (WIFI_MODE_STA);
@@ -68,27 +68,13 @@ void loop () {
     switch (MQTTFlag) {
       case 1: json = "{\"button\":\"1\"}"; break;
       case 2: json = "{\"button\":\"2\"}"; break;
-      case 3: json = "{\"button\":\"3\"}"; break;
-      case 4: json = "{\"button\":\"4\"}"; break;
-      case 5: json = "{\"button\":\"5\"}"; break;
-      case 6: json = "{\"button\":\"6\"}"; break;
-      case 7: json = "{\"button\":\"7\"}"; break;
-      case 8: json = "{\"button\":\"8\"}"; break;
-      case 9: json = "{\"button\":\"9\"}"; break;
-      case 10: json = "{\"button\":\"10\"}"; break;
-      case 11: json = "{\"button\":\"11\"}"; break;
-      case 12: json = "{\"button\":\"12\"}"; break;
-      case 13: json = "{\"button\":\"13\"}"; break;
-      case 14: json = "{\"button\":\"14\"}"; break;
-      case 15: json = "{\"button\":\"15\"}"; break;
-      case 16: json = "{\"button\":\"16\"}"; break;
     }
     Serial.println(json);
     esp_mqtt_client_publish (client, "esp_remote_mini", json, 0, 0, false);
     neopixelWrite(LEDPIN,247,198,0);
-    delay(250);
+    delay(100);
     neopixelWrite(LEDPIN,0,0,0);
-    delay(250);
+    delay(100);
     MQTTFlag = 0;
   }
 }
