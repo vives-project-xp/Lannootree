@@ -72,9 +72,9 @@ void loop () {
     Serial.println(json);
     esp_mqtt_client_publish (client, "esp_remote_mini", json, 0, 0, false);
     neopixelWrite(LEDPIN,247,198,0);
-    delay(250);
+    delay(100);
     neopixelWrite(LEDPIN,0,0,0);
-    delay(250);
+    delay(100);
     MQTTFlag = 0;
   }
 }
