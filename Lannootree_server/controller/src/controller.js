@@ -88,6 +88,8 @@ client.on('message', function (topic, message) {
         case "play": play_leds(); break;
         case "stop": stop_leds(); break;
         case "color": set_color(data.red, data.green, data.blue); break;
+        case "previous": previous_gif(); break;
+        case "next": next_gif(); break;
         case "show_media": set_media(data.media_name); break;
         // case "play_effect": set_effect(data.effect_name); break;
         case "play_effect": play_gif(data.effect_name); break;
@@ -140,6 +142,26 @@ function set_color(red, green, blue) {
   activeData = "(" + red + "," + green + "," + blue + ")";
   sendStatus();
   logging(`INFO: static color (${red},${green},${blue}) set`);
+}
+
+function previous_gif() {
+  if(playing_gif == 0) playing_gif = 20;
+  else playing_gif--;
+  activeData = "gif_" + playing_gif;
+  activeStream = null;
+  client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
+  sendStatus();
+  logging(`INFO: playing gif ${playing_gif}`);
+}
+
+function next_gif() {
+  if(playing_gif == 20) playing_gif = 0;
+  else playing_gif++;
+  activeData = "gif_" + playing_gif;
+  activeStream = null;
+  client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
+  sendStatus();
+  logging(`INFO: playing gif ${playing_gif}`);
 }
 
 function play_gif(gif_number) {
