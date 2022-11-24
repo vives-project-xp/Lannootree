@@ -1,11 +1,19 @@
 const mqtt = require('mqtt');
 const dotenv = require('dotenv');
 const express = require('express');
+const multer = require("multer");
+
 
 const fs = require('fs');
 
 dotenv.config({ path: '../.env' });
 
+const handleError = (err, res) => {
+  res
+    .status(500)
+    .contentType("text/plain")
+    .end("Oops! Something went wrong!");
+};
 
 var caFile = fs.readFileSync("ca.crt");
 var options={
@@ -22,11 +30,14 @@ var options={
     }
 };
 
+
+
 const client = mqtt.connect(options);
 
 const app = express();
 
 var mqtt_connected = false;
+
 
 client.on('connect', () => {
     logging("INFO: mqtt connected")
@@ -37,62 +48,47 @@ client.on('connect', () => {
     mqtt_connected = true;
 });
 
+app.use(express.static('public'));
+
 
 app.post('/uploader-api', (req, res) => {
     console.log('you reached the uploader-api');
 });
 
-
-// app.use(fileUpload({
-//     createParentPath: true,
-//     limits: { 
-//         fileSize: 2000 * 1024 * 1024 * 1024 //2GB max file size
-//     },
-// }));
+const upload = multer({
+  dest: "./uploads"
+  // you might also want to set some limits: https://github.com/expressjs/multer#limits
+});
 
 
-app.post('/upload', (req, res) => {
+app.post("/upload",upload.single("file"),(req, res) => { //file is name in de form of frontend
+    const tempPath = req.file.path;
+    const targetPath = path.join(__dirname, "./uploads/image.png");
 
-    logging('INFO: HTTP POST received from ' + req.headers['x-forwarded-for']);
-    
-    // try {
-    //     if(!req.files && mqtt_connected) {
-    //         client.publish(
-    //             'ffmpeg/in', 
-    //             {
-    //                 status: false,
-    //                 message: 'No file uploaded'
-    //             } 
-    //         );        
-                    
-    //     } else {
-            //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
-    let file = req.files.file;
-    //Use the mv() method to place the file in upload directory (i.e. "uploads")
-    file.mv('./temp/' + file.name);
+    if (path.extname(req.file.originalname).toLowerCase() === ".png") {
+      fs.rename(tempPath, targetPath, err => {
+        if (err) return handleError(err, res);
 
-        //     //send response to mqtt
-        //     if(mqtt_connected){
-        //         client.publish(
-        //             'ffmpeg/in', 
-        //             {
-        //                 status: true,
-        //                 message: 'File is uploaded',
-        //                 data: {
-        //                     name: file.name,
-        //                     mimetype: file.mimetype,
-        //                     size: file.size,
-        //                     file
-        //                 }
-        //             }
-        //         );
-        //     } 
-        // }
-    // } catch (err) {
-    //     res.status(500).send(err);
-    // }
-    res.status(200).send();
+        res
+          .status(200)
+          .contentType("text/plain")
+          .end("File uploaded!");
+      });
+    } else {
+      fs.unlink(tempPath, err => {
+        if (err) return handleError(err, res);
 
+        res
+          .status(403)
+          .contentType("text/plain")
+          .end("Only .png files are allowed!");
+      });
+    }
+  }
+);
+
+app.get("/image", (req, res) => {
+  res.sendFile(path.join(__dirname, "./uploads/image.png"));
 });
 
 
