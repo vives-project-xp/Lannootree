@@ -10,7 +10,7 @@
 #include "esp_event.h"
 #include "mqtt_client.h"
 
-#define SECURE_MQTT
+// #define SECURE_MQTT
 
 #ifdef SECURE_MQTT
 #include "esp_tls.h"
@@ -46,9 +46,9 @@ LSVWQo95Ng==
 esp_mqtt_client_config_t mqtt_cfg;
 esp_mqtt_client_handle_t client;
 
-const char* WIFI_SSID = "MY_SSID";
-const char* WIFI_PASSWD = "MY_PASS";
-const uint8_t newMACAddress[] = {0x32, 0xAE, 0xA4, 0x07, 0x0D, 0x66};
+const char* WIFI_SSID = "MPSK";
+const char* WIFI_PASSWD = "zvjsbmsl";
+const uint8_t newMACAddress[] = {0x58, 0xCF, 0x79, 0xE3, 0x66, 0x80};
 
 const char* MQTT_HOST = "lannootree.devbitapp.be";
 #ifdef SECURE_MQTT
@@ -59,75 +59,74 @@ const uint32_t MQTT_PORT = 1883;
 
 volatile int MQTTFlag;
 
-void IRAM_ATTR isr_button_pause() {
-  MQTTFlag = 111;
-}
-void IRAM_ATTR isr_button_play() {
-  MQTTFlag = 222;
-}
-void IRAM_ATTR isr_button_stop() {
-  MQTTFlag = 333;
-}
-void IRAM_ATTR isr_button_gif0() {
-  MQTTFlag = 0;
-}
-void IRAM_ATTR isr_button_gif1() {
+void IRAM_ATTR isr_button1() {
   MQTTFlag = 1;
 }
-void IRAM_ATTR isr_button_gif2() {
+void IRAM_ATTR isr_button2() {
   MQTTFlag = 2;
 }
-void IRAM_ATTR isr_button_gif3() {
+void IRAM_ATTR isr_button3() {
   MQTTFlag = 3;
 }
-void IRAM_ATTR isr_button_gif4() {
+void IRAM_ATTR isr_button4() {
   MQTTFlag = 4;
 }
-void IRAM_ATTR isr_button_gif5() {
+void IRAM_ATTR isr_button5() {
   MQTTFlag = 5;
 }
-void IRAM_ATTR isr_button_gif6() {
+void IRAM_ATTR isr_button6() {
   MQTTFlag = 6;
 }
-void IRAM_ATTR isr_button_gif7() {
+void IRAM_ATTR isr_button7() {
   MQTTFlag = 7;
 }
-void IRAM_ATTR isr_button_gif8() {
+void IRAM_ATTR isr_button8() {
   MQTTFlag = 8;
 }
-void IRAM_ATTR isr_button_gif9() {
+void IRAM_ATTR isr_button9() {
   MQTTFlag = 9;
 }
-void IRAM_ATTR isr_button_gif10() {
+void IRAM_ATTR isr_button10() {
   MQTTFlag = 10;
 }
-void IRAM_ATTR isr_button_gif11() {
+void IRAM_ATTR isr_button11() {
   MQTTFlag = 11;
 }
-void IRAM_ATTR isr_button_gif12() {
+void IRAM_ATTR isr_button12() {
   MQTTFlag = 12;
+}
+void IRAM_ATTR isr_button13() {
+  MQTTFlag = 13;
+}
+void IRAM_ATTR isr_button14() {
+  MQTTFlag = 14;
+}
+void IRAM_ATTR isr_button15() {
+  MQTTFlag = 15;
+}
+void IRAM_ATTR isr_button16() {
+  MQTTFlag = 16;
 }
 
 void setup () {
 	Serial.begin (115200);
-  MQTTFlag=-1;
-  pinMode(25, INPUT_PULLUP);attachInterrupt(25, isr_button_pause, FALLING);  // button_pause
-  pinMode(21, INPUT_PULLUP);attachInterrupt(21, isr_button_play, FALLING);   // button_play
-  pinMode(19, INPUT_PULLUP);attachInterrupt(19, isr_button_stop, FALLING);   // button_stop
-  pinMode(26, INPUT_PULLUP);attachInterrupt(26, isr_button_gif0, FALLING);   // button_gif0
-  pinMode(13, INPUT_PULLUP);attachInterrupt(13, isr_button_gif1, FALLING);   // button_gif1
-  pinMode(4, INPUT_PULLUP);attachInterrupt(4, isr_button_gif2, FALLING);     // button_gif2
-  pinMode(32, INPUT_PULLUP);attachInterrupt(32, isr_button_gif3, FALLING);   // button_gif3
-  pinMode(23, INPUT_PULLUP);attachInterrupt(23, isr_button_gif4, FALLING);   // button_gif4
-  pinMode(14, INPUT_PULLUP);attachInterrupt(14, isr_button_gif5, FALLING);   // button_gif5
-  pinMode(16, INPUT_PULLUP);attachInterrupt(16, isr_button_gif6, FALLING);   // button_gif6
-  pinMode(33, INPUT_PULLUP);attachInterrupt(33, isr_button_gif7, FALLING);   // button_gif7
-  pinMode(22, INPUT_PULLUP);attachInterrupt(22, isr_button_gif8, FALLING);   // button_gif8
-  pinMode(27, INPUT_PULLUP);attachInterrupt(27, isr_button_gif9, FALLING);   // button_gif9
-  pinMode(17, INPUT_PULLUP);attachInterrupt(17, isr_button_gif10, FALLING);  // button_gif10
-  pinMode(18, INPUT_PULLUP);attachInterrupt(18, isr_button_gif11, FALLING);  // button_gif11
-  pinMode(5, INPUT_PULLUP);attachInterrupt(5, isr_button_gif12, FALLING);    // button_gif12
-
+  MQTTFlag=0;
+  pinMode(13, INPUT_PULLUP);attachInterrupt(13, isr_button1, FALLING);
+  pinMode(4, INPUT_PULLUP);attachInterrupt(4, isr_button2, FALLING);
+  pinMode(32, INPUT_PULLUP);attachInterrupt(32, isr_button3, FALLING);
+  pinMode(23, INPUT_PULLUP);attachInterrupt(23, isr_button4, FALLING);
+  pinMode(14, INPUT_PULLUP);attachInterrupt(14, isr_button5, FALLING);
+  pinMode(16, INPUT_PULLUP);attachInterrupt(16, isr_button6, FALLING);
+  pinMode(33, INPUT_PULLUP);attachInterrupt(33, isr_button7, FALLING);
+  pinMode(22, INPUT_PULLUP);attachInterrupt(22, isr_button8, FALLING);
+  pinMode(27, INPUT_PULLUP);attachInterrupt(27, isr_button9, FALLING);
+  pinMode(17, INPUT_PULLUP);attachInterrupt(17, isr_button10, FALLING);
+  pinMode(18, INPUT_PULLUP);attachInterrupt(18, isr_button11, FALLING);
+  pinMode(5, INPUT_PULLUP);attachInterrupt(5, isr_button12, FALLING);
+  pinMode(26, INPUT_PULLUP);attachInterrupt(26, isr_button13, FALLING);
+  pinMode(19, INPUT_PULLUP);attachInterrupt(19, isr_button14, FALLING);
+  pinMode(25, INPUT_PULLUP);attachInterrupt(25, isr_button15, FALLING);
+  pinMode(21, INPUT_PULLUP);attachInterrupt(21, isr_button16, FALLING);
   // WIFI SETUP
 	WiFi.mode (WIFI_MODE_STA);
   esp_wifi_set_mac(WIFI_IF_STA, &newMACAddress[0]);
@@ -142,9 +141,10 @@ void setup () {
   mqtt_cfg.host = MQTT_HOST;
 	mqtt_cfg.port = MQTT_PORT;
 	mqtt_cfg.keepalive = 15;
+  esp_err_t err;
   #ifdef SECURE_MQTT
     mqtt_cfg.transport = MQTT_TRANSPORT_OVER_SSL;
-    esp_err_t err = esp_tls_set_global_ca_store (DSTroot_CA, sizeof (DSTroot_CA));
+    err = esp_tls_set_global_ca_store (DSTroot_CA, sizeof (DSTroot_CA));
     ESP_LOGI ("TEST","CA store set. Error = %d %s", err, esp_err_to_name(err));
   #else
     mqtt_cfg.transport = MQTT_TRANSPORT_OVER_TCP;
@@ -155,12 +155,9 @@ void setup () {
 }
 
 void loop () {
-  if(MQTTFlag >= 0) {
+  if(MQTTFlag != 0) {
     char* json = "";
-    Serial.println(json);
-    Serial.println(MQTTFlag);
     switch (MQTTFlag) {
-      case 0: json = "{\"command\":\"play_effect\",\"effect_name\":\"0\"}"; break;
       case 1: json = "{\"command\":\"play_effect\",\"effect_name\":\"1\"}"; break;
       case 2: json = "{\"command\":\"play_effect\",\"effect_name\":\"2\"}"; break;
       case 3: json = "{\"command\":\"play_effect\",\"effect_name\":\"3\"}"; break;
@@ -173,13 +170,14 @@ void loop () {
       case 10: json = "{\"command\":\"play_effect\",\"effect_name\":\"10\"}"; break;
       case 11: json = "{\"command\":\"play_effect\",\"effect_name\":\"11\"}"; break;
       case 12: json = "{\"command\":\"play_effect\",\"effect_name\":\"12\"}"; break;
-      case 111: json = "{\"command\":\"pause\"}"; break;
-      case 222: json = "{\"command\":\"play\"}"; break;
-      case 333: json = "{\"command\":\"stop\"}"; break;
+      case 13: json = "{\"command\":\"play_effect\",\"effect_name\":\"13\"}"; break;
+      case 14: json = "{\"command\":\"play_effect\",\"effect_name\":\"14\"}"; break;
+      case 15: json = "{\"command\":\"play_effect\",\"effect_name\":\"15\"}"; break;
+      case 16: json = "{\"command\":\"play_effect\",\"effect_name\":\"16\"}"; break;
     }
     Serial.println(json);
     esp_mqtt_client_publish (client, "controller/in", json, 0, 0, false);
-    MQTTFlag = -1;
+    MQTTFlag = 0;
     delay(500);
   }
 }
