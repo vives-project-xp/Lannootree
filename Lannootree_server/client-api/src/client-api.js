@@ -8,6 +8,8 @@ dotenv.config({ path: '../.env' })
 // MQTT ______________________________________________________________________________________
 
 var caFile = fs.readFileSync("ca.crt");
+var clientcrt = fs.readFileSync("client.crt");
+var clientkey = fs.readFileSync("client.key");
 var options={
   clientId:"client-api_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
@@ -15,6 +17,8 @@ var options={
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
+  cert: clientcrt,
+  key: clientkey,
     will: {
         topic: "status/client-api",
         payload: "Offline",
