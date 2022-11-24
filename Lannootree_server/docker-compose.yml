@@ -7,11 +7,20 @@ services:
     environment:
       - TZ=Europe/Brussels
     volumes:
-      - ./mqtt:/mosquitto/config
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ../certs:/certs
     ports:
-      - 1883:1883
       - 8883:8883
+  mqtt-api:
+    image: eclipse-mosquitto
+    restart: always
+    user: "1001:1001"
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      - ./mqtt/mosquitto-api.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - 1883:1883
   
   nodered:
     image: nodered/node-red:latest
