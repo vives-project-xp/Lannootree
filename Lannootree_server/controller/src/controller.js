@@ -45,7 +45,7 @@ const topics = [
 ]
 
 client.on('connect', function () {
-  logging("INFO: mqtt connected");
+  logging("[INFO] mqtt connected");
   client.subscribe("status/controller-dev");
   
   devCheck.on('startup', () => {
@@ -53,7 +53,7 @@ client.on('connect', function () {
       client.subscribe(topic);
     });
     client.publish("status/" + instanceName, 'Online', {retain: true});
-    logging("INFO: controller started")
+    logging("[INFO] controller started")
     sendStatus();
   });
   
@@ -62,19 +62,19 @@ client.on('connect', function () {
     topics.forEach(topic => {
       client.unsubscribe(topic);
     });
-    logging("WARNING: a dev controller started, going to sleep mode")
+    logging("[WARNING] a dev controller started, going to sleep mode")
   });
   
   devCheck.on('timer', () => {
     client.publish("status/" + instanceName, 'Starting', {retain: true});
-    logging(`INFO: dev controller went offline, starting in ${developement_time} seconds`)
+    logging(`[INFO] dev controller went offline, starting in ${developement_time} seconds`)
   });
 
   devCheck.Start();
 });
 
 client.on('error', function(error) {
-  logging("ERROR: mqtt:  " + error);
+  logging("[ERROR] mqtt:  " + error);
 });
 
 client.on('message', function (topic, message) {
@@ -119,7 +119,7 @@ function pause_leds() {
   status = "pause";
   paused = true;
   sendStatus();
-  logging("INFO: LEDS paused");
+  logging("[INFO] LEDS paused");
 }
 
 function play_leds() {
@@ -127,7 +127,7 @@ function play_leds() {
   status = "playing";
   paused = false;
   sendStatus();
-  logging("INFO: LEDS resumed");
+  logging("[INFO] LEDS resumed");
 }
 
 function stop_leds() {
@@ -138,14 +138,14 @@ function stop_leds() {
   paused = true;
   playing_gif = null;
   sendStatus();
-  logging("INFO: stopped media");
+  logging("[INFO] stopped media");
 }
 
 function set_color(red, green, blue) {
   client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": red, "green": green, "blue": blue}));
   activeData = "(" + red + "," + green + "," + blue + ")";
   sendStatus();
-  logging(`INFO: static color (${red},${green},${blue}) set`);
+  logging(`[INFO] static color (${red},${green},${blue}) set`);
 }
 
 function previous_gif() {
@@ -175,7 +175,7 @@ function play_gif(gif_number) {
   client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": gif_number}));
   playing_gif = gif_number;
   sendStatus();
-  logging(`INFO: playing gif ${gif_number}`);
+  logging(`[INFO] playing gif ${gif_number}`);
 }
 
 function set_media(media_name) {
@@ -185,7 +185,7 @@ function set_media(media_name) {
   activeStream = streamID;
   client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));
   sendStatus();
-  logging(`INFO: playing media (${media_name})`);
+  logging(`[INFO] playing media (${media_name})`);
 }
 
 function set_effect(effect_name) {
@@ -195,7 +195,7 @@ function set_effect(effect_name) {
   activeStream = streamID;
   client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));
   sendStatus();
-  logging(`INFO: playing effect (${effect_name})`);
+  logging(`[INFO] playing effect (${effect_name})`);
 }
 
 var currentID = 0;
@@ -259,13 +259,13 @@ function sendStatus() {
 //       paused = true;
 //       effect_manager.pause();
 //       sendStatus();
-//       logging("INFO: controller paused");
+//       logging("[INFO] controller paused");
 //       break;
 //     case "play":
 //       paused = false;
 //       if(status == "effect") effect_manager.run(speed_modifier);
 //       sendStatus();
-//       logging("INFO: controller resumed");
+//       logging("[INFO] controller resumed");
 //       break;
 //     case "toggle":
 //       if(paused) pause("play");
@@ -282,11 +282,11 @@ function sendStatus() {
 //   set_color_full(0,0,0);
 //   activeData = null;
 //   sendStatus();
-//   logging("INFO: clearing all leds (stop)");
+//   logging("[INFO] clearing all leds (stop)");
 // }
 
 // function set_color_full(red, green, blue) {
-//   if(status != "color") logging("INFO: status changed to static color(s)");
+//   if(status != "color") logging("[INFO] status changed to static color(s)");
 //   status = "color";
 //   effect_manager.stop();
 //   activeData = {color: [red, green, blue]};
@@ -308,14 +308,14 @@ function sendStatus() {
 //     status = "effect";
 //     effect_manager.set_effect(effect_id, get_matrixsize(), speed_modifier);
 //     sendStatus();
-//     logging("INFO: Set effect:" + effect_id);
+//     logging("[INFO] Set effect:" + effect_id);
 //   }
 // }
 
 // function set_fade(fade) {
 //   if(status = "effect") effect_manager.set_fade(fade);
 //   sendStatus();
-//   logging("INFO: set fade:" + fade);
+//   logging("[INFO] set fade:" + fade);
 // }
 
 // Live update__________________________________________________________________________
@@ -357,7 +357,7 @@ function logging(message, msgdebug = false) {
 }
 
 function crashApp(message) {
-  console.log('FATAL: ' + message);
+  logging('[FATAL] ' + message);
   client.publish('logs/' + instanceName, 'FATAL: ' + message, (error) => {
     process.exit(1);
   })

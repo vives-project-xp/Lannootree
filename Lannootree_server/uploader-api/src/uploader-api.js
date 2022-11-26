@@ -40,7 +40,7 @@ var mqtt_connected = false;
 
 
 client.on('connect', () => {
-    logging("INFO: mqtt connected")
+    logging("[INFO] mqtt connected")
     client.publish('status/uploader-api', 'Online', {retain: true});
 
     client.subscribe('voronoi/in');
@@ -52,7 +52,7 @@ app.use(express.static('public'));
 
 
 app.post('/uploader-api', (req, res) => {
-    console.log('you reached the uploader-api');
+    logging('[INFO] you reached the uploader-api');
 });
 
 const upload = multer({
@@ -104,5 +104,5 @@ function logging(message, msgdebug = false){
 
 
 app.listen(process.env.PORT_EXPRESS, () =>
-  console.log(`app listening on port ${process.env.PORT_EXPRESS}`),
+  logging(`[INFO] app listening on port ${process.env.PORT_EXPRESS}`),
 );  
