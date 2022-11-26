@@ -21,18 +21,85 @@ namespace Lannootree {
   class UnixSocket {
 
     public:
+      /**
+       * @brief Construct a new Unix Socket object
+       * 
+       * @param socket_path 
+       * 
+       * Path and name where to create UnixSocket
+       * 
+       * @param max_read 
+       * Maximum bytes to read from connected client
+       * 
+       * @param callback
+       * User defined function to handel incomming data.
+       * socket_callback_t (void* arg, uint8_t* datan size_t data_len) 
+       */
       UnixSocket(std::string socket_path, uint max_read, socket_callback_t callback);
+      
+      /**
+       * @brief Construct a new Unix Socket object
+       * 
+       * @param socket_path 
+       * 
+       * Path and name where to create UnixSocket
+       * 
+       * @param max_read 
+       * Maximum bytes to read from connected client
+       * 
+       * @param callback
+       * User defined function to handel incomming data.
+       * socket_callback_t (void* arg, uint8_t* datan size_t data_len) 
+       * 
+       * @param arg
+       * Agument pointer to get passed to the callback function
+       */
       UnixSocket(std::string socket_path, uint max_read, socket_callback_t callback, void* arg);
+      
       ~UnixSocket();
 
     public:
+      /**
+       * @brief 
+       * 
+       * Start activly using UninxSocket
+       * 
+       */
       void start(void);
+
+      /**
+       * @brief 
+       * 
+       * Stop the UnixSocket
+       * 
+       */
       void stop(void);
 
     public:
+      /**
+       * @brief 
+       * 
+       * Send data over the unix socket to the listening client,
+       * Note: This will buffer the data when no client is connected,
+       * when a client connect this buffer will be send to the connecting client.
+       * 
+       * @param data 
+       * Pointer to data to send
+       * @param data_len 
+       * Lenght of data to send
+       */
       void send_data(uint8_t* data, size_t data_len);
 
     public:
+      /**
+       * @brief 
+       * 
+       * @return true 
+       * When a client is connected,
+       * 
+       * @return false 
+       * When no client is connected
+       */
       bool client_connected(void) { return _current_sock_fd != 0; };
 
     private:

@@ -25,7 +25,9 @@ services:
     env_file:
       - .env
     volumes:
+      - "../certs/ca.crt:/app/ca.crt:ro"
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
       - ${PWD}/led-client/processed/:/app/processed/
       - ${PWD}/config.json:/app/config.json
-      - ${PWD}/ca_crt/:/app/ca_crt/
       - /var/run/:/var/run/

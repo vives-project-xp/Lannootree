@@ -1,0 +1,12 @@
+version: "3"
+services:
+  voronoi:
+    build: 
+      context: ${PWD}/voronoi/
+  
+  redis:
+    build: 
+      context: ./redis
+    # Temp just for testing
+    ports:
+      - 6379:6379

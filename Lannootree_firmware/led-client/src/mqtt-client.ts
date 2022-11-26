@@ -12,7 +12,10 @@ class LannooTreeMqttClient {
   private driverSocket: net.Socket = new net.Socket();
 
   private client: mqtt.Client;
-  private caCert: Buffer = fs.readFileSync('./ca_crt/ca.crt');
+  private caCert: Buffer = fs.readFileSync('./ca.crt');
+  private clientcrt = fs.readFileSync("client.crt");
+  private clientkey = fs.readFileSync("client.key");
+
   private mqttOptions: mqtt.IClientOptions = {
     clientId: `led-client_${Math.random().toString().substring(2, 8)}`,
     port: Number(process.env.MQTT_BROKER_PORT),
@@ -20,6 +23,8 @@ class LannooTreeMqttClient {
     protocol: 'mqtts',
     rejectUnauthorized: true,
     ca: this.caCert,
+    cert: this.clientcrt,
+    key: this.clientkey,
     will: {
       qos: 2,
       topic: 'status/led-client',
@@ -122,6 +127,7 @@ class LannooTreeMqttClient {
 
       if (topicMap?.has(data.command)) {
         let command = topicMap.get(data.command);
+	console.log(command);
         if (command !== undefined) command(data);
       }
 

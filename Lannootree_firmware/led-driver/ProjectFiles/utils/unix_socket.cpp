@@ -13,6 +13,8 @@ namespace Lannootree {
       std::cout << "Failed to create socket\n";
     }
 
+    unlink(_socket_path.c_str());
+
     fcntl(_socket_fd, F_SETFL, O_NONBLOCK);
 
     std::cout << "Initializing socket...\n";
