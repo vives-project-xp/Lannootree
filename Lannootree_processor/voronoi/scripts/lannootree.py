@@ -32,7 +32,7 @@ def draw_voronoi(img, facets, indices, frame, gray):
     # Fill in polygon with average color
     cv2.fillConvexPoly(img, ifacet, color, cv2.LINE_AA, 0)
 
-    # Add data in correct way
+  # Add data in correct way
   cstring = []
   for i in np.argsort(indices):
     cor_color = colors[i]
@@ -50,17 +50,31 @@ class Lannootree:
     self.__init_config__()
     self.__init_redis__()
 
+
   def start(self):
     # Get next image from redis
     self.i = 0
     while True:
       img = self.redis.brpop('voronoi')
 
-      with open('./img/current.gif', 'wb') as f:
-        f.write(img[1])
+      isSingleImage = False
 
-      frames = imageio.mimread('./img/current.gif')
-      size = frames[0].shape
+      # TODO: Clean this up
+      try:
+        frames = imageio.mimread(img[1], memtest=False)
+
+      except Exception as e:
+        try:
+          image = imageio.imread(img[1])
+          isSingleImage = True
+        except Exception as e2:
+          print(f"Somthing went wrong:\n {e2}")
+          continue
+
+      if not isSingleImage:
+        size = frames[0].shape
+      else:
+        size = image.shape
 
       # Scale to image
       xm = np.max(self.screen[:,0])
@@ -89,30 +103,50 @@ class Lannootree:
           subdiv.insert(tuple(p))
 
       # Allocate space for Voronoi Diagram
-      img_voronoi = np.zeros(frames[0].shape, dtype = frames[0].dtype)
-      ( facets, centers) = subdiv.getVoronoiFacetList([])  
+      if not isSingleImage:
+        img_voronoi = np.zeros(frames[0].shape, dtype = frames[0].dtype)
+        ( facets, centers) = subdiv.getVoronoiFacetList([])  
+      else:
+        img_voronoi = np.zeros(image.shape, dtype = image.dtype)
+        ( facets, centers) = subdiv.getVoronoiFacetList([])
 
       processed = dict()
 
-      for i, frame in enumerate(frames):
-        print(f'processing frame [{i + 1}/{len(frames)}]')
+      # For gif
+      if not isSingleImage:
+        for i, frame in enumerate(frames):
+          print(f'processing frame [{i + 1}/{len(frames)}]')
 
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+          gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-        image_height, image_width, _ = frame.shape
+          image_height, image_width, _ = frame.shape
 
-        cstring = draw_voronoi(img_voronoi, facets, self.screen_LED_indexes, frame, gray)
+          cstring = draw_voronoi(img_voronoi, facets, self.screen_LED_indexes, frame, gray)
 
+          data_to_send = []
+          for c in cstring:
+            data_to_send.append(int(c))
+
+          processed[f"frame{i}"] = data_to_send
+
+        with open(f"./processed_json/{self.i}.json", "w") as f:
+          json.dump(processed, f, indent=2)
+        
+        self.i += 1
+
+        print("Done processing gif")
+     
+      # For png
+      else:
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        cstring = draw_voronoi(img_voronoi, facets, self.screen_LED_indexes, image, gray)
+        
         data_to_send = []
         for c in cstring:
           data_to_send.append(int(c))
+        
+        print("Done processing one image")
 
-        processed[f"frame{i}"] = data_to_send
-
-      with open(f"./processed_json/{self.i}.json", "w") as f:
-        json.dump(processed, f, indent=2)
-      
-      self.i += 1
 
   def __init_config__(self):
     dsubx = 107.76
@@ -143,7 +177,7 @@ class Lannootree:
 
   def __init_redis__(self):
     self.redis = rd.Redis(
-      host='localhost',
+      host='redis',
       port=6379
     )
 

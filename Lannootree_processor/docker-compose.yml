@@ -7,5 +7,6 @@ services:
   redis:
     build: 
       context: ./redis
-
-
+    # Temp just for testing
+    ports:
+      - 6379:6379
