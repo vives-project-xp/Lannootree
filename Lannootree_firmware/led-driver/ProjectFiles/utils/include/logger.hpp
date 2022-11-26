@@ -23,6 +23,11 @@ namespace Lannootree {
   class Logger {
 
     public:
+      /**
+       * @brief Get static logger instance
+       * 
+       * @return Logger& 
+       */
       static Logger& Get(void) {
         static Logger instance;
         return instance;
@@ -32,10 +37,18 @@ namespace Lannootree {
       Logger();
       ~Logger();
 
-    public:
+    private:
       friend std::string prep_level(Logger& l);
 
     public:
+      /**
+       * @brief Use logger class as string stream logging over mqtt
+       * 
+       * @tparam T 
+       * @param l 
+       * @param s 
+       * @return Logger& 
+       */
       template <typename T>
       friend Logger& operator<<(Logger& l, const T& s);
 

@@ -1,5 +1,14 @@
 #pragma once
 
+/**
+ * @brief 
+ * 
+ * Some macros used to print to terminal to set different colors
+ * Where F_COLOR are forground colors,
+ * and B_COLOR are background colors.
+ * 
+ */
+
 #define RESET_COLOR "\u001b[0m"
 
 // Background colors

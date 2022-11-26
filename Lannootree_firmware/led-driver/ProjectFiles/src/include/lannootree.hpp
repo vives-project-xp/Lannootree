@@ -23,6 +23,12 @@ namespace Lannootree {
       ~LannooTree();
 
     public:
+      /**
+       * @brief 
+       * 
+       * This will start the lannootree
+       * 
+       */
       void start(void);
 
     private:
