@@ -6,6 +6,9 @@
 
 namespace Lannootree {
 
+  /**
+   * @brief A color abstratction class to wrap rgb values.
+   */
   class Color {
     
     public:

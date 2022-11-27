@@ -31,5 +31,3 @@ This need to be binded to a volume so it can be accessed.
 docker build lannootee:latest  .
 docker run -v "$(pwd)/dev/":/lannootree/dev/ lannootree
 ```
-
-## Communication over socket

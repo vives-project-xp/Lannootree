@@ -6,30 +6,37 @@ namespace Lannootree {
     : UnixSocket(socket_path, max_read, callback, nullptr) { };
 
   UnixSocket::UnixSocket(std::string socket_path, uint max_read, socket_callback_t callback, void* arg) 
-    : _socket_path(socket_path), _max_read(max_read), _callback(callback), _arg(arg) {
+    : m_socket_path(socket_path), m_max_read(max_read), m_callback(callback), m_arg(arg) {
     
+    // Unlink socket and delete socket if not closed on previous creation
+    unlink(m_socket_path.c_str());
+
+    // Create socket and get fd
     std::cout << "Creating socket...\n";
-    if ((_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+    if ((m_socket_fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) { 
       std::cout << "Failed to create socket\n";
     }
 
-    unlink(_socket_path.c_str());
+    // Set socket in non-blocking mode
+    fcntl(m_socket_fd, F_SETFL, O_NONBLOCK);
 
-    fcntl(_socket_fd, F_SETFL, O_NONBLOCK);
-
+    // Create unix socket address set family and path
     std::cout << "Initializing socket...\n";
     struct sockaddr_un serv_addr;
     bzero(&serv_addr, sizeof(serv_addr));
-    serv_addr.sun_family = AF_UNIX;
-    strcpy(serv_addr.sun_path, _socket_path.c_str());
 
+    serv_addr.sun_family = AF_UNIX;
+    strcpy(serv_addr.sun_path, m_socket_path.c_str());
+    
+    // Bind socket to socket address
     std::cout << "Binding socket...\n";
-    if (bind(_socket_fd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
+    if (bind(m_socket_fd, (struct sockaddr*) &serv_addr, sizeof(serv_addr)) == -1) {
       std::cout << "Failed to bind to socket\n";
     }
 
+    // Activly start listening on socket with max backlog of 1
     std::cout << "Listening to socket...\n";
-    if (listen(_socket_fd, 20) == -1) {
+    if (listen(m_socket_fd, 1) == -1) {
       std::cout << "Failed to listen on socket\n";
     }
 
@@ -39,35 +46,37 @@ namespace Lannootree {
   UnixSocket::~UnixSocket() {}
 
   void UnixSocket::start(void) {
-    _running = true;
-    _t = std::thread(&UnixSocket::recv_loop, this);
+    m_running = true;
+    m_thread = std::thread(&UnixSocket::socket_thread, this);
   }
 
   void UnixSocket::stop(void) {
-    _running = false;
-    if (_current_sock_fd) {
-      close(_current_sock_fd);
+    m_running = false;
+    
+    // Disconnect any connected clients
+    if (m_client_sock_fd) {
+      close(m_client_sock_fd);
     }
 
-    close(_socket_fd);
+    // Close and delete socket
+    close(m_socket_fd);
+    unlink(m_socket_path.c_str());
     
-    unlink(_socket_path.c_str());
-    
-    _t.join();
+    // Wait for thread to join main thread
+    m_thread.join();
   }
 
   void UnixSocket::send_data(uint8_t* data, size_t data_len) {
-    std::cout << "Trying to send data\n" << std::endl;
-
-    if (_current_sock_fd == 0) {
-      std::cout << "No client connected buffering data\n";
+    // If no client is connected buffer the data
+    if (m_client_sock_fd == 0) {
       for (int i = 0; i < data_len; i++) {
-        _buffer.push_back(data[i]);
+        m_buffer.push_back(data[i]);
       }
       return;
     }
 
-    ssize_t bytes_send = write(_current_sock_fd, data, data_len);
+    // Send data to connected client
+    ssize_t bytes_send = write(m_client_sock_fd, data, data_len);
     if (bytes_send == -1) {
       std::cout << "Failed to send over unix socket\n";
     } else {
@@ -75,64 +84,71 @@ namespace Lannootree {
     }
   }
 
-  void UnixSocket::recv_loop(void) {
+  void UnixSocket::socket_thread(void) {    
+    // Setting up of select functionality
     fd_set rfds;
-    struct timeval tv;
     int select_ret;
+    struct timeval tv;
 
-    struct sockaddr_un cli_addr;
-    socklen_t cli_len = sizeof(cli_addr);
-
-    char* buffer = new char[_max_read];    
-
-    while (_running) {
+    while (m_running) {
+      // Reset fd_set to 0 then add socket fd to it
       FD_ZERO(&rfds);
-      FD_SET(_socket_fd, &rfds);
+      FD_SET(m_socket_fd, &rfds);
 
+      // Resetting select timeout to one second
       tv.tv_sec = 1;
       tv.tv_usec = 0;
 
-      select_ret = select(_socket_fd + 1, &rfds, NULL, NULL, &tv);
+      select_ret = select(m_socket_fd + 1, &rfds, NULL, NULL, &tv);
 
-      if (select_ret == 0) continue;
+      // No incomming connection or some error we will ignore try again
+      if (select_ret == 0 || select_ret == -1) continue;
 
-      if (select_ret == -1) {
-        std::cout << "Error in select\n";
+      // A client connected
+      client_thread();
+    }
+
+  }
+
+  void UnixSocket::client_thread(void) {
+    // Create a client aderess structure
+    struct sockaddr_un cli_addr;
+    socklen_t cli_len = sizeof(cli_addr);
+
+    // Get the connected client's fd
+    std::cout << "Accepting incomming connection\n";
+    if ((m_client_sock_fd = accept(m_socket_fd, (struct sockaddr* ) & cli_addr, & cli_len)) == -1) {
+      return;
+    };
+
+    // Allocate memory of size max_read
+    char* buffer = new char[m_max_read]; 
+    
+    // Send buffered messages to connected client
+    if (m_buffer.size() > 0) {
+      send_data(m_buffer.data(), m_buffer.size());
+      m_buffer.clear();
+    }
+
+    while (m_running) {
+      int read_status = read(m_client_sock_fd, buffer, m_max_read);
+
+      if (read_status == -1) {
+        std::cout << "Failed to read socket\n";
         continue;
       }
 
-      else if (select_ret) {
-        std::cout << "Accepting incomming connection\n";
-        if ((_current_sock_fd = accept(_socket_fd, (struct sockaddr* ) & cli_addr, & cli_len)) == -1) continue;
-
-        // Send buffered messages to connected client
-        if (_buffer.size() > 0) {
-          send_data(_buffer.data(), _buffer.size());
-          _buffer.clear();
-        }
-
-        std::cout << "Stating receive loop" << std::endl;
-
-        while (_running) {
-          int read_status = read(_current_sock_fd, buffer, _max_read);
-
-          if (read_status == -1) {
-            std::cout << "Failed to read socket\n";
-            continue;
-          }
-
-          if (read_status == 0) {
-            std::cout << "Client disconnected\n";
-            break;
-          }
-
-          _callback(_arg, (uint8_t *) buffer, read_status); // User defined callback
-        }
-
-        close(_current_sock_fd);
-        _current_sock_fd = 0;
+      if (read_status == 0) {
+        std::cout << "Client disconnected\n";
+        break;
       }
+
+      // Make call to user defined callback
+      m_callback(m_arg, (uint8_t *) buffer, read_status); 
     }
+
+    close(m_client_sock_fd);
+    m_client_sock_fd = 0;
 
     delete[] buffer;
   }

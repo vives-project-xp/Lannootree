@@ -8,7 +8,10 @@
 #include <condition_variable>
 
 namespace Lannootree {
-
+  /**
+   * @brief A thread safe double buffer class with shutdown request for blocking threads
+   * 
+   */
   class LedBuffer {
 
     public:
