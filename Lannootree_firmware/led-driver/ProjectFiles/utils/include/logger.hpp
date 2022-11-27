@@ -20,6 +20,10 @@ namespace Lannootree {
     ERROR
   };
 
+  /**
+   * @brief Singleton logging system that writes logs to a UnixSocket, with different loggings levels
+   * 
+   */
   class Logger {
 
     public:

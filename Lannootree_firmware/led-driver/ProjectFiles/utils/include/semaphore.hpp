@@ -1,6 +1,10 @@
 #include <mutex>
 #include <condition_variable>
 
+/**
+ * @brief Simple semaphore implementation
+ * 
+ */
 class semaphore {
   std::mutex mutex_;
   std::condition_variable condition_;

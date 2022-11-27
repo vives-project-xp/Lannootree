@@ -1,7 +1,6 @@
 version: "3"
 services:
   led-driver:
-    image: led-driver:latest
     build: 
       context: ./led-driver
     privileged: true
@@ -15,7 +14,6 @@ services:
       - /proc/cpuinfo:/proc/cpuinfo
 
   led-client:
-    image: led-client:latest
     build:
       context: ./led-client
     privileged: true

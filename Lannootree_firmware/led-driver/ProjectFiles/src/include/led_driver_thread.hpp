@@ -7,6 +7,10 @@ using json = nlohmann::json;
 
 namespace Lannootree {
   
+  /**
+   * @brief Class which creates new thread responsable for driving ws281x leds
+   * 
+   */
   class LedDriverThread {
 
     public:
