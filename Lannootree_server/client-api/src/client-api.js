@@ -43,21 +43,22 @@ var contentJSON;
 const websocket = new WebSocketServer({ port: 3001 });
 
 websocket.on('connection', (ws, req) => {
-    logging('[INFO] Websocket connection from: ' + req.headers['x-forwarded-for']);
+    logging('[INFO] Websocket connection from: ' + req.headers['Remote-Name']);
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
     ws.send(JSON.stringify(statusJSON));
 
     ws.on("message", data => {
+        let sender = ws.upgradeReq.headers['x-forwarded-for']
         
         try {
             data = JSON.parse(data.toString())
-            if(data.hasOwnProperty('stop')) {stop();}
-            if(data.hasOwnProperty('pause')) {pause()}
-            if(data.hasOwnProperty('play')) {play()}
-            if(data.hasOwnProperty('effect')) {effect(data.effect)}
-            if(data.hasOwnProperty('asset')) {asset(data.asset)}
+            if(data.hasOwnProperty('stop')) {stop(sender);}
+            if(data.hasOwnProperty('pause')) {pause(sender)}
+            if(data.hasOwnProperty('play')) {play(sender)}
+            if(data.hasOwnProperty('effect')) {effect(data.effect,sender)}
+            if(data.hasOwnProperty('asset')) {asset(data.asset,sender)}
             if(data.hasOwnProperty('Color')) {
-                if (parseColor(data.Color) != null) setcolor(parseColor(data.Color));
+                if (parseColor(data.Color) != null) setcolor(parseColor(data.Color,sender));
             }
         } 
         catch (error) { 
@@ -96,41 +97,42 @@ websocket.on('connection', (ws, req) => {
 });
 
 // Sending updates_________________________________________
-function stop() {
-    logging('[INFO] sending stop');
+function stop(sender) {
+    logging(`[INFO] {${sender}} is sending stop`);
     client.publish('controller/in', JSON.stringify({"command": "stop"}));
 }
 
-function pause() {
-    logging('[INFO] sending pause');
+function pause(sender) {
+    logging(`[INFO] {${sender}} is sending pause`);
     client.publish('controller/in', JSON.stringify({"command": "pause"}));
 }
 
-function play() {
-    logging('[INFO] sending play');
+function play(sender) {
+    logging(`[INFO] {${sender}} is sending play`);
     client.publish('controller/in', JSON.stringify({"command": "play"}));
 }
 
-function togglepause() {
-    logging('[INFO] sending togglepause');
+function togglepause(sender) {
+    logging(`[INFO] {${sender}} is sending togglepause`);
     client.publish('controller/pause', JSON.stringify({"value": "togglepause"}));
 }
 
-function effect(effect_id) {
-    logging(`[INFO] sending set-effect: ${effect_id}`);
+function effect(effect_id, sender) {
+    logging(`[INFO] {${sender}} is sending set-effect: ${effect_id}`);
     client.publish('controller/in', JSON.stringify({"command": "play_effect", "effect_name": effect_id}));
 }
 
-function asset(asset_id) {
-    logging(`[INFO] sending set-asset: ${asset_is}`);
+function asset(asset_id, sender) {
+    logging(`[INFO] {${sender}} is sending set-asset: ${asset_is}`);
     client.publish('controller/asset', JSON.stringify({"asset_id": asset_id}));
 }
 
-function setcolor(color) {
+function setcolor(color, sender) {
+    logging(`[INFO] {${sender}} is sending color: ${color}`);
     client.publish('controller/in', JSON.stringify({"command": "color", "red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
 }
 
-function parseColor(input) {
+function parseColor(input, sender) {
     if (!input.match(/#[0-9,A-Z,a-z]{6}/g))logging("[ERROR] Color is not in hex format (#FFFFFF)");
 
     let hex = input.match(/[^#].{1}/g);
