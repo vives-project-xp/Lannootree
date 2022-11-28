@@ -43,7 +43,6 @@ var contentJSON;
 const websocket = new WebSocketServer({ port: 3001 });
 
 websocket.on('connection', (ws, req) => {
-g
     logging('[INFO] Websocket connection from: ' + req.headers['x-forwarded-for']) + 'as: ' + req.headers['Remote-Name'];
 
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
