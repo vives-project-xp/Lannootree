@@ -165,7 +165,7 @@ function next_gif() {
   activeStream = null;
   client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
   sendStatus();
-  logging(`INFO: playing gif ${playing_gif}`);
+  logging(`[INFO] playing gif ${playing_gif}`);
 }
 
 function play_gif(gif_number) {
