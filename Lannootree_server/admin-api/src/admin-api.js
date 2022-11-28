@@ -11,13 +11,17 @@ var statusBuffer = {};
 
 // MQTT___________________________________________________________________________________________________
 var caFile = fs.readFileSync("ca.crt");
+var clientcrt = fs.readFileSync("client.crt");
+var clientkey = fs.readFileSync("client.key");
 var mqttOptions={
-  clientId:"admin-api" + Math.random().toString(16).substring(2, 8),
+  clientId:"admin-api_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
   host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
+  cert: clientcrt,
+  key: clientkey,
     will: {
         topic: "status/admin-api",
         payload: "Offline",
@@ -27,7 +31,7 @@ var mqttOptions={
 const client = mqtt.connect(mqttOptions);
 
 client.on('connect', function () {
-    logging("INFO: mqtt connected")
+    logging("[INFO] mqtt connected")
     client.publish('status/admin-api', 'Online', {retain: true});
     client.subscribe('logs/#');
     client.subscribe('status/#');
@@ -106,7 +110,7 @@ client.on('message', function (topic, message) {
 // Websocket log pushing___________________________________________________________________________________________
 
 websocket.on('connection', (ws, req) => {
-  logging('INFO: Websocket connection from: ' + req.headers['x-forwarded-for']);
+  logging('[INFO] Websocket connection from: ' + req.headers['x-forwarded-for']);
 
   db.all(`SELECT * FROM logs ORDER BY id ASC`, [], (err, rows) => {
     rows.forEach(row => {
@@ -129,14 +133,14 @@ websocket.on('connection', (ws, req) => {
     let message = JSON.parse(data.toString());
 
     if (message.type === 'config') {
-      logging(`Received config: ${message.config}`)
+      logging(`[INFO] Received config: ${message.config}`)
       client.publish('controller/config', JSON.stringify(message.config));
     }
 
   })
 
   ws.on("close", () => {
-      logging("INFO: Websocket client disconnected")
+      logging("[INFO] Websocket client disconnected")
   });
 });
 
@@ -149,13 +153,13 @@ const port = 3001
 app.use(express.json())
 app.post('/admin/config', async (req, res) => {
 
-    logging("INFO: recieved new json from: "  + req.headers['x-forwarded-for']);
+    logging("[INFO] recieved new json from: "  + req.headers['x-forwarded-for']);
     
     res.sendStatus(200);
 });
 
 app.listen(port, () => {
-  logging(`INFO: admin-api listening on port ${port}`)
+  logging(`[INFO] admin-api listening on port ${port}`)
 })
 
 

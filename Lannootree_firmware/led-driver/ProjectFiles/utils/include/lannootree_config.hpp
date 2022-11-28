@@ -47,4 +47,4 @@ static const char* logo =
 "      |_| |_|_|  |_| |_| |_|\\_/\\_/ \\__,_|_|  \\___|       \n"
 "                                                         \n"
 "                                                         \n"
-"                       VERSION[1.4]                       \n";
+"                       VERSION[1.4.1]                       \n";

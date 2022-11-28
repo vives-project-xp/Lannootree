@@ -12,14 +12,19 @@ class LannooTreeMqttClient {
   private driverSocket: net.Socket = new net.Socket();
 
   private client: mqtt.Client;
-  private caCert: Buffer = fs.readFileSync('./ca_crt/ca.crt');
+  private caCert: Buffer = fs.readFileSync('./ca.crt');
+  private clientcrt = fs.readFileSync("client.crt");
+  private clientkey = fs.readFileSync("client.key");
+
   private mqttOptions: mqtt.IClientOptions = {
-    clientId: `led-client${Math.random().toString().substring(2, 8)}`,
+    clientId: `led-client_${Math.random().toString().substring(2, 8)}`,
     port: Number(process.env.MQTT_BROKER_PORT),
     host: process.env.MQTT_BROKER_URL,
     protocol: 'mqtts',
     rejectUnauthorized: true,
     ca: this.caCert,
+    cert: this.clientcrt,
+    key: this.clientkey,
     will: {
       qos: 2,
       topic: 'status/led-client',
@@ -72,7 +77,7 @@ class LannooTreeMqttClient {
   };
 
   private connectCallback = () => {
-    this.log('Connected to mqtt');
+    this.log('[INFO] connected to mqtt');
     
     process.on('SIGTERM', () => {
       this.client.publish('status/led-driver', 'Offline', { retain: true });
@@ -81,12 +86,12 @@ class LannooTreeMqttClient {
     this.driverSocket = net.createConnection('/var/run/logging.socket');
 
     this.driverSocket.on('connect', () => {
-      this.log("Connected to led-driver");
+      this.log("[INFO] Connected to led-driver");
       this.client.publish('status/led-driver', 'Online', { retain: true });
     });
 
     this.driverSocket.on('end', () => {
-      this.log("Connection to led-driver-log ended");
+      this.log("[INFO] Connection to led-driver-log ended");
       this.client.publish('status/led-driver', 'Offline', { retain: true });
     });
 
@@ -100,7 +105,7 @@ class LannooTreeMqttClient {
     });
 
     this.driverSocket.on('error', (err) => {
-      this.log("Error connecting to led-driver-logging");
+      this.log("[ERROR] connecting to led-driver-logging");
     });
 
     this.subscribeToTopics();
@@ -111,7 +116,7 @@ class LannooTreeMqttClient {
   };
 
   private errorCallback = (error: Error) => {
-    console.log(`ERROR mqtt: ${error}`);
+    this.log(`[ERROR] mqtt: ${error}`);
   };
 
   private messageCallback = (topic: string, message: Buffer) => {
@@ -122,6 +127,7 @@ class LannooTreeMqttClient {
 
       if (topicMap?.has(data.command)) {
         let command = topicMap.get(data.command);
+	console.log(command);
         if (command !== undefined) command(data);
       }
 

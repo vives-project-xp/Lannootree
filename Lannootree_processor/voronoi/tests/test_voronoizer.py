@@ -108,12 +108,14 @@ for xs in unique_xs:
   jdxs = np.argsort(panel[idxs,1])
   panel[np.min(idxs):np.min(idxs)+len(idxs),1] = panel[idxs[jdxs],1]
 
+width, height = 4, 4
+nPanels = width * height
 
 # Create current configuration
-screen = np.zeros((4*panel.shape[0],2))
-for i in range(2):
-  for j in range(2):
-    idx = panel.shape[0]*(i+j*2)
+screen = np.zeros((nPanels*panel.shape[0],2))
+for i in range(width):
+  for j in range(height):
+    idx = panel.shape[0]*(i + j * width)
     screen[idx:idx+panel.shape[0],:] = panel+np.tile([i*dx, (1-j)*dy],[panel.shape[0],1])
 
 
@@ -123,6 +125,7 @@ y0 = np.min(screen[:,1])
 
 screen = screen - np.array([x0,y0])
 
+
 # Scale to image
 xm = np.max(screen[:,0])
 ym = np.max(screen[:,1])
@@ -131,11 +134,13 @@ scale = np.min([size[0]/ym, size[1]/xm]) * 0.9
 
 screen = screen * scale
 
+
 # Shift screen right up
 xt = np.abs(np.max(screen[:,0])-size[1])/2
 yt = np.abs(np.max(screen[:,1])-size[0])/2
 
 screen = screen + np.array([xt,yt])
+
 
 # Indexes for color data
 panel_LED_indexes = np.array([ 0, 22, 46, 20, 44, 61, 21, 45, 62,  1, 23, 47, 19, 43, 63, 18, 42,
@@ -145,8 +150,8 @@ panel_LED_indexes = np.array([ 0, 22, 46, 20, 44, 61, 21, 45, 62,  1, 23, 47, 19
        53, 10, 33, 71])
 
 # Led indexes for configuration
-screen_LED_indexes = np.zeros(4*panel_LED_indexes.shape[0],dtype=int)
-for i in range(4):
+screen_LED_indexes = np.zeros(nPanels*panel_LED_indexes.shape[0],dtype=int)
+for i in range(nPanels):
   screen_LED_indexes[panel_LED_indexes.shape[0]*i:panel_LED_indexes.shape[0]*i+panel_LED_indexes.shape[0]] = panel_LED_indexes+panel_LED_indexes.shape[0]*i
 
 points = screen
@@ -168,6 +173,8 @@ img_voronoi = np.zeros(frames[0].shape, dtype = frames[0].dtype)
 processed = dict()
 np_processed = [[] for i in range(len(frames))]
 
+import time
+
 for i, frame in enumerate(frames):
   print(f'processing frame [{i + 1}/{len(frames)}]')
 
@@ -175,7 +182,11 @@ for i, frame in enumerate(frames):
 
   image_height, image_width, _ = frame.shape
 
+  start = time.time()
   cstring = draw_voronoi(img_voronoi, facets, screen_LED_indexes)
+  end = time.time()
+
+  print(f"Render took ~ {(end - start) * 100}")
 
   data_to_send = []
   for c in cstring:
@@ -191,15 +202,15 @@ np_processed = np.array(np_processed)
 if not os.path.exists('./img_processed'):
   os.mkdir('img_processed')
 
-if not os.path.exists('./processed_json'):
-  os.mkdir('processed_json')
+# if not os.path.exists('./processed_json'):
+#   os.mkdir('processed_json')
 
-if not os.path.exists('./numpy_store'):
-  os.mkdir('numpy_store')
+# if not os.path.exists('./numpy_store'):
+#   os.mkdir('numpy_store')
 
-with open(f"./numpy_store/np_{img_file}.npy", 'wb') as f:
-  np.save(f, np_processed)
+# with open(f"./numpy_store/np_{img_file}.npy", 'wb') as f:
+#   np.save(f, np_processed)
 
 imageio.mimsave(f'./img_processed/proccesed_{img_file}', images)
-with open(f"./processed_json/{img_file}.json", "w") as f:
-  json.dump(processed, f, indent=2)
+# with open(f"./processed_json/{img_file}.json", "w") as f:
+#   json.dump(processed, f, indent=2)

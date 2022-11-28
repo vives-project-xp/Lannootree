@@ -1,8 +1,0 @@
-version: "3"
-services:
-  cert_downloader:
-    image: curlimages/curl
-    command: "curl https://lannootree.devbitapp.be/ca.crt --output /ca.crt/ca.crt"
-    user: 1001:1001
-    volumes:
-      - ./:/ca.crt
