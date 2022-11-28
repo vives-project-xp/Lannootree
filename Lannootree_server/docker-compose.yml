@@ -4,17 +4,48 @@ services:
     image: eclipse-mosquitto
     restart: always
     user: "1001:1001"
+    environment:
+      - TZ=Europe/Brussels
     volumes:
-      - ./mqtt/config:/mosquitto/config
+      - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ../certs:/certs
+    ports:
+      - 8883:8883
+  mqtt-api:
+    image: eclipse-mosquitto
+    restart: always
+    user: "1001:1001"
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      - ./mqtt/mosquitto-api.conf:/mosquitto/config/mosquitto.conf
     ports:
       - 1883:1883
-      - 8883:8883
+  
+  nodered:
+    image: nodered/node-red:latest
+    restart: always
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      - nodered:/data
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client:/app/clientcert:ro"  
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.nodered.rule=Host(`nodered.lannootree.devbitapp.be`)'
+      - 'traefik.http.services.nodered.loadbalancer.server.port=1880'
+      - 'traefik.http.routers.nodered.entrypoints=websecure'
+      - 'traefik.http.routers.nodered.tls.certresolver=production'
+      - 'traefik.http.routers.nodered.middlewares=authelia@docker'
 
   certificate-api:
     image: "nginx:alpine"
     restart: always
+    environment:
+      - TZ=Europe/Brussels
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/usr/share/nginx/html/ca.crt:ro"
+      - "../certs/ca/ca.crt:/usr/share/nginx/html/ca.crt:ro"
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.certificate-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
@@ -25,6 +56,8 @@ services:
   traefik:
     image: "traefik:v2.9"
     restart: always
+    environment:
+      - TZ=Europe/Brussels
     ports:
       - "80:80"
       - "443:443"
@@ -61,6 +94,8 @@ services:
   whoami:
     image: "traefik/whoami"
     restart: always
+    environment:
+      - TZ=Europe/Brussels
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.whoami.rule=Host(`whoami.lannootree.devbitapp.be`) || (Host(`lannootree.devbitapp.be`) && PathPrefix(`/whoami`))'
@@ -75,6 +110,8 @@ services:
           VITE_LOGOUT_URL: ${VITE_LOGOUT_URL}
           VITE_FRONTEND_WEBSOCKET: ${VITE_FRONTEND_WEBSOCKET}
     restart: always
+    environment:
+      - TZ=Europe/Brussels
     env_file:
       - .env
     labels:
@@ -89,8 +126,12 @@ services:
     build:
       context: ./client-api
     restart: always
+    environment:
+      - TZ=Europe/Brussels
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
     env_file:
       - .env
     labels:
@@ -108,8 +149,12 @@ services:
     build:
       context: ./admin-api
     restart: always
+    environment:
+      - TZ=Europe/Brussels
     volumes:
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"    
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"         
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
       - "log-database:/app/db"
     env_file:
       - .env
@@ -130,16 +175,19 @@ services:
     env_file:
       - .env
     environment:
+      - TZ=Europe/Brussels
       - PRODUCTION_SERVER=true
     restart: always
     volumes:
       - ./config.json:/config.json
-      - "./mqtt/config/ca_certificates/ca.crt:/app/ca.crt:ro"
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"     
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
 
   githook:
     restart: unless-stopped    
     build:
-      context: ./githook/docker-webhook     
+      context: ./githook/docker-webhook   
     env_file:
       - ./githook/githook.env
     volumes:
@@ -147,9 +195,10 @@ services:
         - ../:/home/ubuntu/Lannootree #Set to directory of repo! also change this in the deploy script
         - /var/run/docker.sock:/var/run/docker.sock
     environment:
-        # - WEBHOOK_SECRET=${WEBHOOK_SECRET}
-        - WEBHOOK_HOOKS_DIR=/code/hooks
-        - WEBHOOK_BRANCH_LIST=main  
+      - TZ=Europe/Brussels
+      # - WEBHOOK_SECRET=${WEBHOOK_SECRET}
+      - WEBHOOK_HOOKS_DIR=/code/hooks
+      - WEBHOOK_BRANCH_LIST=main  
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.githook.rule=Host(`githook.lannootree.devbitapp.be`)'
@@ -159,3 +208,4 @@ services:
 
 volumes:
   log-database:
+  nodered:

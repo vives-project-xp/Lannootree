@@ -2,6 +2,7 @@
   import { useTheme } from 'vuetify'
   import { computed, ref, watch } from 'vue'
   import { useUserStore }  from '@/stores/UserInfo'
+import router from './router';
 
   const theme = useTheme();
 
@@ -53,7 +54,24 @@
   const toggleTheme = function () {
     theme.global.name.value = theme.global.current.value.dark ? 'lightTheme' : 'darkTheme';
   }
-
+  // Hotkeys 1,2,3,4 
+  window.addEventListener('keydown', (e)=>{
+    var key = e.which || e.keyCode;
+    switch(key) {
+      case 49:
+        router.push('/controll');
+        break;
+      case 50:
+      router.push('/upload');
+        break;
+      case 51:
+      router.push('/config');
+        break;
+      case 52:
+      router.push('/logging');
+        break;
+    }
+});
 </script>
 
 <template>
@@ -86,15 +104,16 @@
         <v-icon v-if="theme.global.current.value.dark">mdi-weather-sunny</v-icon>
         <v-icon v-else>mdi-weather-night</v-icon>
       </v-btn>
-      
+
       <v-btn 
         color="red"
         :variant="theme.global.current.value.dark ? 'outlined' : 'flat'"
         :href="logoutUrl" 
-        class="ml-2"
+        class="hidden-sm-and-down ml-2"
       >
         Logout
       </v-btn>
+      
 
     </v-app-bar>
 
@@ -111,6 +130,12 @@
           :to="sub.value">
 
             {{ sub.title }}
+        </v-list-item>
+        <v-list-item
+        class="hidden-md-and-up"
+        :href="logoutUrl"
+        append-icon="mdi-logout">
+        Logout
         </v-list-item>
       </v-list>
     </v-navigation-drawer>

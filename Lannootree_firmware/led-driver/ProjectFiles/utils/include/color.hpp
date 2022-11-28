@@ -6,14 +6,17 @@
 
 namespace Lannootree {
 
+  /**
+   * @brief A color abstratction class to wrap rgb values.
+   */
   class Color {
     
     public:
       Color() {};
       Color(uint8_t red, uint8_t green, uint8_t blue) {
-        color[1] = red;
-        color[2] = green;
-        color[3] = blue;
+        m_color[1] = red;
+        m_color[2] = green;
+        m_color[3] = blue;
       };
       
       ~Color() {};
@@ -26,7 +29,7 @@ namespace Lannootree {
        *
        */
       uint32_t to_uint32_t(void) {
-        return 0U | ((uint32_t)(color[0] << 24) | (uint32_t)(color[1] << 16) | (uint32_t)(color[2] << 8) | (uint32_t)color[3]);
+        return 0U | ((uint32_t)(m_color[0] << 24) | (uint32_t)(m_color[1] << 16) | (uint32_t)(m_color[2] << 8) | (uint32_t)m_color[3]);
       }
 
       /**
@@ -45,12 +48,12 @@ namespace Lannootree {
 
     public:
       friend std::ostream& operator<<(std::ostream& os, const Color& c) {
-        os << "RGB(" << std::to_string(c.color[1]) << ", " << std::to_string(c.color[2]) << ", " << std::to_string(c.color[3]) << ")";
+        os << "RGB(" << std::to_string(c.m_color[1]) << ", " << std::to_string(c.m_color[2]) << ", " << std::to_string(c.m_color[3]) << ")";
         return os;
       }
 
     private:
-      uint8_t color[4] = {0};
+      uint8_t m_color[4] = {0};
 
   };
 }

@@ -9,6 +9,7 @@
     
 <template>
   <div class="d-flex align-center justify-center">
+    
     <v-select
       v-model="current"
       label="Effect"

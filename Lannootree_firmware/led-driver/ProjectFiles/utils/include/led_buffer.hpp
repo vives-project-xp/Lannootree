@@ -8,21 +8,58 @@
 #include <condition_variable>
 
 namespace Lannootree {
-
+  /**
+   * @brief A thread safe double buffer class with shutdown request for blocking threads
+   * 
+   */
   class LedBuffer {
 
     public:
+      /**
+     * @brief Construct a new Led Buffer:: Led Buffer object
+     * A double buffer class wich will block read/write until buffers have been swaped
+     * 
+     * @param buffer_size Size of both buffers
+     */
       LedBuffer(unsigned int buffer_size);
       ~LedBuffer();
 
     public:
+      /**
+       * @brief
+       * Write data into the current buffer
+       * 
+       * @param data* pointer to read from
+       * @param len  lenght of data
+       * 
+       * @returns false on shutdown request
+       */
       bool mem_write(uint32_t* data, size_t len);
+
+      /**
+       * @brief
+       * Copies the buffer to data pointer
+       * Note this will copy the whole buffer of size buffer_size to the location,
+       * there is no safety check.
+       * 
+       * @param data pointer to write to
+       * 
+       * @returns false on shutdown request
+       */
       bool mem_read(uint32_t* data);
 
     public:
+      /**
+       * @brief Swapes the buffers
+       * and notifies read/write opperation can be executed now
+       */
       void swap() noexcept;
 
     public:
+      /**
+       * @brief Notify threads blocking on read/write 
+       * program is shutting down.
+       */
       void shutdown();
 
     private:

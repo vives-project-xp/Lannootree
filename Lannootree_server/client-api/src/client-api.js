@@ -8,13 +8,17 @@ dotenv.config({ path: '../.env' })
 // MQTT ______________________________________________________________________________________
 
 var caFile = fs.readFileSync("ca.crt");
+var clientcrt = fs.readFileSync("client.crt");
+var clientkey = fs.readFileSync("client.key");
 var options={
-  clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
+  clientId:"client-api_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
   host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
+  cert: clientcrt,
+  key: clientkey,
     will: {
         topic: "status/client-api",
         payload: "Offline",
@@ -39,7 +43,9 @@ var contentJSON;
 const websocket = new WebSocketServer({ port: 3001 });
 
 websocket.on('connection', (ws, req) => {
+g
     logging('[INFO] Websocket connection from: ' + req.headers['x-forwarded-for']) + 'as: ' + req.headers['Remote-Name'];
+
     ws.send(JSON.stringify({"Connection" : "Hello from server: Client-API"}));
     ws.send(JSON.stringify(statusJSON));
 

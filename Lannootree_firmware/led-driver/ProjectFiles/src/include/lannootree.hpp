@@ -16,13 +16,18 @@ using json = nlohmann::json;
 
 namespace Lannootree {
 
+  /**
+   * @brief The entrypoint of lannootree firmware,
+   * starts automaticly upon creation.
+   * 
+   */
   class LannooTree {
 
     public:
       LannooTree();
       ~LannooTree();
 
-    public:
+    private:
       void start(void);
 
     private:

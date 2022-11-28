@@ -7,14 +7,42 @@ using json = nlohmann::json;
 
 namespace Lannootree {
   
+  /**
+   * @brief Class which creates new thread responsable for driving ws281x leds
+   * 
+   */
   class LedDriverThread {
 
     public:
+      /**
+       * @brief Construct a new Led Driver Thread object
+       * 
+       * @param channel_mem 
+       * 
+       * Pointer to channel ledbuffer maping
+       * 
+       * @param controllers 
+       * 
+       * Pointer to vector of dma ws2811 controllers
+       */
       LedDriverThread(std::unordered_map<std::string, LedBuffer*>* channel_mem, std::vector<ws2811_t*>* controllers);
       ~LedDriverThread();
 
     public:
+      /**
+       * @brief 
+       * 
+       * Start Led driver thread
+       * 
+       */
       void start(void);
+
+      /**
+       * @brief 
+       * 
+       * Signal led driver thread to stop
+       * 
+       */
       void stop(void);
 
     private:
