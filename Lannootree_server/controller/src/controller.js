@@ -86,6 +86,7 @@ client.on('message', function (topic, message) {
   switch (topic) {
     case "controller/in":
       switch(data.command) {
+        case "ontime": set_ontime(data.ontime); break;
         case "pause": pause_leds(); break;
         case "play": play_leds(); break;
         case "stop": stop_leds(); break;
@@ -107,7 +108,7 @@ client.on('message', function (topic, message) {
 
 var on_time = '08:00-18:00';
 var ledpanelOn = false;
-if(checkTimeBetweenSetpoints()) ledpanelOn = true;
+if(checkTimeBetweenSetpoints()) turnOnLedPanel();
 
 var status = "stop";
 var activeData = null;
@@ -125,7 +126,7 @@ setInterval(() => {
 
   sendStatus(); // herhaaldelijke sendStatus() om de frontends zeker up-to-date te houden
 
-}, 5*1000); // EVERY MINUTE
+}, 60*1000); // EVERY MINUTE
 
 function checkTimeBetweenSetpoints() {
   const [time_begin, time_end] = on_time.split('-');
@@ -146,15 +147,37 @@ function checkTimeBetweenSetpoints() {
   }
 }
 
+function set_ontime(ontime) {
+  const date_begin = new Date();
+  const date_end = new Date();
+  if(/^(2[0-3]|[0-1]?[\d]):[0-5][\d]-(2[0-3]|[0-1]?[\d]):[0-5][\d]$/.test(ontime)) {
+    const [time_begin, time_end] = ontime.split('-');
+    const [hours_begin, minutes_begin] = time_begin.split(':');
+    date_begin.setHours(hours_begin,minutes_begin,0,0);
+    const [hours_end, minutes_end] = time_end.split(':');
+    date_end.setHours(hours_end,minutes_end,0,0);
+    if(date_begin >= date_end) logging(`[ERROR] begin_time must come before end_time ('${ontime}')`);
+    else {
+      var time_difference = Math.abs(date_begin-date_end);
+      if(time_difference <= 3600000) logging(`[WARNING] ontime less than 1 hour? Ontime set: '${ontime}'`);
+      else logging(`[INFO] ontime set: '${ontime}'`);
+      on_time = ontime;
+      if(checkTimeBetweenSetpoints()) turnOnLedPanel();
+      else ledpanelOn = turnOffLedPanel();
+    }
+  }
+  else logging(`[ERROR] Possible wrong ontime format ('${ontime}'), must be like: '08:00-18:00'`)
+}
+
 function turnOnLedPanel() {
   ledpanelOn = true;
-  logging(`[INFO] LedPanel turned ON (time-schedule: ${on_time})`);
+  logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
 }
 
 function turnOffLedPanel() {
   stop_leds();
   ledpanelOn = false;
-  logging(`[INFO] LedPanel turned OFF (time-schedule: ${on_time})`);
+  logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
 }
 
 function pause_leds() {
@@ -165,7 +188,7 @@ function pause_leds() {
     sendStatus();
     logging("[INFO] LEDS paused");
   }
-  else logging(`[WARNING] CANT PAUSE, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT PAUSE, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function play_leds() {
@@ -176,7 +199,7 @@ function play_leds() {
     sendStatus();
     logging("[INFO] LEDS resumed");
   }
-  else logging(`[WARNING] CANT PLAY, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT PLAY, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function stop_leds() {
@@ -190,7 +213,7 @@ function stop_leds() {
     sendStatus();
     logging("[INFO] stopped media");
   }
-  else logging(`[WARNING] CANT STOP, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT STOP, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function set_color(red, green, blue) {
@@ -200,7 +223,7 @@ function set_color(red, green, blue) {
     sendStatus();
     logging(`[INFO] static color (${red},${green},${blue}) set`);
   }
-  else logging(`[WARNING] CANT SET COLOR, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT SET COLOR, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function previous_gif() {
@@ -214,7 +237,7 @@ function previous_gif() {
     sendStatus();
     logging(`INFO: playing gif ${playing_gif}`);
   }
-  else logging(`[WARNING] CANT SET PREVIOUS GIF, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT SET PREVIOUS GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function next_gif() {
@@ -228,7 +251,7 @@ function next_gif() {
     sendStatus();
     logging(`INFO: playing gif ${playing_gif}`);
   }
-  else logging(`[WARNING] CANT SET NEXT GIF, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT SET NEXT GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function play_gif(gif_number) {
@@ -241,7 +264,7 @@ function play_gif(gif_number) {
     sendStatus();
     logging(`[INFO] playing gif ${gif_number}`);
   }
-  else logging(`[WARNING] CANT SET GIF, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT SET GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function set_media(media_name) {
@@ -254,7 +277,7 @@ function set_media(media_name) {
     sendStatus();
     logging(`[INFO] playing media (${media_name})`);
   }
-  else logging(`[WARNING] CANT SET MEDIA, LedPanel is OFF (time-schedule)`);
+  else logging(`[WARNING] CANT SET MEDIA, LedPanel is OFF (ontime-schedule)`);
 }
 
 function set_effect(effect_name) {
@@ -267,7 +290,7 @@ function set_effect(effect_name) {
     sendStatus();
     logging(`[INFO] playing effect (${effect_name})`);
   }
-  else logging(`[WARNING] CANT SET EFFECT, LedPanel is OFF (time-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT SET EFFECT, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 var currentID = 0;
