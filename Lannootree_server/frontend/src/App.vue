@@ -35,6 +35,11 @@ import router from './router';
         value: 'logging',
         group: 'admins'
       },
+      {
+        title: 'Media',
+        value: 'media',
+        group: 'admins'
+      },
       
     ];
     
@@ -62,13 +67,16 @@ import router from './router';
         router.push('/controll');
         break;
       case 50:
-      router.push('/upload');
+        router.push('/upload');
         break;
       case 51:
-      router.push('/config');
+        router.push('/config');
         break;
       case 52:
-      router.push('/logging');
+        router.push('/logging');
+        break;
+      case 53:
+        router.push('/media');
         break;
     }
 });
