@@ -18,7 +18,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Data flow:
 
-![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/203812506-f585d0dc-2eda-4000-9cf0-2d6f3b3efd72.png)
+![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/205044302-1731ea85-51a6-42cc-92fa-f754ded09700.png)
 
 ## MQTT Topics:
 
