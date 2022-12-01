@@ -83,18 +83,10 @@ const status_json: Ref<MqttStatus> = ref({
     }
   };
 
-  const setEffect = function (effect: string) {
+  const setMedia = function (media: Number) {
     if(websocketactive.value == true) {
-      console.log(status_json.value)
-      console.log(status_json.value.media)
-      ws.send(JSON.stringify({"effect": effect}));
-    };
-  };
-
-  const setAsset = function (selectedAsset: string) {
-    if(websocketactive.value == true) {
-      console.log(selectedAsset)
-      ws.send(JSON.stringify({"Asset": selectedAsset }));
+      console.log(media)
+      ws.send(JSON.stringify({"media": media}));
     };
   };
 
@@ -105,8 +97,7 @@ const status_json: Ref<MqttStatus> = ref({
     Pause,
     Stop,
     Color,
-    setEffect,
-    setAsset,
+    setMedia,
   };
 
 
