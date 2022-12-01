@@ -93,9 +93,7 @@ client.on('message', function (topic, message) {
         case "color": set_color(data.red, data.green, data.blue); break;
         case "previous": previous_gif(); break;
         case "next": next_gif(); break;
-        case "show_media": set_media(data.media_name); break;
-        // case "play_effect": set_effect(data.effect_name); break;
-        case "play_effect": play_gif(data.effect_name); break;
+        case "play_media": play_media(data.media_id); break;
       }
     case "status/controller-dev": devCheck.Update(data); break;
   }
@@ -274,49 +272,21 @@ function next_gif() {
   else logging(`[WARNING] CANT SET NEXT GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
-function play_gif(gif_number) {
+function play_media(media_id) {
   if(ledpanelOn) {
-    current_media_type = "gif";
-    current_media_id = playing_gif;
-    activeStream = null;
+    //let streamID = generateStreamID();    //veranderen
+    current_media_type = "gif";       // veranderen in media
+    current_media_id = playing_gif;  // veranderen in streamID
+    activeStream = null;         // veranderen in streamID
     status = "playing";
     paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": gif_number}));
-    playing_gif = gif_number;
+    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": media_id}));
+    //client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));    //veranderen
+    playing_gif = media_id;
     sendStatus();
-    logging(`[INFO] playing gif ${gif_number}`);
+    logging(`[INFO] playing media (${media_id})`);
   }
-  else logging(`[WARNING] CANT SET GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
-}
-
-function set_media(media_name) {
-  if(ledpanelOn) {
-    let streamID = generateStreamID();    //veranderen (enkel goed voor enkel play_gif())
-    current_media_type = "media";
-    current_media_id = streamID;
-    activeStream = streamID;
-    status = "playing";
-    paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));
-    sendStatus();
-    logging(`[INFO] playing media (${media_name})`);
-  }
-  else logging(`[WARNING] CANT SET MEDIA, LedPanel is OFF (ontime-schedule)`);
-}
-
-function set_effect(effect_name) {
-  if(ledpanelOn) {
-    let streamID = generateStreamID();    //veranderen (enkel goed voor enkel play_gif())
-    current_media_type = "effect";
-    current_media_id = streamID;
-    activeStream = streamID;
-    status = "playing";
-    paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));
-    sendStatus();
-    logging(`[INFO] playing effect (${effect_name})`);
-  }
-  else logging(`[WARNING] CANT SET EFFECT, LedPanel is OFF (ontime-schedule: ${on_time})`);
+  else logging(`[WARNING] CANT PLAY MEDIA, LedPanel is OFF (ontime-schedule)`);
 }
 
 var currentID = 0;
