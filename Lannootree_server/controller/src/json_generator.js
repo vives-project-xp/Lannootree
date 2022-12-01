@@ -1,13 +1,15 @@
 export default class JsonGenerator {
-  static statusToJson(status, activeData, activeStream, paused, active_effect, effects){
+  static statusToJson(status, paused, ontime, activeStream, current_media_type, current_media_id, media){
     return {
       "status": status,
-      "active_data": activeData,
-      "active_stream": activeStream,
-
       "pause": paused,
-      "current_effect": active_effect,
-      "effects": effects
+      "ontime": ontime,
+      "active_stream": activeStream,
+      "active": {
+        "type": current_media_type,
+        "media_id": current_media_id
+      },
+      "media": media
     };
   }
 }

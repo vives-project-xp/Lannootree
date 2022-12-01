@@ -42,7 +42,8 @@ class _GifPlayer extends EventEmitter {
       }
     });
 
-    while (running) {
+    while (true) {
+      if (!running) break;
       ledDriver.frame_to_ledcontroller(Gif[Frames[frame]]);
       frame = (frame + 1) % Frames.length;
 
@@ -50,10 +51,6 @@ class _GifPlayer extends EventEmitter {
 
       await new Promise(resolve => setTimeout(resolve, 50));
     }
-
-    this.removeAllListeners('pause');
-    this.removeAllListeners('play');
-    this.removeAllListeners('stop');
   }
 
   set_gif(index: number) {

@@ -10,8 +10,10 @@ class _StreamPlayer extends EventEmitter {
     super();
 
     this.redis = createClient({
-      url: 'redis://redis:6380'
+      url: 'redis://redis:6379'
     });
+
+    this.redis.connect();
   }
 
   async loop() {

@@ -18,11 +18,11 @@ export function play_leds() {
 
 export function stop_leds() {
   streamPlayer.stop();
-  gifPlayer.stop();
+  // gifPlayer.stop();
 }
 
 export function play_gif(data: any) {
-  gifPlayer.set_gif(data.gif_number);
+  // gifPlayer.set_gif(data.gif_number);
 }
 
 export function set_color(data: any) {
@@ -51,6 +51,7 @@ export function play_stream(mqtt_client: mqtt.Client, currentStreamID: string | 
   }
 
   currentStreamID = data.stream;
+  console.log(`Listening on stream: ${currentStreamID}`)
   mqtt_client.subscribe(`ledpanel/stream/${currentStreamID}`);
 
   streamPlayer.start();
