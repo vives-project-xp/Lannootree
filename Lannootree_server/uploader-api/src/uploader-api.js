@@ -53,8 +53,10 @@ app.post("/upload/post", function(req, res) {
     test1 = JSON.stringify(req.files)
     client.publish('/$SYS/broker/uploads', test1, options);
     console.log(req.files);
+
+    res.send('Image is send.')
+    // logging("[INFO] image is uploaded to mqtt.")
   }
-  res.send('test')
   
 });
 
