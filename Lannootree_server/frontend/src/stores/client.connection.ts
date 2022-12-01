@@ -4,22 +4,19 @@ import type MqttStatus from '@/assets/frontendView/mqtt.status.interface';
 
 export const useClientAPIStore = defineStore('client-api-store', () => {
   
-  const color_matrix = ref({});
 
-  const status_json: Ref<MqttStatus> = ref({
-    matrix_size: {
-      cols: 0,
-      rows: 0
-    },
-    pause: false,
-    status: "",
-    fade: false,
-    current_effect: "",
-    effects: [],
-    current_asset: "",
-    assets: [],
-    color: ""
-  });
+const status_json: Ref<MqttStatus> = ref({
+  status: "",
+  pause: false,
+  ontime: "",
+  active_stream: null,
+  active: {
+    type: "",
+    media_id: 0
+  },
+  media: []
+});
+  
 
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
@@ -34,8 +31,7 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     ws.onmessage = (event) => {
       
       let data = JSON.parse(event.data.toString());
-
-      if(data.hasOwnProperty('matrix')) color_matrix.value = data.matrix;
+      // if(data.hasOwnProperty('matrix')) color_matrix.value = data.matrix;
 
       if(data.hasOwnProperty('status')){
         status_json.value = data;
@@ -87,31 +83,21 @@ export const useClientAPIStore = defineStore('client-api-store', () => {
     }
   };
 
-  const setEffect = function (effect: string) {
+  const setMedia = function (media: Number) {
     if(websocketactive.value == true) {
-      console.log(status_json.value)
-      console.log(status_json.value.current_effect)
-      ws.send(JSON.stringify({"effect": effect}));
-    };
-  };
-
-  const setAsset = function (selectedAsset: string) {
-    if(websocketactive.value == true) {
-      console.log(selectedAsset)
-      ws.send(JSON.stringify({"asset": selectedAsset }));
+      console.log(media)
+      ws.send(JSON.stringify({"media": media}));
     };
   };
 
   return {
-    color_matrix,
     status_json,
     
     websocketClient,
     Pause,
     Stop,
     Color,
-    setEffect,
-    setAsset,
+    setMedia,
   };
 
 
