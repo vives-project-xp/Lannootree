@@ -10,12 +10,12 @@
     <v-row
       class="d-flex align-center justify-center"
     >
-      <v-chip
+      <v-btn
         v-for="label in clientStore.status_json.media"
         :key="`chip_${label.name}`"
         class="ma-3"
       >
         {{ label.name }}
-      </v-chip>
+      </v-btn>
     </v-row>
 </template>
