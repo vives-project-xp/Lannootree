@@ -1,7 +1,5 @@
 <script>
 import axios from 'axios'
-import cors from 'cors'
-
 
   export default {
     data: () => ({
@@ -18,18 +16,17 @@ import cors from 'cors'
         this.loading[i] = true
         setTimeout(() => (this.loading[i] = false), 3000)
       },
-
-      post() {
-        // van hieruit zouden de files moeten worden verstuurd
-        // console.log(this.files);
-        axios.post('http://localhost:3000/upload/post', this.files, {
+      post (files) {
+        //van hieruit zouden de files moeten worden verstuurd
+        // console.log(this.files)
+        axios.post('upload/post', this.files, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            "content-Type": "multipart/form-data",
           }
         })
       }
-    }
-  };
+    },
+  }
 </script>
 
 <template>
