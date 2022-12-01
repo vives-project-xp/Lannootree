@@ -244,14 +244,7 @@ function previous_gif() {
   if(ledpanelOn) {
     if(playing_gif == 0) playing_gif = 20;
     else playing_gif--;
-    current_media_type = "gif";
-    current_media_id = playing_gif;
-    activeStream = null;
-    status = "playing";
-    paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
-    sendStatus();
-    logging(`[INFO]: playing gif ${playing_gif}`);
+    play_media(playing_gif);
   }
   else logging(`[WARNING] CANT SET PREVIOUS GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
@@ -260,14 +253,7 @@ function next_gif() {
   if(ledpanelOn) {
     if(playing_gif == 20) playing_gif = 0;
     else playing_gif++;
-    current_media_type = "gif";
-    current_media_id = playing_gif;
-    activeStream = null;
-    status = "playing";
-    paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
-    sendStatus();
-    logging(`[INFO]: playing gif ${playing_gif}`);
+    play_media(playing_gif);
   }
   else logging(`[WARNING] CANT SET NEXT GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
