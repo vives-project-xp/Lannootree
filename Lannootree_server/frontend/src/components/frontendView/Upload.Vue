@@ -17,11 +17,11 @@ import cors from 'cors'
         setTimeout(() => (this.loading[i] = false), 3000)
       },
       post (files) {
-        // van hieruit zouden de files moeten worden verstuurd
-        // console.log(this.files);
-        axios.post('http://localhost:3000/upload/post', this.files, {
+        //van hieruit zouden de files moeten worden verstuurd
+        // console.log(this.files)
+        axios.post('upload/post', this.files, {
           headers: {
-            'Content-Type': 'multipart/form-data'
+            "content-Type": "multipart/form-data",
           }
         })
       }
@@ -75,6 +75,7 @@ import cors from 'cors'
     ></v-btn>
 </v-row>
   </template>
+
 <style>
 .custom-loader {
   animation: loader 1s infinite;
