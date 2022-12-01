@@ -13,7 +13,7 @@
     <v-select
       v-model="current"
       label="Effect"
-      :items="clientStore.status_json.effects"
+      :items="clientStore.status_json.media"
       @update:modelValue="clientStore.setEffect(current)"
       density="comfortable"
       style="width: 150px; height: 50px;"
