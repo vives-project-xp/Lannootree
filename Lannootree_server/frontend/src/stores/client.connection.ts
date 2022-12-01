@@ -31,22 +31,13 @@ const status_json: Ref<MqttStatus> = ref({
     ws.onmessage = (event) => {
       
       let data = JSON.parse(event.data.toString());
-      // if(data.hasOwnProperty('matrix')) color_matrix.value = data.matrix;
 
       if(data.hasOwnProperty('status')){
         status_json.value = data;
         console.log(data);
       }    
-
-         
+    
     };
-    // ws.onmessage = (event) => {
-    //   let temp = JSON.parse(event.data.toString()).matrix;
-  
-      
-  
-    //   color_matrix.value = temp;
-    // };
   }
 
   websocketClient();
@@ -55,21 +46,21 @@ const status_json: Ref<MqttStatus> = ref({
     if(websocketactive.value == true) {
       if(paused) {
         ws.send(JSON.stringify({"pause": true}));
-        console.log(paused);
+        console.log("[INFO]" + paused);
       }
       else{
         ws.send(JSON.stringify({"play": true}));
-        console.log(paused);
+        console.log("[INFO]" + paused);
       }
     }
-   
+  
   };
 
   const Stop = function () {
     if(websocketactive.value == true) {
   
       ws.send(JSON.stringify({"stop": true}));
-      console.log("stop!")
+      console.log("[INFO] stop!")
   
     }
   };
@@ -85,7 +76,7 @@ const status_json: Ref<MqttStatus> = ref({
 
   const setMedia = function (media: Number) {
     if(websocketactive.value == true) {
-      console.log(media)
+      console.log("[INFO]" + media)
       ws.send(JSON.stringify({"media": media}));
     };
   };
