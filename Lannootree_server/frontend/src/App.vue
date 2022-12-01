@@ -15,6 +15,11 @@ import router from './router';
   
   const items = computed(() => {    
     const _routes = [
+    {
+        title: 'Media',
+        value: 'media',
+        group: 'admins'
+      },
       {
         title: 'Upload',
         value: 'upload',
@@ -30,12 +35,6 @@ import router from './router';
         value: 'logging',
         group: 'admins'
       },
-      {
-        title: 'Media',
-        value: 'media',
-        group: 'admins'
-      },
-      
     ];
     
     let routes: { title: string, value: string, group: string }[] = [];
@@ -59,16 +58,16 @@ import router from './router';
     var key = e.which || e.keyCode;
     switch(key) {
       case 49:
-        router.push('/upload');
+        router.push('/media');
         break;
       case 50:
-        router.push('/config');
+        router.push('/upload');
         break;
       case 51:
-        router.push('/logging');
+        router.push('/config');
         break;
       case 52:
-        router.push('/media');
+        router.push('/logging');
         break;
     }
 });
