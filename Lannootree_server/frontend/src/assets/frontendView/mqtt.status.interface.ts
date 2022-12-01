@@ -22,5 +22,5 @@ export default interface MqttStatus {
   ontime: string;
   active_stream: null;
   active: MatrixSize;
-  media: string[];
+  media: JSON[];
 }
