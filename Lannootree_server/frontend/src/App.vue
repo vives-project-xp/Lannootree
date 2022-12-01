@@ -16,11 +16,6 @@ import router from './router';
   const items = computed(() => {    
     const _routes = [
       {
-        title: 'Controll',
-        value: 'controll',
-        group: 'admins'
-      },
-      {
         title: 'Upload',
         value: 'upload',
         group: 'admins'
@@ -64,18 +59,15 @@ import router from './router';
     var key = e.which || e.keyCode;
     switch(key) {
       case 49:
-        router.push('/controll');
-        break;
-      case 50:
         router.push('/upload');
         break;
-      case 51:
+      case 50:
         router.push('/config');
         break;
-      case 52:
+      case 51:
         router.push('/logging');
         break;
-      case 53:
+      case 52:
         router.push('/media');
         break;
     }
