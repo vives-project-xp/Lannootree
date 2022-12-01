@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios'
-import cors from 'cors'
+
   export default {
     data: () => ({
       loading: [],
@@ -18,7 +18,6 @@ import cors from 'cors'
       },
       post (files) {
         // van hieruit zouden de files moeten worden verstuurd
-        // console.log(this.files);
         axios.post('http://localhost:3000/upload/post', this.files, {
           headers: {
             'Content-Type': 'multipart/form-data'

@@ -1,7 +1,6 @@
 const mqtt = require('mqtt');
 const dotenv = require('dotenv');
 const express = require('express');
-const cors = require("cors");
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const { json } = require('express');
@@ -42,7 +41,6 @@ var mqtt_connected = false;
 const client = mqtt.connect(options);
 const app = express();
 var mqtt_connected = false;
-app.use(cors());
 app.use(bodyParser.json());
 
 client.on('connect', () => {

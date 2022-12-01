@@ -37,7 +37,6 @@
 
           <Pause class="ma-3"/>
           <Stop class="ma-3"/>
-          <Assets class="ma-3"/>
 
         </v-col>
       </v-row>
