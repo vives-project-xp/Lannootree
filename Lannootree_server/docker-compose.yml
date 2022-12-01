@@ -143,7 +143,7 @@ services:
       - 'traefik.http.services.client-api.loadbalancer.server.port=3001'
       - 'traefik.http.routers.client-api.entrypoints=websecure'
       - 'traefik.http.routers.client-api.tls.certresolver=production'
-      - 'traefik.http.routers.client-api.middlewares=authelia@docker'
+      # - 'traefik.http.routers.client-api.middlewares=authelia@docker'
 
   admin-api:
     build:
