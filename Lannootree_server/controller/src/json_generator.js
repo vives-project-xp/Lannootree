@@ -7,7 +7,7 @@ export default class JsonGenerator {
       "active_stream": activeStream,
       "active": {
         "type": current_media_type,
-        "media-id": current_media_id
+        "media_id": current_media_id
       },
       "media": media
     };
