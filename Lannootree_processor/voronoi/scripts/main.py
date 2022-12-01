@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import lannootree as lt
 
 lannootree = lt.Lannootree()

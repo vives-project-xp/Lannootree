@@ -29,3 +29,7 @@ services:
       - ${PWD}/led-client/processed/:/app/processed/
       - ${PWD}/config.json:/app/config.json
       - /var/run/:/var/run/
+
+  redis:
+    build:
+      context: ./redis
