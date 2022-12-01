@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios'
-import cors from 'cors'
+
   export default {
     data: () => ({
       loading: [],
