@@ -8,6 +8,7 @@
   function sendId(idToSend: Number) {
   // `event` implicitly has `any` type
   clientStore.setMedia(idToSend)
+  console.log(clientStore.status_json.active.media_id)
   }
 </script>
     
@@ -20,6 +21,7 @@
         :key="`chip_${label.name}`"
         class="ma-3"
         @click="sendId(label.id)"
+        :color="clientStore.status_json.active.media_id == label.id ? '#00bd7e' : 'secondary'"
       >
         {{ label.name }}
       </v-btn>
