@@ -51,6 +51,8 @@ class _StreamPlayer extends EventEmitter {
 
       if (data == null) continue;
 
+      console.log(data.element);
+
       let next = JSON.parse(data.element.toString());
 
       if (next !== null) {

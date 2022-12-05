@@ -135,7 +135,6 @@ class LannooTreeMqttClient {
     if (topic.match(/^ledpanel\/stream\/.*/)) {
       // console.log("Adding frame");
       // this.redis_client.lPush('frame', message);
-      console.log(data.frame.length);
       ledDriver.frame_to_ledcontroller(data.frame);
 
     }
