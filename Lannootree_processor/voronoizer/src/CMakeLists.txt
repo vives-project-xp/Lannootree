@@ -1,3 +1,4 @@
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/formatters)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/frame-providers)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libs)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/voronoizer)
@@ -13,6 +14,7 @@ target_include_directories(Voronoizer PUBLIC
 target_link_libraries(Voronoizer PUBLIC
   ${OpenCV_LIBS}
   voronoizer-libs
-  voronoizer-frame-providers
   voronoizer-process
+  voronoizer-formatters
+  voronoizer-frame-providers
 )

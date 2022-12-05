@@ -10,6 +10,7 @@ target_sources(voronoizer-process INTERFACE
   
 target_link_libraries(voronoizer-process INTERFACE
   voronoizer-libs
+  voronoizer-formatters
   voronoizer-frame-providers
 )
   

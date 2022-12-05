@@ -4,10 +4,10 @@
 
 namespace Processing {
 
-  Voronoizer::Voronoizer(std::shared_ptr<FrameProvider> provider) : Voronoizer(2, 2, provider) { };
+  Voronoizer::Voronoizer(std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter) : Voronoizer(2, 2, provider, fromatter) { };
 
-  Voronoizer::Voronoizer(uint width, uint height, std::shared_ptr<FrameProvider> provider)
-    : m_width(width), m_height(height), m_frame_provider(provider) 
+  Voronoizer::Voronoizer(int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter)
+    : m_width(width), m_height(height), m_frame_provider(provider), m_fromatter(fromatter)
   {
     m_number_of_panels = m_width * m_height;
 
@@ -95,7 +95,7 @@ namespace Processing {
 
     m_screen_led_indexes = cv::Mat(1, m_number_of_panels * led_indexes.cols, led_indexes.type(), cv::Scalar(0));
     
-    for (uint i = 0; i < m_number_of_panels; i++) {
+    for (int i = 0; i < m_number_of_panels; i++) {
       cv::Mat multiplied = led_indexes.clone();
       cv::multiply(multiplied, i, multiplied);
       cv::add(led_indexes, multiplied, multiplied);
@@ -115,7 +115,8 @@ namespace Processing {
     while (m_frame_provider->has_next_frame()) {
       frame = m_frame_provider->next_frame();
 
-      auto start = std::chrono::high_resolution_clock::now();
+      if (frame.empty()) continue;
+
       scale_screen_to_image(screen, frame);
 
       // Add points to subdiv
@@ -135,7 +136,7 @@ namespace Processing {
       cv::cvtColor(frame, gray_image, cv::COLOR_BGR2GRAY);
 
       std::vector<std::vector<cv::Vec3i>> colors(actual_workers);
-
+      
       // Start bunch of workers to calculate color
       for (int i = 0; i < (int) actual_workers; i++) {
         // Loadbalance processing over workers
@@ -145,7 +146,7 @@ namespace Processing {
         int from = i * split_size;
         int to   = from + split_size;
 
-        auto color = &colors[i];
+        std::vector<cv::Vec3i>* color = &colors[i];
 
         m_thread_pool.queue_job(
           [&facets, &gray_image, &frame, color, from, to] (void) {
@@ -189,11 +190,11 @@ namespace Processing {
               int igreen = cv::pow(green / 255, 1.4) * 255;
               int iblue = cv::pow(blue / 255, 1.4) * 255;
 
+              
+              // Only needed for visualisation
               color->push_back(
                 cv::Vec3i(iblue, igreen, ired)
               );
-              
-              // Only needed for visualisation
               cv::fillConvexPoly(frame, ifacets, cv::Scalar(ired, igreen, iblue), cv::LINE_AA, 0);
             }
           }
@@ -204,8 +205,8 @@ namespace Processing {
 
       // Add calculated values in right order to cstring vector
       std::vector<cv::Vec3i> cstring;
-      for (auto cv : colors) {
-        for (auto co : cv) {
+      for (auto& cv : colors) {
+        for (auto& co : cv) {
           cstring.push_back(co);
         }
       }
@@ -216,33 +217,23 @@ namespace Processing {
 
       std::vector<uint8_t> next;
       for (int i = 0; i < argsort.cols; i++) {
-        auto c = cstring[argsort.at<int>(i)];
-        next.push_back((int) c[0]);
-        next.push_back((int) c[1]);
-        next.push_back((int) c[2]);
+        cv::Vec3i c = cstring[argsort.at<int>(i)];
+        next.push_back(c[0]);
+        next.push_back(c[1]);
+        next.push_back(c[2]);
       }
 
-
-      // TODO: [Feature] -> Make this a formatter class to support multiple output formats
-      json message;
-      message["frame"] = next;
-      // m_redis_client->lpush("nextframe", message.dump());
       cv::imshow("Processed", frame);
-      // TODO: END      
-
-
-      // Should i display this ?
-      auto end = std::chrono::high_resolution_clock::now();
-      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-      std::cout <<  duration.count()  << "ms" << "\r" << std::flush;
-      
       // TODO: [Feature] -> Find better way to exit program (waitKey is only needed when live visualisation is active)
       if (cv::waitKey(1) == 113) {
         break;
       }
+
+      m_fromatter->format(next, frame);
     }
 
     m_thread_pool.stop();
+    cv::destroyAllWindows();
   }
 
   void Voronoizer::generate_screen(void) {
@@ -250,8 +241,8 @@ namespace Processing {
 
     m_screen = cv::Mat(m_number_of_panels * m_panel.rows, 2, m_panel.type());
 
-    for (uint w = 0; w < m_width; w++) {
-      for (uint h = 0; h < m_height; h++) {
+    for (int w = 0; w < m_width; w++) {
+      for (int h = 0; h < m_height; h++) {
         // Calculate row offset
         double row_offset = m_panel.rows * (w + h * m_width);
 
@@ -264,6 +255,7 @@ namespace Processing {
 
         // Add palel to offset
         cv::Mat result(m_panel.rows, m_panel.cols, m_panel.type(), offset_data);
+
         cv::add(m_panel, result, result);
 
         // Copy to screen
@@ -297,7 +289,7 @@ namespace Processing {
     cv::minMaxLoc(m_screen.col(0), NULL, &x_max, NULL, NULL);
     cv::minMaxLoc(m_screen.col(1), NULL, &y_max, NULL, NULL);
 
-    double scale = cv::min(image_rows / y_max, image_cols / x_max) * 0.9;
+    double scale = cv::min(image.rows / y_max, image.cols / x_max) * 0.9;
 
     cv::Mat n_screen;
     cv::multiply(scale, m_screen, n_screen);
@@ -306,8 +298,8 @@ namespace Processing {
     cv::minMaxLoc(n_screen.col(0), NULL, &x_max, NULL, NULL);
     cv::minMaxLoc(n_screen.col(1), NULL, &y_max, NULL, NULL);
 
-    double xt = cv::abs(x_max - image_cols) / 2;
-    double yt = cv::abs(y_max - image_rows) / 2;
+    double xt = cv::abs(x_max - image.cols) / 2;
+    double yt = cv::abs(y_max - image.rows) / 2;
 
     cv::add(xt, n_screen.col(0), n_screen.col(0));
     cv::add(yt, n_screen.col(1), n_screen.col(1));

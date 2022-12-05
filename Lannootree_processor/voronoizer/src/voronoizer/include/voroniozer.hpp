@@ -5,20 +5,18 @@
 #include <iostream>
 #include <opencv4/opencv2/opencv.hpp>
 
-#include <json.hpp>
 #include <threadpool.hpp>
 #include <frame-provider.hpp>
 
-// !Temp!
-using json = nlohmann::json;
+#include <json-file-formatter.hpp>
 
 namespace Processing {
 
   class Voronoizer {
 
     public:
-      Voronoizer (std::shared_ptr<FrameProvider> provider);
-      Voronoizer (uint width, uint height, std::shared_ptr<FrameProvider> provider);
+      Voronoizer (std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter);
+      Voronoizer (int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter);
 
     public:
       void start(uint32_t number_of_workers);
@@ -34,6 +32,7 @@ namespace Processing {
 
     private:
       Threading::ThreadPool m_thread_pool;
+      std::shared_ptr<Formatter> m_fromatter;
       std::shared_ptr<FrameProvider> m_frame_provider;
 
     private:
@@ -47,9 +46,6 @@ namespace Processing {
       const double m_dsuby = 109.03;
       const double m_dx = 3 * m_dsubx;
       const double m_dy = 3 * m_dsuby;
-
-    private:
-      
 
   };
 

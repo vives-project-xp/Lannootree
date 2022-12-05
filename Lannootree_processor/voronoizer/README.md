@@ -41,7 +41,7 @@ NOT TESTED
 
 ## Install required libs
 
-These libraries are needed because I haven't yet found the static libraries variants.
+These libraries are needed because these can't be staticly linked.
 
 ```bash
 sudo apt-get update
@@ -51,7 +51,7 @@ sudo apt-get install libwebp-dev libopenjp2-7 libgtk2.0-dev -y
 # Help menu
 
 ```text
-Usage: Voronoizer [--help] [--version] [--threads VAR] [--width VAR] [--height VAR] --frame-provider VAR [--redis-url VAR]
+Usage: Voronoizer [--help] [--version] [--threads VAR] [--width VAR] [--height VAR] --frame-provider VAR [--redis-url VAR] [--image VAR]
 
 Optional arguments:
   -h, --help            shows help message and exits 
@@ -59,6 +59,7 @@ Optional arguments:
   -t, --threads         set number of threads to use [default: 4]
   -w, --width           width to use [default: 2]
   -h, --height          height to use [default: 2]
-  --frame-provider      frame provider to use can be redis or camera [required]
+  --frame-provider      frame provider to use can be [ redis, camera, single-image ] [required]
   --redis-url           redis url to use when frame provider is redis [default: "redis://localhost:6379"]
+  -i, --image           Path to image to process 
 ```

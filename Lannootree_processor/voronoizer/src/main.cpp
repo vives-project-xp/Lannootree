@@ -3,11 +3,11 @@
 #include <argparser.hpp>
 #include <voroniozer.hpp>
 
-#include <frame-provider.hpp>
+#include <json-file-formatter.hpp>
+
 #include <camera.hpp>
 #include <redis-frame-provider.hpp>
 #include <single-image-provider.hpp>
-
 
 enum class FrameProviders {
   INVALID,
@@ -75,6 +75,7 @@ int main(int argc, char* argv[]) {
 
   // Get the frame provider
   std::shared_ptr<Processing::FrameProvider> provider;
+  std::shared_ptr<Processing::Formatter> formatter;
 
   try {
     switch (frame_providers_map[frame_provider]) {
@@ -110,7 +111,9 @@ int main(int argc, char* argv[]) {
     std::exit(1);
   }
 
-  Processing::Voronoizer voroizer(width, height, provider);
+  formatter = std::make_shared<Processing::JSONFileFormatter>("./saves/", true);
+
+  Processing::Voronoizer voroizer(width, height, provider, formatter);
   voroizer.start(threads);
 
   return 0;

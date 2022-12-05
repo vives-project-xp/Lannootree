@@ -3,7 +3,7 @@ FROM ubuntu
 WORKDIR /app
 
 RUN apt-get update
-RUN apt-get install -y libwebp-dev libopenjp2-7 libgtk2.0-dev
+RUN apt-get install libgtk2.0-dev libopenjp2-7 libwebp-dev -y
 
 COPY ./precompiled_bin/Voronoizer ./Voronoizer
 
