@@ -1,13 +1,30 @@
 #include <iostream>
 
-#include "./include/argparser.hpp"
-#include "./include/voroniozer.hpp"
-#include "./include/frame-provider.hpp"
-#include "./include/camera.hpp"
-#include "./include/redis-frame-provider.hpp"
+#include <argparser.hpp>
+#include <voroniozer.hpp>
+
+#include <frame-provider.hpp>
+#include <camera.hpp>
+#include <redis-frame-provider.hpp>
+#include <single-image-provider.hpp>
+
+
+enum class FrameProviders {
+  INVALID,
+  Camera,
+  Redis,
+  SingleImage
+};
+
+static std::map<std::string, FrameProviders> frame_providers_map {
+  { std::string{ "camera" }, FrameProviders::Camera },
+  { std::string{ "redis" },  FrameProviders::Redis  },
+  { std::string{ "single-image" }, FrameProviders::SingleImage }
+};
 
 int main(int argc, char* argv[]) {
-  argparse::ArgumentParser arguments("Voronoizer", "1.0.1");
+  // TODO: [Clean] -> Maby move arg parsing somwhere else to clean up main
+  argparse::ArgumentParser arguments("Voronoizer", "1.0.2");
 
   arguments
     .add_argument("-t", "--threads")
@@ -30,12 +47,16 @@ int main(int argc, char* argv[]) {
   arguments
     .add_argument("--frame-provider")
     .required()
-    .help("frame provider to use can be redis or camera");
+    .help("frame provider to use can be [ redis, camera, single-image ]");
 
   arguments
     .add_argument("--redis-url")
     .help("redis url to use when frame provider is redis")
     .default_value(std::string{"redis://localhost:6379"});
+
+  arguments
+    .add_argument("-i", "--image")
+    .help("Path to image to process");
 
   try {
     arguments.parse_args(argc, argv);
@@ -55,29 +76,41 @@ int main(int argc, char* argv[]) {
   // Get the frame provider
   std::shared_ptr<Processing::FrameProvider> provider;
 
-  if (frame_provider == "redis") {
-    auto redis_url = arguments.get<std::string>("--redis-url");
-    provider = std::make_shared<Processing::RedisFrameProvider>(redis_url);
-  } 
+  try {
+    switch (frame_providers_map[frame_provider]) {
+      case FrameProviders::INVALID: {
+        std::cerr 
+          << "[ " << frame_provider << " ] " 
+          << "Invalid frame provider.\nProvider can be [ redis, camera, single-image ]" 
+          << std::endl;
 
-  else if (frame_provider == "camera") {
-    try {
-      provider = std::make_shared<Processing::Camera>();
-    } 
-    catch (std::runtime_error& e) {
-      std::cerr << e.what() << std::endl;
-      std::exit(1);
+        std::exit(1);
+      }
+
+      case FrameProviders::Camera: {
+        provider = std::make_shared<Processing::Camera>();
+        break;
+      }
+      
+      case FrameProviders::Redis: {
+        auto redis_url = arguments.get<std::string>("--redis-url");
+        provider = std::make_shared<Processing::RedisFrameProvider>(redis_url);
+        break;
+      }
+
+      case FrameProviders::SingleImage: {
+        auto image_path = arguments.get<std::string>("-i");
+        provider = std::make_shared<Processing::SingelImageProvider>(image_path);
+        break;
+      }
     }
   }
-
-  else {
-    std::cerr << "Invalid frame provider.\nProvider can be redis or camera" << std::endl;
+  catch (std::runtime_error& e) {
+    std::cerr << e.what() << std::endl;
     std::exit(1);
   }
 
-  Processing::Voronoizer voroizer(width, height);
-  voroizer.set_frame_provider(provider);
-
+  Processing::Voronoizer voroizer(width, height, provider);
   voroizer.start(threads);
 
   return 0;
