@@ -17,6 +17,24 @@ db.serialize(() => {
     ")"
   );
 
+  // db.run("CREATE TABLE IF NOT EXISTS settings (" +
+  //   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+  //   "setting TEXT, " +
+  //   "value TEXT, " +
+  //   ")"
+  // );
+
+  // db.run("CREATE TABLE IF NOT EXISTS buttonmapper (" +
+  //   "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+  //   "button TEXT, " +
+  //   "value TEXT, " +
+  //   ")"
+  // );
+
+
+
+//populate media examples--------------------------------------------------------------------------
+
   for (let i = 0; i < 21; i++) {
     let media_obj = {
       name: `gif ${i}`,
@@ -34,4 +52,3 @@ db.serialize(() => {
   });
 
 });
-
