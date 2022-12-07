@@ -163,8 +163,8 @@ export const usePanelGrid = defineStore('panel-grid', () => {
       panelCount: panelCount,
       totalLeds: panelCount * LED_PER_PANEL,
       dimentions: {
-        col: col - 1,
-        row: row - 1
+        col: col - 2,
+        row: row - 2
       },
       inUseChannels: inUseChannels,
       channels: {
