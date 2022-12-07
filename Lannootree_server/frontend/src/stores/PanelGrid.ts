@@ -207,7 +207,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
           coordinate: corrected_coordinate,
         };
 
-        if (panel?.connection) 
+        if (panel?.connection && panel.connection.uuid !== panel.uuid) 
           cell["connection"] = panel.connection.uuid;
 
         cells.push(cell)
