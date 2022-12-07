@@ -1,0 +1,20 @@
+{
+  "name": "storage",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/storage.js",
+  "scripts": {
+    "dev": "node src/storage.js",
+    "start": "node src/storage.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fs": "^0.0.1-security",
+    "mqtt": "^4.3.7",
+    "sqlite3": "^5.1.2"
+  },
+  "type": "module"
+}
