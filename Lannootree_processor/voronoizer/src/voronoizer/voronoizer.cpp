@@ -310,8 +310,8 @@ namespace Processing {
       nlohmann::json head = find_cell(data["head"], data);
       m_channel_map[channel].push_back(
         std::make_tuple(
-          static_cast<int>(head["coordinate"]["col"]) - 1, 
-          static_cast<int>(head["coordinate"]["row"]) - 1
+          static_cast<int>(head["coordinate"]["col"]), 
+          static_cast<int>(head["coordinate"]["row"])
         )
       );
 
@@ -320,8 +320,8 @@ namespace Processing {
 
         m_channel_map[channel].push_back(
           std::make_tuple(
-            static_cast<int>(head["coordinate"]["col"]) - 1, 
-            static_cast<int>(head["coordinate"]["row"]) - 1
+            static_cast<int>(head["coordinate"]["col"]), 
+            static_cast<int>(head["coordinate"]["row"])
           )
         );
       }
