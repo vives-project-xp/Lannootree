@@ -3,7 +3,7 @@ import { WebSocketServer } from 'ws';
 import mqtt from "mqtt";
 import * as fs from 'fs';
 
-dotenv.config({ path: '../.env' })
+dotenv.config({ path: '../../.env' })
 
 // MQTT ______________________________________________________________________________________
 

@@ -5,7 +5,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const { json } = require('express');
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 var caFile = fs.readFileSync("ca.crt");
 var clientcrt = fs.readFileSync("client.crt");
@@ -76,6 +76,6 @@ function logging(message, msgdebug = false){
 }
 
 
-app.listen(process.env.PORT_EXPRESS, () =>
-  logging(`[INFO] app listening on port ${process.env.PORT_EXPRESS}`),
-);  
+app.listen(3000, () =>
+  logging(`[INFO] listening internal on port 3000`),
+);

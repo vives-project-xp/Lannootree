@@ -19,13 +19,6 @@ This container is responsable for listening on mqtt, processing those commands, 
 
 **Base Image**: node:latest
 
-**.Env file**:
-
-.env file has to be placed in the /Lannootree_firmware/ directory where the list of variables have to be defined:
-
-  - MQTT_BROKER_URL
-  - MQTT_BROKER_PORT
-
 **Volumes**:
 
 The led-client depends on certificates, that will be passed in as a volume.

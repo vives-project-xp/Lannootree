@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import process from 'process'
 import * as handel from './mqtt-handles.js'
 
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 class LannooTreeMqttClient {
 

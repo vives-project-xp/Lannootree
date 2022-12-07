@@ -4,8 +4,8 @@ services:
     image: eclipse-mosquitto
     restart: always
     user: "1001:1001"
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     volumes:
       - ./mqtt/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ../certs:/certs
@@ -15,8 +15,8 @@ services:
     image: eclipse-mosquitto
     restart: always
     user: "1001:1001"
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     volumes:
       - ./mqtt/mosquitto-api.conf:/mosquitto/config/mosquitto.conf
     ports:
@@ -25,8 +25,8 @@ services:
   nodered:
     image: nodered/node-red:latest
     restart: always
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     volumes:
       - nodered:/data
       - "../certs/ca/ca.crt:/app/ca.crt:ro"
@@ -42,8 +42,8 @@ services:
   certificate-api:
     image: "nginx:alpine"
     restart: always
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     volumes:
       - "../certs/ca/ca.crt:/usr/share/nginx/html/ca.crt:ro"
     labels:
@@ -56,8 +56,8 @@ services:
   traefik:
     image: "traefik:v2.9"
     restart: always
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     ports:
       - "80:80"
       - "443:443"
@@ -79,8 +79,8 @@ services:
     user: "1001:1001"
     volumes:
       - ./authelia/config:/config
-    environment:
-      TZ: "Europe/Brussels"
+    env_file:
+      - ../.env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.authelia.rule=Host(`auth.lannootree.devbitapp.be`)'
@@ -94,8 +94,8 @@ services:
   whoami:
     image: "traefik/whoami"
     restart: always
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.whoami.rule=Host(`whoami.lannootree.devbitapp.be`) || (Host(`lannootree.devbitapp.be`) && PathPrefix(`/whoami`))'
@@ -110,10 +110,8 @@ services:
           VITE_LOGOUT_URL: ${VITE_LOGOUT_URL}
           VITE_FRONTEND_WEBSOCKET: ${VITE_FRONTEND_WEBSOCKET}
     restart: always
-    environment:
-      - TZ=Europe/Brussels
     env_file:
-      - .env
+      - ../.env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.frontend.rule=Host(`lannootree.devbitapp.be`)'
@@ -126,14 +124,12 @@ services:
     build:
       context: ./client-api
     restart: always
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     volumes:
       - "../certs/ca/ca.crt:/app/ca.crt:ro"
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
-    env_file:
-      - .env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.client-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/wss`)'
@@ -149,15 +145,13 @@ services:
     build:
       context: ./admin-api
     restart: always
-    environment:
-      - TZ=Europe/Brussels
+    env_file:
+      - ../.env
     volumes:
       - "../certs/ca/ca.crt:/app/ca.crt:ro"         
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
       - "log-database:/app/db"
-    env_file:
-      - .env
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.admin-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/admin/wss`)'
@@ -173,9 +167,8 @@ services:
     build:
       context: ./controller 
     env_file:
-      - .env
+      - ../.env
     environment:
-      - TZ=Europe/Brussels
       - PRODUCTION_SERVER=true
     restart: always
     volumes:
@@ -188,9 +181,8 @@ services:
     build:
       context: ./storage 
     env_file:
-      - .env
+      - ../.env
     environment:
-      - TZ=Europe/Brussels
       - PRODUCTION_SERVER=true
     restart: always
     volumes:
@@ -210,8 +202,6 @@ services:
         - ../:/home/ubuntu/Lannootree #Set to directory of repo! also change this in the deploy script
         - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - TZ=Europe/Brussels
-      # - WEBHOOK_SECRET=${WEBHOOK_SECRET}
       - WEBHOOK_HOOKS_DIR=/code/hooks
       - WEBHOOK_BRANCH_LIST=main  
     labels:
