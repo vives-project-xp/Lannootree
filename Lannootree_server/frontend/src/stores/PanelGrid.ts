@@ -185,7 +185,11 @@ export const usePanelGrid = defineStore('panel-grid', () => {
       let current = head;
       let next = current?.connection;
 
+
       do {
+        let corrected_coordinate: Coordinate = JSON.parse(JSON.stringify(current?.coordinate));
+        corrected_coordinate.row = (-corrected_coordinate.row + (row - 1))
+
         cells.push({
           uuid: current?.uuid,
           coordinate: current?.coordinate,
