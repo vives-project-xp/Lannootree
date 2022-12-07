@@ -143,7 +143,7 @@ services:
       - 'traefik.http.services.client-api.loadbalancer.server.port=3001'
       - 'traefik.http.routers.client-api.entrypoints=websecure'
       - 'traefik.http.routers.client-api.tls.certresolver=production'
-      - 'traefik.http.routers.client-api.middlewares=authelia@docker'
+      # - 'traefik.http.routers.client-api.middlewares=authelia@docker'
 
   admin-api:
     build:
@@ -172,6 +172,21 @@ services:
   controller:
     build:
       context: ./controller 
+    env_file:
+      - .env
+    environment:
+      - TZ=Europe/Brussels
+      - PRODUCTION_SERVER=true
+    restart: always
+    volumes:
+      - ./config.json:/config.json
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"     
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
+
+  storage:
+    build:
+      context: ./storage 
     env_file:
       - .env
     environment:

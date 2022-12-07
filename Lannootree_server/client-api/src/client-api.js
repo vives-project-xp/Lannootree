@@ -56,8 +56,7 @@ websocket.on('connection', (ws, req) => {
             if(data.hasOwnProperty('stop')) {stop(sender);}
             if(data.hasOwnProperty('pause')) {pause(sender)}
             if(data.hasOwnProperty('play')) {play(sender)}
-            if(data.hasOwnProperty('effect')) {effect(data.effect,sender)}
-            if(data.hasOwnProperty('asset')) {asset(data.asset,sender)}
+            if(data.hasOwnProperty('media')) {media(data.media,sender)}
             if(data.hasOwnProperty('Color')) {
                 if (parseColor(data.Color) != null) setcolor(parseColor(data.Color,sender));
             }
@@ -118,14 +117,9 @@ function togglepause(sender) {
     client.publish('controller/pause', JSON.stringify({"value": "togglepause"}));
 }
 
-function effect(effect_id, sender) {
-    logging(`[INFO] {${sender}} is sending set-effect: ${effect_id}`);
-    client.publish('controller/in', JSON.stringify({"command": "play_effect", "effect_name": effect_id}));
-}
-
-function asset(asset_id, sender) {
-    logging(`[INFO] {${sender}} is sending set-asset: ${asset_is}`);
-    client.publish('controller/asset', JSON.stringify({"asset_id": asset_id}));
+function media(media_id, sender) {
+    logging(`[INFO] {${sender}} is sending set-media: ${media_id}`);
+    client.publish('controller/in', JSON.stringify({"command": "play_media", "media_id": media_id}));
 }
 
 function setcolor(color, sender) {

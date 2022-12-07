@@ -1,12 +1,15 @@
 const mqtt = require('mqtt');
 const dotenv = require('dotenv');
 const express = require('express');
-const multer = require("multer");
-
-
 const fs = require('fs');
+const bodyParser = require('body-parser');
+const { json } = require('express');
 
 dotenv.config({ path: '../.env' });
+
+var caFile = fs.readFileSync("ca.crt");
+var clientcrt = fs.readFileSync("client.crt");
+var clientkey = fs.readFileSync("client.key");
 
 const handleError = (err, res) => {
   res
@@ -23,6 +26,8 @@ var options={
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
+  cert: clientcrt,
+  key: clientkey, 
     will: {
         topic: "status/uploader-api",
         payload: "Offline",
@@ -31,13 +36,12 @@ var options={
 };
 
 
-
-const client = mqtt.connect(options);
-
-const app = express();
-
 var mqtt_connected = false;
 
+const client = mqtt.connect(options);
+const app = express();
+var mqtt_connected = false;
+app.use(bodyParser.json());
 
 client.on('connect', () => {
     logging("[INFO] mqtt connected")
@@ -50,47 +54,16 @@ client.on('connect', () => {
 
 app.use(express.static('public'));
 
+app.post("/upload/post", function(req, res) {
+  if(mqtt_connected){
+    test1 = JSON.stringify(req.files)
+    client.publish('/$SYS/broker/uploads', test1, options);
+    console.log(req.files);
 
-app.post('/uploader-api', (req, res) => {
-    logging('[INFO] you reached the uploader-api');
-});
-
-const upload = multer({
-  dest: "./uploads"
-  // you might also want to set some limits: https://github.com/expressjs/multer#limits
-});
-
-
-app.post("/upload",upload.single("file"),(req, res) => { //file is name in de form of frontend
-    const tempPath = req.file.path;
-    const targetPath = path.join(__dirname, "./uploads/image.png");
-
-    if (path.extname(req.file.originalname).toLowerCase() === ".png") {
-      fs.rename(tempPath, targetPath, err => {
-        if (err) return handleError(err, res);
-
-        res
-          .status(200)
-          .contentType("text/plain")
-          .end("File uploaded!");
-      });
-    } else {
-      fs.unlink(tempPath, err => {
-        if (err) return handleError(err, res);
-
-        res
-          .status(403)
-          .contentType("text/plain")
-          .end("Only .png files are allowed!");
-      });
-    }
+    res.send('Image is send.')
+    // logging("[INFO] image is uploaded to mqtt.")
   }
-);
-
-app.get("/image", (req, res) => {
-  res.sendFile(path.join(__dirname, "./uploads/image.png"));
 });
-
 
 function logging(message, msgdebug = false){
     if (!msgdebug) {

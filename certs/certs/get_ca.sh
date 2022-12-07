@@ -1,0 +1,1 @@
+curl https://lannootree.devbitapp.be/ca.crt --output ca.crt

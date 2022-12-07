@@ -127,7 +127,6 @@ class LannooTreeMqttClient {
 
       if (topicMap?.has(data.command)) {
         let command = topicMap.get(data.command);
-	console.log(command);
         if (command !== undefined) command(data);
       }
 
