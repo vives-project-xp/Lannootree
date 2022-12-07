@@ -1,4 +1,4 @@
-# Voronoizer V1.0.0
+# Voronoizer V1.0.2
 
 # Docker container
 
