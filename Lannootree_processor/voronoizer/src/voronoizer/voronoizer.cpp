@@ -4,12 +4,10 @@
 
 namespace Processing {
 
-  Voronoizer::Voronoizer(std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter) : Voronoizer(2, 2, provider, fromatter) { };
-
-  Voronoizer::Voronoizer(int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter)
+  Voronoizer::Voronoizer(int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, std::string& config_path)
     : m_width(width), m_height(height), m_frame_provider(provider), m_fromatter(fromatter)
   {
-    m_number_of_panels = m_width * m_height;
+    configure_json(config_path);
 
     double prim_unit_data[] = {
       83.08, 368.57,
@@ -96,12 +94,13 @@ namespace Processing {
     m_screen_led_indexes = cv::Mat(1, m_number_of_panels * led_indexes.cols, led_indexes.type(), cv::Scalar(0));
     
     for (int i = 0; i < m_number_of_panels; i++) {
-      cv::Mat multiplied = led_indexes.clone();
-      cv::multiply(multiplied, i, multiplied);
-      cv::add(led_indexes, multiplied, multiplied);
+      cv::Mat modified = led_indexes.clone();
+      double offset = led_indexes.cols * i;
+      cv::add(offset, led_indexes, modified);
 
-      multiplied
-        .copyTo(m_screen_led_indexes(cv::Rect((i * multiplied.cols), 0, multiplied.cols, 1)));
+      modified
+        .copyTo(m_screen_led_indexes(cv::Rect((i * modified.cols), 0, modified.cols, 1)));
+
     }
   };
 
@@ -214,6 +213,9 @@ namespace Processing {
       cv::Mat argsort;
       cv::sortIdx(m_screen_led_indexes, argsort, cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
 
+      // std::cout << argsort << std::endl;
+      std::cout << m_screen_led_indexes << std::endl;
+
       std::vector<uint8_t> next;
       for (int i = 0; i < argsort.cols; i++) {
         cv::Vec3i c = cstring[argsort.at<int>(i)];
@@ -236,20 +238,26 @@ namespace Processing {
   }
 
   void Voronoizer::generate_screen(void) {
-    m_number_of_panels = m_width * m_height;
-
     m_screen = cv::Mat(m_number_of_panels * m_panel.rows, 2, m_panel.type());
 
-    for (int w = 0; w < m_width; w++) {
-      for (int h = 0; h < m_height; h++) {
-        // Calculate row offset
-        double row_offset = m_panel.rows * (w + h * m_width);
+    for (auto& [channel, panels] : m_channel_map) {
+      static double channel_offset = 0;
+      
+      for (int n = 0; n < panels.size(); n++){
+        double row_offset = channel_offset + (n * 72);
 
-        // Create offset data
+        int col = std::get<0>(panels[n]);
+        int row = std::get<1>(panels[n]);
+
+        std::cout << "n: " << n 
+        << " col row: [" << col << " ," << row << "]"
+        << " offset: " << row_offset
+        << std::endl;
+
         double offset_data[2 * m_panel.rows];
         for (int k = 0; k < 2 * m_panel.rows; k += 2) {
-          offset_data[k + 0] = w * m_dx;
-          offset_data[k + 1] = (1 - h) * m_dy;
+          offset_data[k + 0] = col * m_dx;
+          offset_data[k + 1] = (1 - row) * m_dy;
         }
 
         // Add palel to offset
@@ -260,7 +268,10 @@ namespace Processing {
         // Copy to screen
         result.copyTo(m_screen(cv::Rect(0, row_offset, m_panel.cols, m_panel.rows)));
       }
+
+      channel_offset += panels.size();
     }
+
 
     // Get min and max values
     double x_min, y_min, x_max, y_max;
@@ -272,6 +283,51 @@ namespace Processing {
     cv::subtract(y_min, m_screen.col(1), m_screen.col(1));
 
     m_screen *= -1;
+  }
+
+  void Voronoizer::configure_json(std::string& json_path) {
+    // Read the json file
+    std::ifstream reader;
+    reader.open(json_path);
+    nlohmann::json config = nlohmann::json::parse(reader);
+    reader.close();
+
+    m_channel_map["CA0"];
+    m_channel_map["CA1"];
+    m_channel_map["CB0"];
+    m_channel_map["CB1"];
+
+    for (auto& [channel, data] : config["channels"].items()) {
+      
+      auto find_cell = [&](const std::string& id, nlohmann::json& data) {
+        for (auto cell : data["cells"]) 
+          if (cell["uuid"] == id) return cell;
+        
+        // Should not happen
+        return nlohmann::json::array();
+      };
+      
+      nlohmann::json head = find_cell(data["head"], data);
+      m_channel_map[channel].push_back(
+        std::make_tuple(
+          static_cast<int>(head["coordinate"]["col"]) - 1, 
+          static_cast<int>(head["coordinate"]["row"]) - 1
+        )
+      );
+
+      while (head.contains("connection")) {
+        head = find_cell(head["connection"], data);
+
+        m_channel_map[channel].push_back(
+          std::make_tuple(
+            static_cast<int>(head["coordinate"]["col"]) - 1, 
+            static_cast<int>(head["coordinate"]["row"]) - 1
+          )
+        );
+      }
+    }
+
+    m_number_of_panels = static_cast<int>(config["dimentions"]["col"]) * static_cast<int>(config["dimentions"]["row"]);
   }
 
   void Voronoizer::scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image) {

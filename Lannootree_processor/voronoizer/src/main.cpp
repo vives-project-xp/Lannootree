@@ -59,6 +59,11 @@ int main(int argc, char* argv[]) {
     .add_argument("-i", "--image")
     .help("Path to image to process");
 
+  arguments
+    .add_argument("--config")
+    .help("Path to config.json file")
+    .default_value(std::string{"./config.json"});
+
   try {
     arguments.parse_args(argc, argv);
   } 
@@ -118,7 +123,9 @@ int main(int argc, char* argv[]) {
     formatter = std::make_shared<Processing::JSONMqttFormatter>("/test");
   #endif
 
-  Processing::Voronoizer voroizer(width, height, provider, formatter);
+  auto config_path = arguments.get<std::string>("--config");
+
+  Processing::Voronoizer voroizer(width, height, provider, formatter, config_path);
   voroizer.start(threads);
 
   return 0;
