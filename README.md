@@ -1,5 +1,9 @@
 # Lannootree
 
+## Blogpost about The Lannootree
+
+![Blogpost](img/Blogpost.png)
+
 ## Cloning git repo
 
 ```bash
@@ -46,8 +50,4 @@ git clone git@github.com:vives-project-xp/Lannootree.git
   - Status
 * Logs
 * Status
-
-
-
-
 
