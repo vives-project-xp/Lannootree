@@ -1,4 +1,4 @@
-# Voronoizer V1.0.2
+# Voronoizer V1.0.3
 
 # Docker container
 
@@ -51,15 +51,14 @@ sudo apt-get install libwebp-dev libopenjp2-7 libgtk2.0-dev -y
 # Help menu
 
 ```text
-Usage: Voronoizer [--help] [--version] [--threads VAR] [--width VAR] [--height VAR] --frame-provider VAR [--redis-url VAR] [--image VAR]
+Usage: Voronoizer [--help] [--version] [--threads VAR] --frame-provider VAR [--redis-url VAR] [--image VAR] [--config VAR]
 
 Optional arguments:
   -h, --help            shows help message and exits 
   -v, --version         prints version information and exits 
-  -t, --threads         set number of threads to use [default: 4]
-  -w, --width           width to use [default: 2]
-  -h, --height          height to use [default: 2]
-  --frame-provider      frame provider to use can be [ redis, camera, single-image ] [required]
+  -t, --threads         Sets the number of theads to use [default: 4]
+  -p, --frame-provider  Sets the frame provider to use can be: [ "camera" "redis" "single-image" ] [required]
   --redis-url           redis url to use when frame provider is redis [default: "redis://localhost:6379"]
-  -i, --image           Path to image to process 
+  --image               Path to image to process 
+  --config              Path to config.json file [default: "./config.json"]
 ```

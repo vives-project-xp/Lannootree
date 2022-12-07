@@ -20,14 +20,14 @@ namespace Processing {
   class Voronoizer {
 
     public:
-      Voronoizer (int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, std::string& config_path);
+      Voronoizer (std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, const std::string& config_path);
 
     public:
       void start(uint32_t number_of_workers);
 
     private:
       void generate_screen(void);
-      void configure_json(std::string& json_path);
+      void configure_json(const std::string& json_path);
       void scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image);
 
     private:

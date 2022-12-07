@@ -4,8 +4,8 @@
 
 namespace Processing {
 
-  Voronoizer::Voronoizer(int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, std::string& config_path)
-    : m_width(width), m_height(height), m_frame_provider(provider), m_fromatter(fromatter)
+  Voronoizer::Voronoizer(std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, const std::string& config_path)
+    : m_frame_provider(provider), m_fromatter(fromatter)
   {
     configure_json(config_path);
 
@@ -285,7 +285,7 @@ namespace Processing {
     m_screen *= -1;
   }
 
-  void Voronoizer::configure_json(std::string& json_path) {
+  void Voronoizer::configure_json(const std::string& json_path) {
     // Read the json file
     std::ifstream reader;
     reader.open(json_path);
@@ -327,7 +327,9 @@ namespace Processing {
       }
     }
 
-    m_number_of_panels = static_cast<int>(config["dimentions"]["col"]) * static_cast<int>(config["dimentions"]["row"]);
+    m_width = static_cast<int>(config["dimentions"]["col"]);
+    m_height = static_cast<int>(config["dimentions"]["row"]);
+    m_number_of_panels = m_width * m_height;
   }
 
   void Voronoizer::scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image) {
