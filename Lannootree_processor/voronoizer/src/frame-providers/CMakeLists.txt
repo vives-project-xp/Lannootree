@@ -1,7 +1,7 @@
 add_library(voronoizer-frame-providers INTERFACE)
 
 target_include_directories(voronoizer-frame-providers INTERFACE
-  ${CMAKE_CURRENT_LIST_DIR}/include
+  ${PROJECT_SOURCE_DIR}/src/frame-providers/include 
 )
 
 target_sources(voronoizer-frame-providers INTERFACE

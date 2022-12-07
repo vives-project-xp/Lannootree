@@ -1,6 +1,7 @@
 #pragma once
 
-#include "./frame-provider.hpp"
+#include <frame-provider.hpp>
+
 #include <sw/redis++/redis++.h>
 
 namespace Processing {

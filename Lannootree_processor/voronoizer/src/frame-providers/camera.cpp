@@ -1,4 +1,4 @@
-#include "./include/camera.hpp"
+#include <camera.hpp>
 
 namespace Processing {
 

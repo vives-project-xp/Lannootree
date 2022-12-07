@@ -4,6 +4,7 @@
 #include <voroniozer.hpp>
 
 #include <json-file-formatter.hpp>
+#include <json-mqtt-formatter.hpp>
 
 #include <camera.hpp>
 #include <redis-frame-provider.hpp>
@@ -112,6 +113,10 @@ int main(int argc, char* argv[]) {
   }
 
   formatter = std::make_shared<Processing::JSONFileFormatter>("./saves/", true);
+
+  #ifdef WITH_JSON_MQTT
+    formatter = std::make_shared<Processing::JSONMqttFormatter>("/test");
+  #endif
 
   Processing::Voronoizer voroizer(width, height, provider, formatter);
   voroizer.start(threads);

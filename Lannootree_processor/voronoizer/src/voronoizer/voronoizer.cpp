@@ -1,4 +1,4 @@
-#include "./include/voroniozer.hpp"
+#include <voroniozer.hpp>
 
 #include <chrono>
 
@@ -172,7 +172,6 @@ namespace Processing {
 
               if (value_indexes.size() == 0) break;
 
-              // TODO: [Cleaning] -> Can't u use Vec3b insted of spliting data into r, g, b
               // Calculate mean values
               for (auto point : value_indexes) {
                 auto color = frame.at<cv::Vec3b>(point);

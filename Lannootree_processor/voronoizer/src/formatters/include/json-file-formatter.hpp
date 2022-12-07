@@ -1,12 +1,13 @@
 #pragma once
 
-#include "formatter.hpp"
+#include <formatter.hpp>
 
-#include <fstream>
 #include <json.hpp>
 #include <opencv4/opencv2/videoio.hpp>
 
-using json = nlohmann::json;
+#include <fstream>
+
+using ordered_json = nlohmann::ordered_json;
 
 namespace Processing {
 
@@ -33,7 +34,7 @@ namespace Processing {
       virtual void format(std::vector<uint8_t>& cstring, cv::Mat& frame);
 
     private:
-      json m_data;
+      ordered_json m_data;
       bool m_save_preview;
       std::ofstream m_json_file;
       std::string m_save_path;

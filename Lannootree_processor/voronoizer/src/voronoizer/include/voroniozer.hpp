@@ -1,14 +1,14 @@
 #pragma once
 
+#include <threadpool.hpp>
+#include <frame-provider.hpp>
+#include <json-file-formatter.hpp>
+
+#include <opencv4/opencv2/opencv.hpp>
+
 #include <mutex>
 #include <memory>
 #include <iostream>
-#include <opencv4/opencv2/opencv.hpp>
-
-#include <threadpool.hpp>
-#include <frame-provider.hpp>
-
-#include <json-file-formatter.hpp>
 
 namespace Processing {
 

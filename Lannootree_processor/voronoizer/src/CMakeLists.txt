@@ -1,3 +1,10 @@
+include_directories(
+  ${PROJECT_SOURCE_DIR}/src/voronoizer/include 
+  ${PROJECT_SOURCE_DIR}/src/libs/include 
+  ${PROJECT_SOURCE_DIR}/src/frame-providers/include 
+  ${PROJECT_SOURCE_DIR}/src/formatters/include
+)
+
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/formatters)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/frame-providers)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libs)
@@ -6,9 +13,10 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/voronoizer)
 add_executable(Voronoizer ${CMAKE_CURRENT_LIST_DIR}/main.cpp)
 
 target_include_directories(Voronoizer PUBLIC
-  ${CMAKE_CURRENT_LIST_DIR}/frame-provider/include
-  ${CMAKE_CURRENT_LIST_DIR}/libs/include
-  ${CMAKE_CURRENT_LIST_DIR}/voronoizer/include
+  ${PROJECT_SOURCE_DIR}/src/voronoizer/include 
+  ${PROJECT_SOURCE_DIR}/src/libs/include 
+  ${PROJECT_SOURCE_DIR}/src/frame-providers/include 
+  ${PROJECT_SOURCE_DIR}/src/formatters/include
 )
 
 target_link_libraries(Voronoizer PUBLIC

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "./frame-provider.hpp"
+#include <frame-provider.hpp>
 
 namespace Processing {
 
