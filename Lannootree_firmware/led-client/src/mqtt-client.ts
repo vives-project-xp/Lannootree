@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 import process from 'process'
 import { createClient } from 'redis'
 import * as handel from './mqtt-handles.js'
-
+import { ledDriver } from './driver-connection.js'
 dotenv.config({ path: '../.env' });
 
 class LannooTreeMqttClient {
@@ -67,8 +67,10 @@ class LannooTreeMqttClient {
     this.client.on('connect', this.connectCallback);
     
     this.redis_client = createClient({
-      url: 'redis://redis:6380'
+      url: 'redis://redis:6379'
     });
+
+    this.redis_client.connect();
   }
 
   send(topic: string, msg: string) {
@@ -129,13 +131,22 @@ class LannooTreeMqttClient {
 
   private messageCallback = (topic: string, message: Buffer) => {
     let data = JSON.parse(message.toString());
+    
+    if (topic.match(/^ledpanel\/stream\/.*/)) {
+      // console.log("Adding frame");
+      // this.redis_client.lPush('frame', message);
+      ledDriver.frame_to_ledcontroller(data.frame);
 
-    if (topic.match(/^ledpanel\/controll\/stream\/.*/)) {
-      this.redis_client.lPush('frame', data);
     }
+
+    if (data.command == 'stream') {
+      handel.play_stream(this.client, this.currentStreamId, data);
+      return;
+    } 
 
     if (this.messageTopicMap.has(topic)) {
       let topicMap = this.messageTopicMap.get(topic);
+
 
       if (topicMap?.has(data.command)) {
         if (data.command == 'stream') {

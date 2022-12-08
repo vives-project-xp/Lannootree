@@ -1,5 +1,8 @@
 version: "3"
 services:
+  redis:
+    image: redis:latest
+  
   led-driver:
     build: 
       context: ./led-driver
@@ -20,6 +23,7 @@ services:
     restart: always
     depends_on:
       - led-driver
+      - redis
     env_file:
       - .env
     volumes:
@@ -30,6 +34,3 @@ services:
       - ${PWD}/config.json:/app/config.json
       - /var/run/:/var/run/
 
-  redis:
-    build:
-      context: ./redis
