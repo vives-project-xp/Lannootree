@@ -147,7 +147,7 @@ import router from './router';
             <component :is="Component" />
           </transition>
             <!-- zet hier tekst met info over de pagina's -->
-
+            
         </router-view>
       </v-container>
     </v-main>

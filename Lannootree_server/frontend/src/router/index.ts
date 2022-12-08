@@ -3,11 +3,17 @@ import ConfigViewVue from '@/views/configView/ConfigView.vue'
 import UploadViewVue from '@/views/frontendView/UploadView.vue'
 import LoggingViewVue from '@/views/configView/LoggingView.vue'
 import MediaViewVue from '@/views/frontendView/MediaView.vue'
+import LandingViewVue from '@/views/frontendView/LandingView.vue'
 
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
+    {
+      path: "/",
+      name: "Landing",
+      component: LandingViewVue
+    },
     {
       path: "/config",
       name: "config",
