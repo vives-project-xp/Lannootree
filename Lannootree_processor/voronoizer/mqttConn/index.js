@@ -37,11 +37,8 @@ const main = async function() {
   mqtt_client.publish("ledpanel/control", JSON.stringify({ "command": "stream", "stream": "stream_0" }));
   
   while (true) {
-    console.time("PopN'Pub")
     const data = await redis_client.brPop("nextframe", 0);
-    // console.log(data);
     mqtt_client.publish('ledpanel/stream/stream_0', data.element);
-    console.timeEnd("PopN'Pub")
   }
 }
 
