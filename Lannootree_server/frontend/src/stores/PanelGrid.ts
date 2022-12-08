@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { defineStore } from "pinia"
 
 import Matrix from '@/assets/ConfigView/Matrix'
@@ -14,6 +14,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
   const LED_PER_PANEL = 72;
 
   const panels = ref<Matrix<Panel | null>>(new Matrix(3, 3));
+  panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
   
   const colCount = computed(() => panels.value.dimention()[0]);
   const rowCount = computed(() => panels.value.dimention()[1]);
@@ -143,89 +144,33 @@ export const usePanelGrid = defineStore('panel-grid', () => {
 
   // *------------------------------------------------------------------------------------* //
 
-  
-  const inUseChannels = computed(() => { 
+  const toJson = computed(() => {
     let inUseChannels: string[] = [];
-    
+    let panelCount: number = 0;
+
     // Find all unique channels
     panels.value.forEach((panel: Panel | null) => {
       if (panel !== null && !inUseChannels.find(c => c == panel.channel)) inUseChannels.push(panel.channel);
     });
-    
-    return inUseChannels;
-  });
-  
-  const panelCount = computed(() => {
-    let panelCount: number = 0;
-    
+
+    // Count panels
     panels.value.forEach((panel: Panel | null) => {
       if (panel !== null) panelCount++;
     });
-    
-    return panelCount;
-  });
-  
-  const toJson = ref<JsonConfig>({
-    panelCount: 0,
-    totalLeds: 0,
-    dimentions: {
-      col: 0,
-      row: 0
-    },
-    inUseChannels: inUseChannels.value,
-    channels: { }
-  });
 
-  watch(panels, (newPanels, oldPanels) => {
-    let [col, row] = newPanels.dimention();
-    toJson.value.dimentions.col = col - 2; 
-    toJson.value.dimentions.row = row - 2; 
+    let [col, row] = panels.value.dimention();
+    let obj: JsonConfig = {
+      panelCount: panelCount,
+      totalLeds: panelCount * LED_PER_PANEL,
+      dimentions: {
+        col: col - 1,
+        row: row - 1
+      },
+      inUseChannels: inUseChannels,
+      channels: {
 
-    toJson.value.panelCount = panelCount.value;
-    toJson.value.inUseChannels = inUseChannels.value;
-
-    inUseChannels.value.forEach(channel => {
-      let filteredPanels = panels.value.toArray()
-      .filter(panel => {
-        if (panel) return panel.channel === channel;
-        return false;
-      });
-
-      let cells: any[] = [];
-      let ledCount = filteredPanels.length * 72;
-      let head = filteredPanels.find(panel => panel?.parentConnection === null);
-      
-      filteredPanels.forEach((panel) => {
-        let corrected_coordinate = JSON.parse(JSON.stringify(panel?.coordinate));
-        corrected_coordinate.row = corrected_coordinate.row - 1;
-        corrected_coordinate.col = corrected_coordinate.col - 1;
-
-        corrected_coordinate.row = (-corrected_coordinate.row) + toJson.value.dimentions.row - 1;
-
-        let cell: any = {
-          uuid: panel?.uuid,
-          coordinate: corrected_coordinate,
-        };
-
-        if (panel?.connection && panel.connection.uuid !== panel.uuid) 
-          cell["connection"] = panel.connection.uuid;
-
-        cells.push(cell)
-      });
-
-      toJson.value.channels[channel] = {
-        ledCount: ledCount,
-        head: head?.uuid,
-        cells: cells
-      };
-    });
-
-  }, 
-  { 
-    deep: true 
-  });
-
-  const toJsonOld = computed(() => {
+      }
+    };
 
     obj.inUseChannels.forEach(chan => {
       let panelsInChannel = panels.value.toArray().filter(p => {
@@ -241,14 +186,9 @@ export const usePanelGrid = defineStore('panel-grid', () => {
       let next = current?.connection;
 
       do {
-        let corrected_coordinate: Coordinate = JSON.parse(JSON.stringify(current?.coordinate));
-        corrected_coordinate.row =  -((corrected_coordinate.row - 1) - obj.dimentions.row + 1);
-        corrected_coordinate.col = corrected_coordinate.col - 1;
-
-
         cells.push({
           uuid: current?.uuid,
-          coordinate: corrected_coordinate,
+          coordinate: current?.coordinate,
           connection: next?.uuid
         });
 
@@ -273,7 +213,6 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     return JSON.stringify(obj, null, 2);
   });
 
-  panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
   changeChannel({ col: 1, row: 1 }, "CA0");
 
   return { 

@@ -133,10 +133,7 @@ class LannooTreeMqttClient {
     let data = JSON.parse(message.toString());
     
     if (topic.match(/^ledpanel\/stream\/.*/)) {
-      // console.log("Adding frame");
-      // this.redis_client.lPush('frame', message);
       ledDriver.frame_to_ledcontroller(data.frame);
-
     }
 
     if (data.command == 'stream') {
@@ -148,9 +145,15 @@ class LannooTreeMqttClient {
       let topicMap = this.messageTopicMap.get(topic);
 
 
-      if (topicMap?.has(data.command)) {        
-        let command = topicMap.get(data.command);
-        if (command !== undefined) command(data);
+      if (topicMap?.has(data.command)) {
+        if (data.command == 'stream') {
+          handel.play_stream(this.client, this.currentStreamId, data);
+        } 
+        
+        else {
+          let command = topicMap.get(data.command);
+          if (command !== undefined) command(data);
+        }
       }
 
       else if (topic == 'controller/config') {

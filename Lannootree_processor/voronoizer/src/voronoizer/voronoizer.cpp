@@ -114,6 +114,8 @@ namespace Processing {
     while (m_frame_provider->has_next_frame()) {
       frame = m_frame_provider->next_frame();
 
+      auto start = std::chrono::high_resolution_clock::now();
+
       if (frame.empty()) continue;
 
       scale_screen_to_image(screen, frame);
@@ -228,6 +230,11 @@ namespace Processing {
       }
 
       m_fromatter->format(next, frame);
+
+      auto end = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+
+      std::cout << duration.count() << "ms" << std::endl;
     }
 
     m_thread_pool.stop();

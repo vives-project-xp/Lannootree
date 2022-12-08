@@ -180,18 +180,12 @@ function set_ontime(ontime) {
 
 function turnOnLedPanel() {
   ledpanelOn = true;
-  paused = false;
   logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
 }
 
 function turnOffLedPanel() {
-  ledpanelOn = false;
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
   stop_leds();
+  ledpanelOn = false;
   logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
 }
 
