@@ -6,6 +6,13 @@
 
 namespace Lannootree {
 
+  struct color {
+    union {
+      uint8_t data[4] __attribute__((aligned(4)));
+      uint32_t wrgb;
+    };
+  };
+
   /**
    * @brief A color abstratction class to wrap rgb values.
    */
@@ -29,7 +36,8 @@ namespace Lannootree {
        *
        */
       uint32_t to_uint32_t(void) {
-        return 0U | ((uint32_t)(m_color[0] << 24) | (uint32_t)(m_color[1] << 16) | (uint32_t)(m_color[2] << 8) | (uint32_t)m_color[3]);
+        return *(uint32_t*)&m_color;
+        // return 0U | ((uint32_t)(m_color[0] << 24) | (uint32_t)(m_color[1] << 16) | (uint32_t)(m_color[2] << 8) | (uint32_t)m_color[3]);
       }
 
       /**

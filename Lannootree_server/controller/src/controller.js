@@ -87,6 +87,7 @@ client.on('message', function (topic, message) {
     case "controller/in":
       switch(data.command) {
         case "ontime": set_ontime(data.ontime); break;
+        case "media": update_media(data.media); break;
         case "pause": pause_leds(); break;
         case "play": play_leds(); break;
         case "stop": stop_leds(); break;
@@ -107,6 +108,7 @@ client.on('message', function (topic, message) {
 var on_time = '08:00-18:00';
 var ledpanelOn = false;
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();
+client.publish('storage/in', JSON.stringify({"command": "send_media"}));
 
 var status = "stop";
 var paused = true;  // later opvragen aan ledclient, niet lokaal bijhouden
@@ -116,18 +118,10 @@ var current_media_type = null;
 var current_media_id = null;
 var media = [];
 
-function populateMedia0to20gifs() {  // voorlopige functie (VERWIJDEREN)
-  for (let i = 0; i < 21; i++) {
-    let media_obj = {
-      id: i,
-      name: `gif_${i}`,
-      category: "gif",
-      description: `description_gif_${i}`
-    };
-    media.push(media_obj);
-  }
+function update_media(new_media) {
+  media = new_media;
+  sendStatus();
 }
-populateMedia0to20gifs();
 
 setInterval(() => {
   
@@ -135,6 +129,8 @@ setInterval(() => {
   else if(!checkTimeBetweenSetpoints() && ledpanelOn) turnOffLedPanel();
 
   if(ledpanelOn && !paused) next_gif();  // van gif veranderen terwijl het paneel aan staat
+
+  client.publish('storage/in', JSON.stringify({"command": "send_media"}));
 
   sendStatus(); // herhaaldelijke sendStatus() om de frontends zeker up-to-date te houden
 
@@ -184,12 +180,18 @@ function set_ontime(ontime) {
 
 function turnOnLedPanel() {
   ledpanelOn = true;
+  paused = false;
   logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
 }
 
 function turnOffLedPanel() {
-  stop_leds();
   ledpanelOn = false;
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  stop_leds();
   logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
 }
 
@@ -244,14 +246,7 @@ function previous_gif() {
   if(ledpanelOn) {
     if(playing_gif == 0) playing_gif = 20;
     else playing_gif--;
-    current_media_type = "gif";
-    current_media_id = playing_gif;
-    activeStream = null;
-    status = "playing";
-    paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
-    sendStatus();
-    logging(`[INFO]: playing gif ${playing_gif}`);
+    play_media(playing_gif);
   }
   else logging(`[WARNING] CANT SET PREVIOUS GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
@@ -260,14 +255,7 @@ function next_gif() {
   if(ledpanelOn) {
     if(playing_gif == 20) playing_gif = 0;
     else playing_gif++;
-    current_media_type = "gif";
-    current_media_id = playing_gif;
-    activeStream = null;
-    status = "playing";
-    paused = false;
-    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
-    sendStatus();
-    logging(`[INFO]: playing gif ${playing_gif}`);
+    play_media(playing_gif);
   }
   else logging(`[WARNING] CANT SET NEXT GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
@@ -300,6 +288,7 @@ function generateStreamID() {
 }
 
 function sendStatus() {
+
   let obj = JsonGenerator.statusToJson(
     status,
     paused,
