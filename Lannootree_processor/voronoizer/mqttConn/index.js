@@ -2,9 +2,9 @@ import fs from 'fs';
 import mqtt from 'mqtt';
 import { createClient } from 'redis';
 
-const caCert = fs.readFileSync("../certs/ca.crt");
-const clientcrt = fs.readFileSync("../certs/client/client.crt");
-const clientkey = fs.readFileSync("../certs/client/client.key");
+const caCert = fs.readFileSync("../../../certs/ca.crt");
+const clientcrt = fs.readFileSync("../../../certs/client/client.crt");
+const clientkey = fs.readFileSync("../../../certs/client/client.key");
 
 const mqttOptions = {
   clientId: `steamer`,
@@ -37,9 +37,11 @@ const main = async function() {
   mqtt_client.publish("ledpanel/control", JSON.stringify({ "command": "stream", "stream": "stream_0" }));
   
   while (true) {
+    console.time("PopN'Pub")
     const data = await redis_client.brPop("nextframe", 0);
     // console.log(data);
     mqtt_client.publish('ledpanel/stream/stream_0', data.element);
+    console.timeEnd("PopN'Pub")
   }
 }
 
