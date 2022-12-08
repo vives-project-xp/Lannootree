@@ -16,7 +16,6 @@ find_package(Threads REQUIRED)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/rpi_ws281x)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/ProjectFiles)
 
-
 option(BUILD_DOC "Build documentation" ON)
 
 find_package(Doxygen)
