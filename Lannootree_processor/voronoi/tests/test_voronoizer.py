@@ -64,8 +64,6 @@ def draw_voronoi(img, facets, indices) :
   images.append(Image.open(buf))
 
   # Add data in correct way
-  # print(np.argsort(indices))
-
   cstring = []
   for i in np.argsort(indices):
     cor_color = colors[i]
@@ -114,17 +112,16 @@ for xs in unique_xs:
   jdxs = np.argsort(panel[idxs,1])
   panel[np.min(idxs):np.min(idxs)+len(idxs),1] = panel[idxs[jdxs],1]
 
-width, height = 2, 2
-width, height = 2, 2
+width, height = 4, 4
 nPanels = width * height
 
 # print(panel)
 
 # Create current configuration
 screen = np.zeros((nPanels*panel.shape[0],2))
-for w in range(width):
-  for h in range(height):
-    idx = panel.shape[0]*(w + h * width)
+for i in range(width):
+  for j in range(height):
+    idx = panel.shape[0]*(i + j * width)
     screen[idx:idx+panel.shape[0],:] = panel+np.tile([i*dx, (1-j)*dy],[panel.shape[0],1])
 
 
@@ -134,7 +131,6 @@ y0 = np.min(screen[:,1])
 
 screen = screen - np.array([x0,y0])
 
-print(screen)
 
 # Scale to image
 xm = np.max(screen[:,0])
