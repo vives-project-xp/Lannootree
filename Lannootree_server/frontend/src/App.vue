@@ -80,7 +80,7 @@ import router from './router';
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
       </template>
 
-      <v-btn to="/">Lannootree</v-btn>
+      <v-app-bar-title>Lannootree</v-app-bar-title>
       
       <v-spacer></v-spacer>
 
@@ -146,8 +146,7 @@ import router from './router';
           <transition name="fade" mode="out-in">
             <component :is="Component" />
           </transition>
-            <!-- zet hier tekst met info over de pagina's -->
-            
+
         </router-view>
       </v-container>
     </v-main>

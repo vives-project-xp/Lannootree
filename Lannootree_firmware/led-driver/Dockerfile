@@ -2,15 +2,13 @@ FROM gcc:latest as builder
 
 WORKDIR /lannootree
 
-COPY CMakeLists.txt .
+COPY . .
 
 # Get necessary tools
 RUN apt-get update
 RUN apt-get install cmake -y
 RUN apt-get install build-essential -y
 RUN apt-get install libpthread-stubs0-dev -y
-
-COPY . .
 
 ENV JSON_FILE_PATH "./config.json"
 
