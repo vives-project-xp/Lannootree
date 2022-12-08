@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ConfigViewVue from '@/views/configView/ConfigView.vue'
-import ControlViewVue from '@/views/frontendView/ControlView.vue'
 import UploadViewVue from '@/views/frontendView/UploadView.vue'
 import LoggingViewVue from '@/views/configView/LoggingView.vue'
+import MediaViewVue from '@/views/frontendView/MediaView.vue'
 
 
 const router = createRouter({
@@ -19,14 +19,14 @@ const router = createRouter({
       component: LoggingViewVue
     },
     {
-      path: "/controll",
-      name: "controll",
-      component: ControlViewVue
-    },
-    {
       path: "/upload",
       name: "upload",
       component: UploadViewVue
+    },
+    {
+      path: "/media",
+      name: "media",
+      component: MediaViewVue
     }
   ]
 })
