@@ -11,6 +11,7 @@ if (WITH_JSON_MQTT)
 
   target_sources(voronoizer-formatters INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/json-file-formatter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/json-redis-formatter.cpp
     ${CMAKE_CURRENT_LIST_DIR}/json-mqtt-formatter.cpp
   )
 
@@ -23,6 +24,7 @@ if (WITH_JSON_MQTT)
 else()
   target_sources(voronoizer-formatters INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}/json-file-formatter.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/json-redis-formatter.cpp
   )
 
   target_link_libraries(voronoizer-formatters INTERFACE
