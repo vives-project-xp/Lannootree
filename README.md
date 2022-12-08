@@ -1,5 +1,9 @@
 # Lannootree
 
+## Team
+
+![Team](img/groupphoto.JPG)
+
 ## Blogpost about The Lannootree
 
 ![Blogpost](img/Blogpost.png)
@@ -50,4 +54,27 @@ git clone git@github.com:vives-project-xp/Lannootree.git
   - Status
 * Logs
 * Status
+
+# Lannootree Documentation
+
+## Map Structure LANNOOTREE
+
+### Certs
+
+This folder Manage all client and server certificates.
+
+### img
+
+Here you will find the images that are displayed on the frontend.
+
+### Lannootree_firmware
+
+
+
+### Lannootree_hardware
+
+### Lannootree_processor
+
+### Lannootree_server
+
 
