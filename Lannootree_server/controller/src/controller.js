@@ -7,8 +7,6 @@ import dotenv from "dotenv";
 dotenv.config({ path: '../.env' });
 
 const debug = false;
-const framerate = process.env.CONTROLLER_FRAMERATE;
-const frontend_framerate = process.env.CONTROLLER_FRONTEND_FRAMERATE;
 var production_server = process.env.PRODUCTION_SERVER
 const developement_time = process.env.CONTROLLER_DEV_SECONDS;
 
@@ -21,8 +19,8 @@ const devCheck = new DevCheck(production_server, developement_time);
 
 // MQTT______________________________________________________________
 var caFile = fs.readFileSync("./ca.crt");
-var clientcrt = fs.readFileSync("client.crt");
-var clientkey = fs.readFileSync("client.key");
+var clientcrt = fs.readFileSync("./client.crt");
+var clientkey = fs.readFileSync("./client.key");
 var options = {
   clientId:"controller_" + Math.random().toString(16).substring(2, 8),
   port: process.env.MQTT_BROKER_PORT,
@@ -88,15 +86,15 @@ client.on('message', function (topic, message) {
   switch (topic) {
     case "controller/in":
       switch(data.command) {
+        case "ontime": set_ontime(data.ontime); break;
+        case "media": update_media(data.media); break;
         case "pause": pause_leds(); break;
         case "play": play_leds(); break;
         case "stop": stop_leds(); break;
         case "color": set_color(data.red, data.green, data.blue); break;
         case "previous": previous_gif(); break;
         case "next": next_gif(); break;
-        case "show_media": set_media(data.media_name); break;
-        // case "play_effect": set_effect(data.effect_name); break;
-        case "play_effect": play_gif(data.effect_name); break;
+        case "play_media": play_media(data.media_id); break;
       }
     case "status/controller-dev": devCheck.Update(data); break;
   }
@@ -107,95 +105,176 @@ client.on('message', function (topic, message) {
 
 // CONTROLLER______________________________________________________________
 
-var status = "stop";
-var activeData = null;
-var activeStream = null;
+var on_time = '08:00-18:00';
+var ledpanelOn = false;
+if(checkTimeBetweenSetpoints()) turnOnLedPanel();
+client.publish('storage/in', JSON.stringify({"command": "send_media"}));
 
+var status = "stop";
 var paused = true;  // later opvragen aan ledclient, niet lokaal bijhouden
 var playing_gif = 0;  // Later ook verwijderen
+var activeStream = null;
+var current_media_type = null;
+var current_media_id = null;
+var media = [];
+
+function update_media(new_media) {
+  media = new_media;
+  sendStatus();
+}
+
+setInterval(() => {
+  
+  if(checkTimeBetweenSetpoints() && !ledpanelOn) turnOnLedPanel();
+  else if(!checkTimeBetweenSetpoints() && ledpanelOn) turnOffLedPanel();
+
+  if(ledpanelOn && !paused) next_gif();  // van gif veranderen terwijl het paneel aan staat
+
+  client.publish('storage/in', JSON.stringify({"command": "send_media"}));
+
+  sendStatus(); // herhaaldelijke sendStatus() om de frontends zeker up-to-date te houden
+
+}, 60*1000); // EVERY MINUTE
+
+function checkTimeBetweenSetpoints() {
+  const [time_begin, time_end] = on_time.split('-');
+  const [hours_begin, minutes_begin] = time_begin.split(':');
+  const date_begin = new Date();
+  date_begin.setHours(hours_begin,minutes_begin,0,0);
+  const [hours_end, minutes_end] = time_end.split(':');
+  const date_end = new Date();
+  date_end.setHours(hours_end,minutes_end,0,0);
+  const date_now = new Date();
+  if(date_begin <= date_end) {   // BEGIN   NOW    END
+    if(date_now > date_begin && date_now < date_end) return true;
+    else return false;
+  }
+  else {                        // END   NOW    BEGIN
+    if(date_now > date_end && date_now < date_end) return true;
+    else return false;
+  }
+}
+
+function set_ontime(ontime) {
+  const date_begin = new Date();
+  const date_end = new Date();
+  if(/^(2[0-3]|[0-1]?[\d]):[0-5][\d]-(2[0-3]|[0-1]?[\d]):[0-5][\d]$/.test(ontime)) {
+    const [time_begin, time_end] = ontime.split('-');
+    const [hours_begin, minutes_begin] = time_begin.split(':');
+    date_begin.setHours(hours_begin,minutes_begin,0,0);
+    const [hours_end, minutes_end] = time_end.split(':');
+    date_end.setHours(hours_end,minutes_end,0,0);
+    if(date_begin >= date_end) logging(`[ERROR] begin_time must come before end_time ('${ontime}')`);
+    else {
+      var time_difference = Math.abs(date_begin-date_end);
+      if(time_difference <= 3600000) logging(`[WARNING] ontime less than 1 hour? Ontime set: '${ontime}'`);
+      else logging(`[INFO] ontime set: '${ontime}'`);
+      on_time = ontime;
+      sendStatus();
+      if(checkTimeBetweenSetpoints()) turnOnLedPanel();
+      else ledpanelOn = turnOffLedPanel();
+    }
+  }
+  else logging(`[ERROR] Possible wrong ontime format ('${ontime}'), must be like: '08:00-18:00'`)
+}
+
+function turnOnLedPanel() {
+  ledpanelOn = true;
+  paused = false;
+  logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
+}
+
+function turnOffLedPanel() {
+  ledpanelOn = false;
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  stop_leds();
+  logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
+}
 
 function pause_leds() {
-  client.publish('ledpanel/control', JSON.stringify({"command": "pause"}));
-  status = "pause";
-  paused = true;
-  sendStatus();
-  logging("[INFO] LEDS paused");
+  if(ledpanelOn) {
+    client.publish('ledpanel/control', JSON.stringify({"command": "pause"}));
+    status = "pause";
+    paused = true;
+    sendStatus();
+    logging("[INFO] LEDS paused");
+  }
+  else logging(`[WARNING] CANT PAUSE, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function play_leds() {
-  client.publish('ledpanel/control', JSON.stringify({"command": "play"}));
-  status = "playing";
-  paused = false;
-  sendStatus();
-  logging("[INFO] LEDS resumed");
+  if(ledpanelOn) {
+    client.publish('ledpanel/control', JSON.stringify({"command": "play"}));
+    status = "playing";
+    paused = false;
+    sendStatus();
+    logging("[INFO] LEDS resumed");
+  }
+  else logging(`[WARNING] CANT PLAY, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function stop_leds() {
-  client.publish('ledpanel/control', JSON.stringify({"command": "stop"}));
-  status = "stop";
-  activeData = null;
-  activeStream = null;
-  paused = true;
-  playing_gif = null;
-  sendStatus();
-  logging("[INFO] stopped media");
+  if(ledpanelOn) {
+    client.publish('ledpanel/control', JSON.stringify({"command": "stop"}));
+    status = "stop";
+    paused = true;
+    activeStream = null;
+    current_media_type = null;
+    current_media_id = null;
+    sendStatus();
+    logging("[INFO] stopped media");
+  }
+  else logging(`[WARNING] CANT STOP, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function set_color(red, green, blue) {
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": red, "green": green, "blue": blue}));
-  activeData = "(" + red + "," + green + "," + blue + ")";
-  sendStatus();
-  logging(`[INFO] static color (${red},${green},${blue}) set`);
+  if(ledpanelOn) {
+    client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": red, "green": green, "blue": blue}));
+    current_media_type = `static_color_${red}_${green}_${blue}`;
+    current_media_id = null;
+    sendStatus();
+    logging(`[INFO] static color (${red},${green},${blue}) set`);
+  }
+  else logging(`[WARNING] CANT SET COLOR, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function previous_gif() {
-  if(playing_gif == 0) playing_gif = 20;
-  else playing_gif--;
-  activeData = "gif_" + playing_gif;
-  activeStream = null;
-  client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
-  sendStatus();
-  logging(`INFO: playing gif ${playing_gif}`);
+  if(ledpanelOn) {
+    if(playing_gif == 0) playing_gif = 20;
+    else playing_gif--;
+    play_media(playing_gif);
+  }
+  else logging(`[WARNING] CANT SET PREVIOUS GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
 function next_gif() {
-  if(playing_gif == 20) playing_gif = 0;
-  else playing_gif++;
-  activeData = "gif_" + playing_gif;
-  activeStream = null;
-  client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": playing_gif}));
-  sendStatus();
-  logging(`[INFO] playing gif ${playing_gif}`);
+  if(ledpanelOn) {
+    if(playing_gif == 20) playing_gif = 0;
+    else playing_gif++;
+    play_media(playing_gif);
+  }
+  else logging(`[WARNING] CANT SET NEXT GIF, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
-function play_gif(gif_number) {
-  // Check storage if media (media_name) is ready
-  activeData = "gif_" + gif_number;
-  activeStream = null;
-  client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": gif_number}));
-  playing_gif = gif_number;
-  sendStatus();
-  logging(`[INFO] playing gif ${gif_number}`);
-}
-
-function set_media(media_name) {
-  // Check storage if media (media_name) is ready
-  activeData = media_name;
-  let streamID = generateStreamID();
-  activeStream = streamID;
-  client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));
-  sendStatus();
-  logging(`[INFO] playing media (${media_name})`);
-}
-
-function set_effect(effect_name) {
-  // Check storage if effect (effect_name) is ready
-  activeData = effect_name;
-  let streamID = generateStreamID();
-  activeStream = streamID;
-  client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));
-  sendStatus();
-  logging(`[INFO] playing effect (${effect_name})`);
+function play_media(media_id) {
+  if(ledpanelOn) {
+    //let streamID = generateStreamID();    //veranderen
+    current_media_type = "gif";       // veranderen in media
+    current_media_id = playing_gif;  // veranderen in streamID
+    activeStream = null;         // veranderen in streamID
+    status = "playing";
+    paused = false;
+    client.publish('ledpanel/control', JSON.stringify({"command": "gif", "gif_number": media_id}));
+    //client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_${streamID}`}));    //veranderen
+    playing_gif = media_id;
+    sendStatus();
+    logging(`[INFO] playing media (${media_id})`);
+  }
+  else logging(`[WARNING] CANT PLAY MEDIA, LedPanel is OFF (ontime-schedule)`);
 }
 
 var currentID = 0;
@@ -208,142 +287,19 @@ function generateStreamID() {
   return padLeft(currentID,3);
 }
 
-// function updateMatrixFromFile() {
-//   fs.readFile('../config.json', (err, data) => {
-//     if (err) throw err;
-//     let json_data = JSON.parse(data);
-//     set_matrixsize(json_data.dimentions.row,json_data.dimentions.col);
-//   });
-// }
-
-// updateMatrixFromFile();
-
-// function set_matrixsize(rows, columns) { // this needs to reinitiate the effect_controller (create a new object)
-//   if(!isNaN(rows) && !isNaN(columns)) {
-//     stop();
-//     ledmatrix = Array.from(Array(Math.abs(rows)), () => new Array(Math.abs(columns)));
-//     for(var i = 0; i < ledmatrix.length; i++) {
-//       for(var j = 0; j < ledmatrix[i].length; j++) {
-//         ledmatrix[i][j] = new Color(0,0,0);
-//       }
-//     }
-//     logging(`NEW MATRIX SIZE: \tROWS: ${Math.abs(rows)}, COLUMNS: ${Math.abs(columns)}`, true);
-//   }
-// }
-
 function sendStatus() {
+
   let obj = JsonGenerator.statusToJson(
     status,
-    activeData,
-    activeStream,
     paused,
-    playing_gif,
-    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]   // totally DRY
+    on_time,
+    activeStream,
+    current_media_type,
+    current_media_id,
+    media
   );
   client.publish('controller/status', JSON.stringify(obj));
 }
-
-// function get_matrixsize() {
-//   let rows = 0;
-//   let cols = 0;
-//   if(ledmatrix.length != 0) {
-//     cols = ledmatrix[0].length;
-//     for(var i = 0; i < ledmatrix.length; i++) rows++;
-//   }
-//   return [rows, cols];
-// }
-
-// function pause(type) {
-//   switch (type) {
-//     case "pause":
-//       paused = true;
-//       effect_manager.pause();
-//       sendStatus();
-//       logging("[INFO] controller paused");
-//       break;
-//     case "play":
-//       paused = false;
-//       if(status == "effect") effect_manager.run(speed_modifier);
-//       sendStatus();
-//       logging("[INFO] controller resumed");
-//       break;
-//     case "toggle":
-//       if(paused) pause("play");
-//       else pause("pause");
-//       break;
-//     default:
-//       break;
-//   }
-// }
-
-// function stop() {
-//   status = "stop";
-//   effect_manager.stop();
-//   set_color_full(0,0,0);
-//   activeData = null;
-//   sendStatus();
-//   logging("[INFO] clearing all leds (stop)");
-// }
-
-// function set_color_full(red, green, blue) {
-//   if(status != "color") logging("[INFO] status changed to static color(s)");
-//   status = "color";
-//   effect_manager.stop();
-//   activeData = {color: [red, green, blue]};
-//   if(!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
-//     if(red<=255 && green<=255 && blue<=255 && red>=0 && green>=0 && blue>=0) {
-//       for(var i = 0; i < ledmatrix.length; i++) {
-//         for(var j = 0; j < ledmatrix[i].length; j++) {
-//           ledmatrix[i][j].set_color(red, green, blue);
-//         }
-//       }
-//     }
-//   }
-//   sendStatus();
-// }
-
-// function play_effect(effect_id) {
-//   if(effect_manager.has_effect(effect_id)) {
-//     pause("play");
-//     status = "effect";
-//     effect_manager.set_effect(effect_id, get_matrixsize(), speed_modifier);
-//     sendStatus();
-//     logging("[INFO] Set effect:" + effect_id);
-//   }
-// }
-
-// function set_fade(fade) {
-//   if(status = "effect") effect_manager.set_fade(fade);
-//   sendStatus();
-//   logging("[INFO] set fade:" + fade);
-// }
-
-// Live update__________________________________________________________________________
-// function PushMatrix() {
-//   switch (status) {
-//     case "effect":
-//       ledmatrix = effect_manager.get_currentmatrix();
-//       break;
-//     case "asset":
-      
-//       break;
-  
-//     default:
-//       break;
-//   }
-//   logging(MatrixParser.frame_to_string(ledmatrix), true);
-//   // client.publish('lannootree/processor/out', response);
-// }
-
-// function PushMatrix_frontend() {
-//   if (devCheck.Online()) {
-//     let response = JSON.stringify(MatrixParser.frame_to_json(ledmatrix));
-//     client.publish('lannootree/out', response);
-//   }
-// }
-
-// setInterval(() => {PushMatrix()}, (Math.round(1000/framerate)));
-// setInterval(() => {PushMatrix_frontend()}, (Math.round(1000/frontend_framerate)));
 
 // general__________________________________________________________________
 function logging(message, msgdebug = false) {

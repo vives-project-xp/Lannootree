@@ -15,9 +15,9 @@ import router from './router';
   
   const items = computed(() => {    
     const _routes = [
-      {
-        title: 'Controll',
-        value: 'controll',
+    {
+        title: 'Media',
+        value: 'media',
         group: 'admins'
       },
       {
@@ -35,7 +35,6 @@ import router from './router';
         value: 'logging',
         group: 'admins'
       },
-      
     ];
     
     let routes: { title: string, value: string, group: string }[] = [];
@@ -59,16 +58,16 @@ import router from './router';
     var key = e.which || e.keyCode;
     switch(key) {
       case 49:
-        router.push('/controll');
+        router.push('/media');
         break;
       case 50:
-      router.push('/upload');
+        router.push('/upload');
         break;
       case 51:
-      router.push('/config');
+        router.push('/config');
         break;
       case 52:
-      router.push('/logging');
+        router.push('/logging');
         break;
     }
 });
@@ -81,7 +80,7 @@ import router from './router';
         <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" class="hidden-md-and-up"></v-app-bar-nav-icon>
       </template>
 
-      <v-app-bar-title>Lannootree</v-app-bar-title>
+      <v-btn to="/">Lannootree</v-btn>
       
       <v-spacer></v-spacer>
 
@@ -147,7 +146,8 @@ import router from './router';
           <transition name="fade" mode="out-in">
             <component :is="Component" />
           </transition>
-
+            <!-- zet hier tekst met info over de pagina's -->
+            
         </router-view>
       </v-container>
     </v-main>
