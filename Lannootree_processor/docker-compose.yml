@@ -5,7 +5,8 @@ services:
       context: ${PWD}/voronoi/
   
   redis:
-    image: redis:latest
+    build: 
+      context: ./redis
     # Temp just for testing
     ports:
       - 6379:6379

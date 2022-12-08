@@ -7,7 +7,7 @@ export const useDisplayOptions = defineStore('display-options', () => {
 
   const options: Ref<DisplayOptions> = ref({
     effect_3d: true,
-    show_json: true
+    show_json: false
   });
 
   return { 
