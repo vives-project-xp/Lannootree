@@ -31,10 +31,7 @@ const client = mqtt.connect(options);
 client.on('connect', function () {
     logging("[INFO] mqtt connected")
     client.publish('status/storage', 'Online', {retain: true});
-<<<<<<< HEAD
-=======
     client.subscribe("storage/in");
->>>>>>> 4575a37a4e58029d34d66567ea0f29ae1ce9fb52
 });
 
 function logging(message, msgdebug = false){
@@ -45,8 +42,6 @@ function logging(message, msgdebug = false){
     else if(msgdebug && debug) {
         console.log(message);
     }
-<<<<<<< HEAD
-=======
 }
 
 client.on('message', function (topic, message) {
@@ -78,5 +73,4 @@ function send_media() {
           client.publish('controller/in', JSON.stringify({"command": "media", "media": new_media}));
         });
     });
->>>>>>> 4575a37a4e58029d34d66567ea0f29ae1ce9fb52
 }
