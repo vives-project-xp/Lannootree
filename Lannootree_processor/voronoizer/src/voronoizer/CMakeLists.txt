@@ -5,6 +5,7 @@ target_include_directories(voronoizer-process INTERFACE
 )
 
 target_sources(voronoizer-process INTERFACE
+  ${CMAKE_CURRENT_LIST_DIR}/voronoizer-arguments.cpp
   ${CMAKE_CURRENT_LIST_DIR}/voronoizer.cpp
 )
 

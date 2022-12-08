@@ -4,8 +4,8 @@
 
 namespace Processing {
 
-  Voronoizer::Voronoizer(int width, int height, std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, std::string& config_path)
-    : m_width(width), m_height(height), m_frame_provider(provider), m_fromatter(fromatter)
+  Voronoizer::Voronoizer(std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, const std::string& config_path)
+    : m_frame_provider(provider), m_fromatter(fromatter)
   {
     configure_json(config_path);
 
@@ -213,9 +213,6 @@ namespace Processing {
       cv::Mat argsort;
       cv::sortIdx(m_screen_led_indexes, argsort, cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
 
-      // std::cout << argsort << std::endl;
-      std::cout << m_screen_led_indexes << std::endl;
-
       std::vector<uint8_t> next;
       for (int i = 0; i < argsort.cols; i++) {
         cv::Vec3i c = cstring[argsort.at<int>(i)];
@@ -249,11 +246,6 @@ namespace Processing {
         int col = std::get<0>(panels[n]);
         int row = std::get<1>(panels[n]);
 
-        std::cout << "n: " << n 
-        << " col row: [" << col << " ," << row << "]"
-        << " offset: " << row_offset
-        << std::endl;
-
         double offset_data[2 * m_panel.rows];
         for (int k = 0; k < 2 * m_panel.rows; k += 2) {
           offset_data[k + 0] = col * m_dx;
@@ -285,7 +277,7 @@ namespace Processing {
     m_screen *= -1;
   }
 
-  void Voronoizer::configure_json(std::string& json_path) {
+  void Voronoizer::configure_json(const std::string& json_path) {
     // Read the json file
     std::ifstream reader;
     reader.open(json_path);
@@ -327,7 +319,9 @@ namespace Processing {
       }
     }
 
-    m_number_of_panels = static_cast<int>(config["dimentions"]["col"]) * static_cast<int>(config["dimentions"]["row"]);
+    m_width = static_cast<int>(config["dimentions"]["col"]);
+    m_height = static_cast<int>(config["dimentions"]["row"]);
+    m_number_of_panels = m_width * m_height;
   }
 
   void Voronoizer::scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image) {
