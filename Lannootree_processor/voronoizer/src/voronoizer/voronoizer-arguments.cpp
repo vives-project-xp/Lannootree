@@ -82,7 +82,11 @@ namespace Processing {
         }
 
         case FrameProviders::SingleImage: {
+<<<<<<< HEAD
           auto image_path = m_arguments.get<std::string>("--image");
+=======
+          auto image_path = m_arguments.get<std::string>("-i");
+>>>>>>> parent of b5d42df (Merge pull request #64 from vives-project-xp/storage)
           provider = std::make_shared<Processing::SingelImageProvider>(image_path);
           break;
         }
