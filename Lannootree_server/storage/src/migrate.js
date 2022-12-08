@@ -2,6 +2,7 @@
 // migrations are used to setup the database initially.
 // so the create tables needs to be here.
 
+import fs from "fs";
 import * as sqlite3 from 'sqlite3';
 
 const db = new sqlite3.default.Database('./db/storage.sqlite');
@@ -35,14 +36,16 @@ db.serialize(() => {
 
 //populate media examples--------------------------------------------------------------------------
 
-  for (let i = 0; i < 21; i++) {
-    let media_obj = {
-      name: `gif ${i}`,
-      category: "gif",
-      description: `description gif ${i}`
-    };
-    db.run(`INSERT INTO media (name,category,description) VALUES ('${media_obj.name}','${media_obj.category}','${media_obj.description}')`);
-  }
+  fs.readdir("./db/config1", (err, files) => {
+    files.forEach(file => {
+      let media_obj = {
+        name: `${file.replace('.json','').replace('.gif','')}`,
+        category: "gif",
+        description: `description_${file}`
+      };
+      db.run(`INSERT INTO media (name,category,description,config_hash,filename_hash) VALUES ('${media_obj.name}','${media_obj.category}','${media_obj.description}','config1','${file}')`);
+    });
+  });
 
   db.each(`SELECT * FROM media`, (err, row) => {
     if (err) {
