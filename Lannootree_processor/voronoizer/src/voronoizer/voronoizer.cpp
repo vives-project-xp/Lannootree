@@ -213,9 +213,6 @@ namespace Processing {
       cv::Mat argsort;
       cv::sortIdx(m_screen_led_indexes, argsort, cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
 
-      // std::cout << argsort << std::endl;
-      std::cout << m_screen_led_indexes << std::endl;
-
       std::vector<uint8_t> next;
       for (int i = 0; i < argsort.cols; i++) {
         cv::Vec3i c = cstring[argsort.at<int>(i)];
@@ -248,11 +245,6 @@ namespace Processing {
 
         int col = std::get<0>(panels[n]);
         int row = std::get<1>(panels[n]);
-
-        std::cout << "n: " << n 
-        << " col row: [" << col << " ," << row << "]"
-        << " offset: " << row_offset
-        << std::endl;
 
         double offset_data[2 * m_panel.rows];
         for (int k = 0; k < 2 * m_panel.rows; k += 2) {

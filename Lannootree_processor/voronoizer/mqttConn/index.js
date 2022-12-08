@@ -3,8 +3,8 @@ import mqtt from 'mqtt';
 import { createClient } from 'redis';
 
 const caCert = fs.readFileSync("../certs/ca.crt");
-const clientcrt = fs.readFileSync("../certs/client.crt");
-const clientkey = fs.readFileSync("../certs/client.key");
+const clientcrt = fs.readFileSync("../certs/client/client.crt");
+const clientkey = fs.readFileSync("../certs/client/client.key");
 
 const mqttOptions = {
   clientId: `steamer`,
