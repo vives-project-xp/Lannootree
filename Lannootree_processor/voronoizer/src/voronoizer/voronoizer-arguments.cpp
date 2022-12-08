@@ -82,7 +82,7 @@ namespace Processing {
         }
 
         case FrameProviders::SingleImage: {
-          auto image_path = m_arguments.get<std::string>("-i");
+          auto image_path = m_arguments.get<std::string>("--image");
           provider = std::make_shared<Processing::SingelImageProvider>(image_path);
           break;
         }

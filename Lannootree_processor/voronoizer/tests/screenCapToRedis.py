@@ -3,6 +3,8 @@ import redis as rd
 import numpy as np
 from mss import mss 
 
+import time
+
 r = rd.StrictRedis('localhost', 6379)
 
 # 1920 x 1080
@@ -19,4 +21,6 @@ while True:
   image = cv2.resize(image, dim, interpolation=None)
 
   r.lpush('voronoi', cv2.imencode('.jpg', image)[1].tobytes())
+
+  time.sleep(0.040)
   
