@@ -5,6 +5,8 @@
 #include <json-file-formatter.hpp>
 
 #include <json.hpp>
+#include <opencv4/opencv2/core/core.hpp>
+#include <opencv4/opencv2/core/cuda.hpp>
 #include <opencv4/opencv2/opencv.hpp>
 
 #include <map>
@@ -12,6 +14,10 @@
 #include <memory>
 #include <fstream>
 #include <iostream>
+
+#ifdef USE_CUDA
+  #include <voronoizer-cuda-processing.hpp>
+#endif
 
 using channel_coodinates = std::vector<std::tuple<int, int>>;
 
@@ -28,7 +34,7 @@ namespace Processing {
     private:
       void generate_screen(void);
       void configure_json(const std::string& json_path);
-      void scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image);
+      bool scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image);
 
     private:
       uint m_width;
