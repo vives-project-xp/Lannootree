@@ -1,48 +1,272 @@
 {
-  "panelCount": 4,
+  "panelCount": 32,
   "totalLeds": 0,
   "dimentions": {
-    "col": 2,
-    "row": 2
+    "col": 8,
+    "row": 4
   },
   "inUseChannels": [
     "CA0"
   ],
   "channels": {
     "CA0": {
-      "ledCount": 288,
-      "head": "295716075590",
+      "ledCount": 2304,
+      "head": "1563095802676",
       "cells": [
         {
-          "uuid": "1414901066215",
+          "uuid": "850914756013",
+          "coordinate": {
+            "col": 0,
+            "row": 3
+          },
+          "connection": "1598236881650"
+        },
+        {
+          "uuid": "1598236881650",
+          "coordinate": {
+            "col": 1,
+            "row": 3
+          },
+          "connection": "1342641949448"
+        },
+        {
+          "uuid": "1342641949448",
+          "coordinate": {
+            "col": 2,
+            "row": 3
+          },
+          "connection": "159832219965"
+        },
+        {
+          "uuid": "159832219965",
+          "coordinate": {
+            "col": 3,
+            "row": 3
+          },
+          "connection": "1569347383828"
+        },
+        {
+          "uuid": "1569347383828",
+          "coordinate": {
+            "col": 4,
+            "row": 3
+          },
+          "connection": "825384497899"
+        },
+        {
+          "uuid": "825384497899",
+          "coordinate": {
+            "col": 5,
+            "row": 3
+          },
+          "connection": "1466218780419"
+        },
+        {
+          "uuid": "1466218780419",
+          "coordinate": {
+            "col": 6,
+            "row": 3
+          },
+          "connection": "565200806340"
+        },
+        {
+          "uuid": "565200806340",
+          "coordinate": {
+            "col": 7,
+            "row": 3
+          },
+          "connection": "1411607682307"
+        },
+        {
+          "uuid": "769045657128",
+          "coordinate": {
+            "col": 0,
+            "row": 2
+          },
+          "connection": "850914756013"
+        },
+        {
+          "uuid": "1363710451614",
+          "coordinate": {
+            "col": 1,
+            "row": 2
+          },
+          "connection": "769045657128"
+        },
+        {
+          "uuid": "966074184693",
+          "coordinate": {
+            "col": 2,
+            "row": 2
+          },
+          "connection": "1363710451614"
+        },
+        {
+          "uuid": "1644022850777",
+          "coordinate": {
+            "col": 3,
+            "row": 2
+          },
+          "connection": "966074184693"
+        },
+        {
+          "uuid": "147709196936",
+          "coordinate": {
+            "col": 4,
+            "row": 2
+          },
+          "connection": "1211546017394"
+        },
+        {
+          "uuid": "771463126543",
+          "coordinate": {
+            "col": 5,
+            "row": 2
+          },
+          "connection": "147709196936"
+        },
+        {
+          "uuid": "381293987502",
+          "coordinate": {
+            "col": 6,
+            "row": 2
+          },
+          "connection": "771463126543"
+        },
+        {
+          "uuid": "1411607682307",
+          "coordinate": {
+            "col": 7,
+            "row": 2
+          },
+          "connection": "381293987502"
+        },
+        {
+          "uuid": "380490351054",
           "coordinate": {
             "col": 0,
             "row": 1
           },
-          "connection": "952238167414"
+          "connection": "780483686841"
         },
         {
-          "uuid": "952238167414",
+          "uuid": "780483686841",
           "coordinate": {
             "col": 1,
             "row": 1
+          },
+          "connection": "1644418625750"
+        },
+        {
+          "uuid": "1644418625750",
+          "coordinate": {
+            "col": 2,
+            "row": 1
+          },
+          "connection": "467329002233"
+        },
+        {
+          "uuid": "857767582058",
+          "coordinate": {
+            "col": 3,
+            "row": 1
+          },
+          "connection": "1644022850777"
+        },
+        {
+          "uuid": "1211546017394",
+          "coordinate": {
+            "col": 4,
+            "row": 1
+          },
+          "connection": "485343125789"
+        },
+        {
+          "uuid": "485343125789",
+          "coordinate": {
+            "col": 5,
+            "row": 1
+          },
+          "connection": "1301683097664"
+        },
+        {
+          "uuid": "1301683097664",
+          "coordinate": {
+            "col": 6,
+            "row": 1
+          },
+          "connection": "849251178429"
+        },
+        {
+          "uuid": "849251178429",
+          "coordinate": {
+            "col": 7,
+            "row": 1
+          },
+          "connection": "1314065771744"
+        },
+        {
+          "uuid": "1563095802676",
+          "coordinate": {
+            "col": 0,
+            "row": 0
+          },
+          "connection": "1510083359812"
+        },
+        {
+          "uuid": "1510083359812",
+          "coordinate": {
+            "col": 1,
+            "row": 0
+          },
+          "connection": "380490351054"
+        },
+        {
+          "uuid": "467329002233",
+          "coordinate": {
+            "col": 2,
+            "row": 0
+          },
+          "connection": "800416792725"
+        },
+        {
+          "uuid": "800416792725",
+          "coordinate": {
+            "col": 3,
+            "row": 0
+          },
+          "connection": "857767582058"
+        },
+        {
+          "uuid": "1464718617252",
+          "coordinate": {
+            "col": 4,
+            "row": 0
           }
         },
         {
-          "uuid": "295716075590",
+          "uuid": "1608018523884",
           "coordinate": {
-            "col": 0,
+            "col": 5,
             "row": 0
           },
-          "connection": "1666996789218"
+          "connection": "1464718617252"
         },
         {
-          "uuid": "1666996789218",
+          "uuid": "696023989868",
           "coordinate": {
-            "col": 1,
+            "col": 6,
             "row": 0
           },
-          "connection": "1414901066215"
+          "connection": "1608018523884"
+        },
+        {
+          "uuid": "1314065771744",
+          "coordinate": {
+            "col": 7,
+            "row": 0
+          },
+          "connection": "696023989868"
         }
       ]
     }

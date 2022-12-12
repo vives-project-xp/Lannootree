@@ -1,6 +1,7 @@
 #include <voroniozer.hpp>
 
 #include <chrono>
+#include <timer.hpp>
 
 namespace Processing {
 
@@ -108,15 +109,22 @@ namespace Processing {
     uint32_t actual_workers = m_thread_pool.start(number_of_workers);
     std::cout << "Asked for " << number_of_workers << " workers received: " << actual_workers << std::endl;
 
+    int frames_rendered = 0;
+
     cv::Mat frame;
     cv::Mat screen(m_screen.rows, m_screen.cols, m_screen.type());
 
-    while (m_frame_provider->has_next_frame()) {
-      frame = m_frame_provider->next_frame();
+    #ifdef USE_CUDA
+    std::vector<uint3> cstring;
+    #endif
 
+    while (m_frame_provider->has_next_frame()) {
+      auto start = std::chrono::high_resolution_clock::now();
+
+      frame = m_frame_provider->next_frame();
       if (frame.empty()) continue;
 
-      scale_screen_to_image(screen, frame);
+      bool screen_size_changed = scale_screen_to_image(screen, frame);
 
       // Add points to subdiv
       auto subdiv = cv::Subdiv2D(cv::Rect2d(0, 0, frame.cols, frame.rows));
@@ -130,10 +138,7 @@ namespace Processing {
       std::vector<std::vector<cv::Point2f>> facets;
       subdiv.getVoronoiFacetList({}, facets, centers);
 
-      // Convert to gray scale
-      cv::Mat gray_image;
-      cv::cvtColor(frame, gray_image, cv::COLOR_BGR2GRAY);
-
+      #ifndef USE_CUDA
       std::vector<std::vector<cv::Vec3i>> colors(actual_workers);
       
       // Start bunch of workers to calculate color
@@ -148,7 +153,7 @@ namespace Processing {
         std::vector<cv::Vec3i>* color = &colors[i];
 
         m_thread_pool.queue_job(
-          [&facets, &gray_image, &frame, color, from, to] (void) {
+          [&facets, &frame, color, from, to] (void) {
 
             for (int i = from; i < to; i++) {
               auto ifacet = facets[i];
@@ -160,7 +165,7 @@ namespace Processing {
               );
 
               // Create mask
-              cv::Mat mask(gray_image.rows, gray_image.cols, gray_image.type(), cv::Scalar(0));
+              cv::Mat mask(frame.rows, frame.cols, CV_8UC1, cv::Scalar(0));
               cv::fillConvexPoly(mask, ifacets, cv::Scalar(255));
 
               // Filter points using mask
@@ -208,18 +213,59 @@ namespace Processing {
           cstring.push_back(co);
         }
       }
+      #else
+        if (screen_size_changed) {
+          cv::Mat mask(frame.rows, frame.cols, CV_16UC1, cv::Scalar(0));
+
+          for (size_t i = 0; i < facets.size(); i++) {
+            std::vector<cv::Point> ifacet;
+            for (auto point : facets[i]) ifacet.push_back(
+              cv::Point(point.x, point.y)
+            );
+
+            // 100 is just to visualize the mask
+            cv::fillConvexPoly(mask, ifacet, cv::Scalar(i));
+          }
+
+          alloc_new_image_size(frame, mask, facets.size());
+          
+          cstring.resize(facets.size());        
+        }
+
+        process_image(frame, cstring);
+
+        // This is just visualization
+        for (size_t i = 0; i < facets.size(); i++) {
+          std::vector<cv::Point> ifacet;
+          for (auto point : facets[i]) ifacet.push_back(
+            cv::Point(point.x, point.y)
+          );
+
+          cv::fillConvexPoly(frame, ifacet, cv::Scalar(cstring[i].x, cstring[i].y, cstring[i].z), cv::LINE_AA, 0);
+        }
+      #endif
 
       // Place values in right order
       cv::Mat argsort;
       cv::sortIdx(m_screen_led_indexes, argsort, cv::SORT_EVERY_ROW + cv::SORT_ASCENDING);
 
       std::vector<uint8_t> next;
-      for (int i = 0; i < argsort.cols; i++) {
-        cv::Vec3i c = cstring[argsort.at<int>(i)];
-        next.push_back(c[0]);
-        next.push_back(c[1]);
-        next.push_back(c[2]);
-      }
+      
+      #ifndef USE_CUDA
+        for (int i = 0; i < argsort.cols; i++) {
+          cv::Vec3i c = cstring[argsort.at<int>(i)];
+          next.push_back(c[0]);
+          next.push_back(c[1]);
+          next.push_back(c[2]);
+        }
+      #else
+        for (int i = 0; i < argsort.cols; i++) {
+          uint3 c = cstring[argsort.at<int>(i)];
+          next.push_back(c.x);
+          next.push_back(c.y);
+          next.push_back(c.z);
+        }
+      #endif
 
       cv::imshow("Processed", frame);
       // TODO: [Feature] -> Find better way to exit program (waitKey is only needed when live visualisation is active)
@@ -228,6 +274,11 @@ namespace Processing {
       }
 
       m_fromatter->format(next, frame);
+
+      auto end = std::chrono::high_resolution_clock::now();
+      auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+
+      std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << "ms | " << duration.count() << "us" << std::endl;
     }
 
     m_thread_pool.stop();
@@ -324,11 +375,11 @@ namespace Processing {
     m_number_of_panels = m_width * m_height;
   }
 
-  void Voronoizer::scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image) {
+  bool Voronoizer::scale_screen_to_image(cv::Mat& new_screen, cv::Mat& image) {
     static int image_rows = 0, image_cols = 0;
 
     // No need to do calculations when image didn't change size
-    if (image_rows == image.rows && image_cols == image.cols) return;
+    if (image_rows == image.rows && image_cols == image.cols) return false;
 
     image_rows = image.rows;
     image_cols = image.cols;
@@ -354,6 +405,7 @@ namespace Processing {
     cv::add(yt, n_screen.col(1), n_screen.col(1));
 
     n_screen.copyTo(new_screen);
+    return true;
   }
 
 }
