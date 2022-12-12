@@ -1,11 +1,11 @@
 import dotenv from 'dotenv';
 import mqtt from "mqtt";
 import * as fs from 'fs';
-import * as sqlite3 from 'sqlite3';
-const db = new sqlite3.default.Database('./db/storage.sqlite');
+
 dotenv.config({ path: '../.env' })
 
 import Player from "./player.js";
+import DBManager from "./dbmanager.js";
 
 // MQTT ______________________________________________________________________________________
 
@@ -64,20 +64,10 @@ client.on('message', function (topic, message) {
   }
 });
 
-function send_media() {
-  let new_media = [];
-  db.serialize(() => {
-    db.all(`SELECT * FROM media`, (err, result) => {
-      if (err) {
-        console.error(err.message);
-      }
-      console.log(result)
-      for (let index = 0; index < result.length; index++) {
-        new_media.push({id: result[index].id, name: result[index].name, category: result[index].category, description: result[index].description});
-      }
-      client.publish('controller/in', JSON.stringify({"command": "media", "media": new_media}));
-    });
-  });
+const dbmanager = new DBManager("localhost","storage","storage","storage");
+async function send_media() {
+  let media = await dbmanager.getMedia();
+  client.publish('controller/in', JSON.stringify({"command": "media", "media": media}));
 }
 
 function play_stream() {
