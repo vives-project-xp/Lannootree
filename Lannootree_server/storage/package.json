@@ -14,7 +14,7 @@
     "dotenv": "^16.0.3",
     "fs": "^0.0.1-security",
     "mqtt": "^4.3.7",
-    "sqlite3": "^5.1.2"
+    "mysql": "^2.18.1"
   },
   "type": "module"
 }
