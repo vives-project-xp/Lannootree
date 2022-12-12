@@ -11,57 +11,18 @@ services:
       - ../certs:/certs
     ports:
       - 8883:8883
-  mqtt-api:
-    image: eclipse-mosquitto
-    restart: always
-    user: "1001:1001"
-    environment:
-      - TZ=Europe/Brussels
-    volumes:
-      - ./mqtt/mosquitto-api.conf:/mosquitto/config/mosquitto.conf
-    ports:
-      - 1883:1883
+    networks:
+      - lannootree
   
-  nodered:
-    image: nodered/node-red:latest
-    restart: always
-    environment:
-      - TZ=Europe/Brussels
-    volumes:
-      - nodered:/data
-      - "../certs/ca/ca.crt:/app/ca.crt:ro"
-      - "../certs/client:/app/clientcert:ro"  
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.nodered.rule=Host(`nodered.lannootree.devbitapp.be`)'
-      - 'traefik.http.services.nodered.loadbalancer.server.port=1880'
-      - 'traefik.http.routers.nodered.entrypoints=websecure'
-      - 'traefik.http.routers.nodered.tls.certresolver=production'
-      - 'traefik.http.routers.nodered.middlewares=authelia@docker'
-
-  certificate-api:
-    image: "nginx:alpine"
-    restart: always
-    environment:
-      - TZ=Europe/Brussels
-    volumes:
-      - "../certs/ca/ca.crt:/usr/share/nginx/html/ca.crt:ro"
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.http.routers.certificate-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
-      - 'traefik.http.routers.certificate-api.priority=100'
-      - 'traefik.http.routers.certificate-api.entrypoints=websecure'
-      - 'traefik.http.routers.certificate-api.tls.certresolver=production'
-
-  traefik:
+  lannootree-traefik:
     image: "traefik:v2.9"
     restart: always
     environment:
       - TZ=Europe/Brussels
-    ports:
-      - "80:80"
-      - "443:443"
-      - "3100:8080"
+    # ports:
+      # - "80:80"
+      # - "443:443"
+      # - "3100:8080"
     volumes:
       - "./traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -69,9 +30,11 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.lannootree.devbitapp.be`)'
       - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
-      - 'traefik.http.routers.traefik-dashboard.entrypoints=websecure'
-      - 'traefik.http.routers.traefik-dashboard.tls.certresolver=production'
+      - 'traefik.http.routers.traefik-dashboard.entrypoints=web'
       - 'traefik.http.routers.traefik-dashboard.middlewares=authelia@docker'
+    networks:
+      - lannootree
+      - traefik
 
   authelia:
     image: authelia/authelia
@@ -85,11 +48,59 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.authelia.rule=Host(`auth.lannootree.devbitapp.be`)'
       - 'traefik.http.services.authelia.loadbalancer.server.port=9091'
-      - 'traefik.http.routers.authelia.entryPoints=websecure'
-      - 'traefik.http.routers.authelia.tls.certresolver=production'
+      - 'traefik.http.routers.authelia.entryPoints=web'
       - 'traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.lannootree.devbitapp.be%2F'
       - 'traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true'
       - 'traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
+      - 'traefik.http.middlewares.x-proto-middle.headers.customrequestheaders.X-Forwarded-Proto=https'
+    networks:
+      - lannootree
+
+  mqtt-api:
+    image: eclipse-mosquitto
+    restart: always
+    user: "1001:1001"
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      - ./mqtt/mosquitto-api.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - 1883:1883
+    networks:
+      - lannootree
+      
+  nodered:
+    image: nodered/node-red:latest
+    restart: always
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      - nodered:/data
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client:/app/clientcert:ro"  
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.nodered.rule=Host(`nodered.lannootree.devbitapp.be`)'
+      - 'traefik.http.services.nodered.loadbalancer.server.port=1880'
+      - 'traefik.http.routers.nodered.entrypoints=web'
+      - 'traefik.http.routers.nodered.middlewares=x-proto-middle, authelia@docker'
+    networks:
+      - lannootree
+      
+  certificate-api:
+    image: "nginx:alpine"
+    restart: always
+    environment:
+      - TZ=Europe/Brussels
+    volumes:
+      - "../certs/ca/ca.crt:/usr/share/nginx/html/ca.crt:ro"
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.certificate-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
+      - 'traefik.http.routers.certificate-api.priority=100'
+      - 'traefik.http.routers.certificate-api.entrypoints=web'
+    networks:
+      - lannootree
 
   whoami:
     image: "traefik/whoami"
@@ -99,10 +110,11 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.whoami.rule=Host(`whoami.lannootree.devbitapp.be`) || (Host(`lannootree.devbitapp.be`) && PathPrefix(`/whoami`))'
-      - 'traefik.http.routers.whoami.entrypoints=websecure'
-      - 'traefik.http.routers.whoami.tls.certresolver=production'
-      - 'traefik.http.routers.whoami.middlewares=authelia@docker'
-
+      - 'traefik.http.routers.whoami.entrypoints=web'
+      - 'traefik.http.routers.whoami.middlewares=x-proto-middle, authelia@docker'
+    networks:
+      - lannootree
+      
   frontend:
     build:
       context: ./frontend
@@ -118,10 +130,11 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.frontend.rule=Host(`lannootree.devbitapp.be`)'
       - 'traefik.http.routers.frontend.priority=1'
-      - 'traefik.http.routers.frontend.entrypoints=websecure'
-      - 'traefik.http.routers.frontend.tls.certresolver=production'
-      - 'traefik.http.routers.frontend.middlewares=authelia@docker'
-
+      - 'traefik.http.routers.frontend.entrypoints=web'
+      - 'traefik.http.routers.frontend.middlewares=x-proto-middle, authelia@docker'
+    networks:
+      - lannootree
+      
   client-api:
     build:
       context: ./client-api
@@ -141,10 +154,11 @@ services:
       - "traefik.http.middlewares.client-api-stripprefix.stripprefix.prefixes=/wss"
       - 'traefik.http.routers.client-api.priority=100'
       - 'traefik.http.services.client-api.loadbalancer.server.port=3001'
-      - 'traefik.http.routers.client-api.entrypoints=websecure'
-      - 'traefik.http.routers.client-api.tls.certresolver=production'
-      # - 'traefik.http.routers.client-api.middlewares=authelia@docker'
-
+      - 'traefik.http.routers.client-api.entrypoints=web'
+      - 'traefik.http.routers.client-api.middlewares=x-proto-middle, authelia@docker'
+    networks:
+      - lannootree
+      
   admin-api:
     build:
       context: ./admin-api
@@ -165,10 +179,11 @@ services:
       - "traefik.http.middlewares.admin-api-stripprefix.stripprefix.prefixes=/admin/wss"
       - 'traefik.http.routers.admin-api.priority=100'
       - 'traefik.http.services.admin-api.loadbalancer.server.port=3000'
-      - 'traefik.http.routers.admin-api.entrypoints=websecure'
-      - 'traefik.http.routers.admin-api.tls.certresolver=production'
-      # - 'traefik.http.routers.admin-api.middlewares=authelia@docker'
-
+      - 'traefik.http.routers.admin-api.entrypoints=web'
+      - 'traefik.http.routers.admin-api.middlewares=x-proto-middle, authelia@docker'
+    networks:
+      - lannootree
+      
   controller:
     build:
       context: ./controller 
@@ -183,7 +198,9 @@ services:
       - "../certs/ca/ca.crt:/app/ca.crt:ro"     
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
-
+    networks:
+      - lannootree
+      
   storage:
     build:
       context: ./storage 
@@ -198,6 +215,8 @@ services:
       - "../certs/ca/ca.crt:/app/ca.crt:ro"     
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
+    networks:
+      - lannootree
 
   githook:
     restart: unless-stopped    
@@ -218,9 +237,16 @@ services:
       - 'traefik.enable=true'
       - 'traefik.http.routers.githook.rule=Host(`githook.lannootree.devbitapp.be`)'
       - 'traefik.http.services.githook.loadbalancer.server.port=8000'
-      - 'traefik.http.routers.githook.entrypoints=websecure'
-      - 'traefik.http.routers.githook.tls.certresolver=production'
+      - 'traefik.http.routers.githook.entrypoints=web'
+    networks:
+      - lannootree
 
 volumes:
   log-database:
   nodered:
+
+networks:
+  lannootree:
+    name: lannootree
+  traefik:
+    external: true
