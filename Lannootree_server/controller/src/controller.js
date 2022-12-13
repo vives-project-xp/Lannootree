@@ -107,7 +107,7 @@ client.on('message', function (topic, message) {
 var on_time = '08:00-18:00';
 var ledpanelOn = false;
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();
-client.publish('ledpanel/control', JSON.stringify({"command": "stop"}));
+else sendColorLedPanel(0,0,0);
 client.publish('storage/in', JSON.stringify({"command": "stop_current"}));
 client.publish('storage/in', JSON.stringify({"command": "send_media"}));
 
@@ -179,6 +179,7 @@ function set_ontime(ontime) {
 
 function turnOnLedPanel() {
   ledpanelOn = true;
+  sendColorLedPanel(50,0,0);
   logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
 }
 
@@ -190,7 +191,6 @@ function turnOffLedPanel() {
 
 function pause_leds() {
   if(ledpanelOn) {
-    //client.publish('ledpanel/control', JSON.stringify({"command": "pause"}));
     client.publish('storage/in', JSON.stringify({"command": "pause_current"}));
     status = "pause";
     paused = true;
@@ -202,7 +202,6 @@ function pause_leds() {
 
 function play_leds() {
   if(ledpanelOn) {
-    //client.publish('ledpanel/control', JSON.stringify({"command": "play"}));
     client.publish('storage/in', JSON.stringify({"command": "play_current"}));
     status = "playing";
     paused = false;
@@ -212,10 +211,16 @@ function play_leds() {
   else logging(`[WARNING] CANT PLAY, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
+function sendColorLedPanel(r,g,b) {
+  for(let i = 0; i<5; i++) {
+    client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": r, "green": g, "blue": b}));
+  }
+}
+
 function stop_leds() {
   if(ledpanelOn) {
-    client.publish('ledpanel/control', JSON.stringify({"command": "stop"}));
     client.publish('storage/in', JSON.stringify({"command": "stop_current"}));
+    sendColorLedPanel(0,0,0);
     status = "stop";
     paused = true;
     activeStream = null;
