@@ -23,8 +23,7 @@ namespace Processing {
     static uint frame_number = 0;
 
     if (m_save_preview && !m_video_writer.isOpened()) {
-      int ex = -1;
-      bool success = m_video_writer.open(m_save_path + "processed000.avi", (int) cv::CAP_ANY, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), (double) 30, frame.size(), true);
+      bool success = m_video_writer.open(m_save_path + "processed000.avi", (int) cv::CAP_ANY, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), (double) 25, frame.size(), true);
       if (!success) {
         std::cerr << "Failed to create videowriter" << std::endl;
       }
