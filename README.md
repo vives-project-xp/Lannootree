@@ -75,13 +75,9 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 This folder Manage all client and server certificates.
 
-### [img](img/README.md)
-
-Here you will find the images that are displayed on the frontend and readme.
-
 ### [Lannootree_firmware](Lannootree_firmware/README.md)
 
-In this folder you can find the led-client en -driver. This is used to control the leds on the Lannootree.
+In this folder you can find the led-client and -driver. This runs on the raspberry pi.
 
 ### [Lannootree_hardware](Lannootree_hardware/README.md)
 
@@ -93,4 +89,4 @@ This folder is used to set-up dockercontainers of the processor-api, redis and v
 
 ### [Lannootree_server](Lannootree_server/README.md)
 
-Here are all
+This id the directory with all services that runs on the server itself.
