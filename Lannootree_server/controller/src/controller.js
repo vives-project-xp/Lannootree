@@ -104,7 +104,7 @@ client.on('message', function (topic, message) {
 
 // CONTROLLER______________________________________________________________
 
-var on_time = '08:00-23:50';
+var on_time = '08:00-18:00';
 var ledpanelOn = false;
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();
 client.publish('ledpanel/control', JSON.stringify({"command": "stop"}));
