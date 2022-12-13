@@ -5,12 +5,13 @@ export default class Player {
   client;
   interval = null;
   currentfilepathpath = null;
+  paused = false;
   
   constructor(mqttclient) {
     this.client = mqttclient;
   }
 
-  play(filepath, streamTopic) {
+  play(filepath, streamTopic, id) {
     let rawdata = null;
     try {
       rawdata = fs.readFileSync(filepath);
@@ -29,13 +30,23 @@ export default class Player {
     };
 
     let currentframe = 0;
-    this.client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": streamTopic}));
+    this.client.publish('controller/in', JSON.stringify({"command": "acceptstream", "stream": streamTopic, "id": id}));
     this.interval = setInterval(() => {
-      this.client.publish('ledpanel/stream/'+streamTopic, JSON.stringify({"frame": jsonObj.getByIndex(currentframe)}));
-      currentframe++;
-      if(currentframe==Object.keys(jsonObj).length) currentframe = 0;
+      if(!this.paused) {
+        this.client.publish('ledpanel/stream/'+streamTopic, JSON.stringify({"frame": jsonObj.getByIndex(currentframe)}));
+        currentframe++;
+        if(currentframe==Object.keys(jsonObj).length) currentframe = 0;
+      }
     }, 33); // 30 FPS
 
+  }
+
+  pause() {
+    this.paused = true;
+  }
+
+  unpause() {
+    this.paused = false;
   }
 
   stop() {

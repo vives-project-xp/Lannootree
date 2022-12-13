@@ -47,30 +47,9 @@ export default class DBManager {
     else return null;
   }
 
-  // async updateDBfromFiles() {
-  //   let newMediaAdded = 0;
-  //   fs.readdir("./db/config1", (err, files) => {
-  //     files.forEach(async file => {
-  //       let media_obj = {
-  //         name: `${file.replace('.json','').replace('.gif','')}`,
-  //         category: "gif",
-  //         description: `description_${file}`
-  //       };
-  //       const [rows, fields] = await this.DBquery(`SELECT * FROM media WHERE filename_hash = '${file}'`)
-  //       if (!(rows.length > 0)) {
-  //         const insertQuery = `INSERT INTO media (name,category,description,config_hash,filename_hash) VALUES ('${media_obj.name}','${media_obj.category}','${media_obj.description}','config1','${file}')`;
-  //         await this.DBquery(insertQuery);
-  //         newMediaAdded++;
-  //       }
-  //     });
-  //   });
-  //   console.log(`UPDATEDB: added ${newMediaAdded} new files to the database`);
-  // }
-
   async getAllMedia() {
-    //await this.updateDBfromFiles();
     const new_media = [];
-    const [rows, fields] = await this.DBquery('SELECT * FROM media');
+    const [rows, fields] = await this.DBquery('SELECT * FROM media WHERE deleted IS NULL');
     console.log(`GETMEDIA: there are currently ${rows.length} files in the database\n`);
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -85,7 +64,7 @@ export default class DBManager {
   }
 
   async getMediaRow(id) {
-    const [rows, fields] = await this.DBquery(`SELECT * FROM media WHERE id = ${id}`);
+    const [rows, fields] = await this.DBquery(`SELECT * FROM media WHERE id = ${id} AND deleted IS NULL`);
     if(rows.length > 0) {
       const row = rows[0];
       if (row.deleted == null) return row;

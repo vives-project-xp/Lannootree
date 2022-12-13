@@ -29,15 +29,17 @@ async function populateStorage() {
   try {
     const files = await fs.promises.readdir("./src/populate/jsonfiles");
     for (const file of files) {
-      const media_obj = {
-        name: `${file.replace('')}`,
-        category: "gif",
-        description: `description_${file.replace(/\.json$|\.gif$/i, '')}`
-      };
-      const data = await fs.promises.readFile("./src/populate/jsonfiles/"+file);
-      setTimeout(function() {
-        client.publish('storage/in', JSON.stringify({"command": "add_file", "json": JSON.stringify(JSON.parse(data)), "name": media_obj.name, "category": media_obj.category, "description": media_obj.description}));
-      }, 100);
+      if(file.includes('.json')) {
+        const media_obj = {
+          name: `${file.replace('.gif','').replace('.json','')}`,
+          category: "gif",
+          description: `description_${file.replace('.gif','').replace('.json','')}`
+        };
+        const data = await fs.promises.readFile("./src/populate/jsonfiles/"+file);
+        setTimeout(function() {
+          client.publish('storage/in', JSON.stringify({"command": "add_file", "json": JSON.stringify(JSON.parse(data)), "name": media_obj.name, "category": media_obj.category, "description": media_obj.description}));
+        }, 100);
+      }
     }
     setTimeout(function() {
       client.end();

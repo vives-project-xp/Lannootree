@@ -39,7 +39,7 @@ client.on('connect', function () {
   player = new Player(client);
 });
 
-client.on('message', function (topic, message) {
+client.on('message', async function (topic, message) {
   let data = message;
   try {
     data = JSON.parse(message.toString());
@@ -52,7 +52,9 @@ client.on('message', function (topic, message) {
         case "add_file": add_file(data.json, data.name, data.category, data.description); break;
         case "send_media": send_media(); break;
         case "play": play_stream(data.id, data.streamtopic); break;
-        case "stop": stop_stream(); break;
+        case "stop_current": stop_current_stream(); break;
+        case "pause_current": pause_current_stream(); break;
+        case "play_current": play_current_stream(); break;
       }
   }
 });
@@ -77,26 +79,31 @@ async function add_file(json, name, category, description) {
 
 async function send_media() {
   let media = await dbmanager.getAllMedia();
-  client.publish('controller/in_test', JSON.stringify({"command": "media", "media": media})); // SHOULD BE CHANGED
+  client.publish('controller/in', JSON.stringify({"command": "media", "media": media})); // SHOULD BE CHANGED
 }
 
 async function play_stream(id, streamTopic) {
   const row = await dbmanager.getMediaRow(id);
   if(row != null) {
-    if(row.config_hash == CONFIGHASH) {
-      const filepath = `./db/${row.id}.json`
-      if (fs.existsSync(filepath)) {
-        if(player != null) {
-          stop_stream();
-          player.play(filepath, streamTopic);
+    if(row.deleted == null) {
+      if(row.config_hash == CONFIGHASH) {
+        const filepath = `./db/${row.id}.json`
+        if (fs.existsSync(filepath)) {
+          if(player != null) {
+            stop_current_stream();
+            player.play(filepath, streamTopic, id);
+          }
+        } else {
+          logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE FILE db/${id}.json DOESN'T EXIST ANYMORE`)
+          return;
         }
-      } else {
-        logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE FILE db/${id}.json DOESN'T EXIST ANYMORE`)
+      }
+      else {
+        logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: WRONG CONFIG HASH (${row.config_hash}), SHOULD BE ${CONFIGHASH}`)
         return;
       }
-    }
-    else {
-      logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: WRONG CONFIG HASH (${row.config_hash}), SHOULD BE ${CONFIGHASH}`)
+    } else {
+      logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: ITS DELETED`)
       return;
     }
   }
@@ -106,9 +113,18 @@ async function play_stream(id, streamTopic) {
   }
 }
 
-function stop_stream() {
+function stop_current_stream() {
   if(player != null) player.stop();
 }
+
+function pause_current_stream() {
+  if(player != null) player.pause();
+}
+
+function play_current_stream() {
+  if(player != null) player.unpause();
+}
+
 
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
