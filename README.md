@@ -1,10 +1,19 @@
 # Lannootree
 
+[![OS - Linux](https://img.shields.io/badge/OS-Linux-blue?logo=linux&logoColor=white)](https://www.linux.org/ "Go to Linux homepage")
+[![Made with Docker](https://img.shields.io/badge/Made_with-Docker-blue?logo=docker&logoColor=white)](https://www.docker.com/ "Go to Docker homepage")
+[![Made with Python](https://img.shields.io/badge/Python->=3.6-blue?logo=python&logoColor=white)](https://python.org "Go to Python homepage")
+[![Made with Node.js](https://img.shields.io/badge/Node.js->=12-blue?logo=node.js&logoColor=white)](https://nodejs.org "Go to Node.js homepage")
+[![Made with TypeScript](https://img.shields.io/badge/TypeScript-4-blue?logo=typescript&logoColor=white)](https://typescriptlang.org "Go to TypeScript homepage")
+[![Made with Vue](https://img.shields.io/badge/Vue-3-blue?logo=vue.js&logoColor=white)](https://v3.vuejs.org "Go to Vue homepage")
+
 Welcome to the Lannootree Project! The Lannootree is a modular LED display with a central server that allows users to display media and other content. You can display a wide range of media, including videos, images, and text, in a dynamic and engaging way. The central server makes it easy to manage and update the content that is displayed.
 
 This is a project for Project Experience 2022, and is designed to be both versatile and easy to use.
 
 ## Team
+
+![Made with Love - by team Lannootree!](https://img.shields.io/static/v1?label=Made+with+Love&message=by+team+Lannootree!&color=2ea44f)
 
 [<img src="https://github.com/madness007.png" width="25"> Arno Schoutteten](https://github.com/madness007)
 
@@ -75,3 +84,18 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 ## Data flow
 
 ![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/205050305-787bca8d-d48e-46d5-b0a1-096201860b0a.png)
+
+## Licence
+
+### Hippity Hoppity. This project is our property! :smile:
+
+The [MIT License](LICENCE.md) is in place.
+
+So the following is allowed:
+
+- Commercial use
+- Modification
+- Distribution
+- Private use
+
+### Please contribute and let this project live a long and happy life!
