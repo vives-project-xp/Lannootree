@@ -27,6 +27,11 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 ![Team](img/groupphoto.JPG)
 
+## Features
+
+- A frontend to controll the whole project
+- ...
+
 ## Getting started
 
 ```bash
