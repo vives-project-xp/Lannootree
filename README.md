@@ -94,7 +94,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ### Hippity Hoppity. This project is our property! :smile:
 
-The [MIT License](LICENCE.md) is in place.
+The [MIT License](LICENCE) is in place.
 
 So the following is allowed:
 
