@@ -5,7 +5,7 @@ import express from 'express'
 import * as sqlite3 from 'sqlite3';
 import WebSocket, { WebSocketServer } from 'ws';
 
-dotenv.config({ path: '../.env' })
+dotenv.config({ path: '../../.env' })
 const websocket = new WebSocketServer({ port: 3000 });
 var statusBuffer = {};
 

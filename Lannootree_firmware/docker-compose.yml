@@ -21,7 +21,7 @@ services:
     depends_on:
       - led-driver
     env_file:
-      - .env
+      - ../.env
     volumes:
       - "../certs/ca.crt:/app/ca.crt:ro"
       - "../certs/client/client.crt:/app/client.crt:ro"

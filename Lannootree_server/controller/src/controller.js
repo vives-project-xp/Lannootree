@@ -4,7 +4,7 @@ import DevCheck from './dev.js';
 import mqtt from "mqtt";
 import fs from "fs";
 import dotenv from "dotenv";
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 const debug = false;
 var production_server = process.env.PRODUCTION_SERVER

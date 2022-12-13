@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as sqlite3 from 'sqlite3';
 const db = new sqlite3.default.Database('./db/storage.sqlite');
 
-dotenv.config({ path: '../.env' })
+dotenv.config({ path: '../../.env' })
 
 // MQTT ______________________________________________________________________________________
 
