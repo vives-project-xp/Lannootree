@@ -22,13 +22,13 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 ![Blogpost](img/Blogpost.png)
 
-## Cloning git repo
+## Getting started
 
 ```bash
 git clone git@github.com:vives-project-xp/Lannootree.git
 ```
 
-## installation
+### installation
 
 - [Server](Lannootree_server/README.md)
 - [Processor](Lannootree_processor/README.md)
@@ -68,8 +68,6 @@ git clone git@github.com:vives-project-xp/Lannootree.git
   - Status
 * Logs
 * Status
-
-# Lannootree Documentation
 
 ## Folder Structure Lannootree
 
