@@ -1,8 +1,11 @@
 # Lannootree firmware
 
-![](https://img.shields.io/badge/C++-C++17-blue) ![](https://img.shields.io/badge/Typescript-4.8.x-blue) 
+![c++](https://img.shields.io/badge/C++-C++17-blue)
+
+![Typescript](https://img.shields.io/badge/Typescript-4.8.x-blue)
 
 ## Contents
+
 - [Containers](#containers)
   - [Led-client](#led-client)
   - [Led-driver](#led-driver)
@@ -11,13 +14,18 @@
 # Containers
 
 ## Led-client
-#### Description
+
+### Description led-client
+
 This container is responsable for listening on mqtt, processing those commands, and sending color data to the led-driver in order to drive leds.
 
 ### Container info
-![](https://img.shields.io/badge/Typescript-4.8.x-blue)
+
+![Typescript](https://img.shields.io/badge/Typescript-4.8.x-blue)
 
 **Base Image**: node:latest
+
+**.Env file**: .env file has to be placed in the /Lannootree_firmware/ directory where the list of variables have to be defined: MQTT_BROKER_URL and MQTT_BROKER_PORT
 
 **Volumes**:
 
@@ -27,19 +35,22 @@ Go to [certs](../certs/README.md) directory to see how to setup certs.
 At this moment the json config has to be in the /Lannootree_firmware/ directory but this will later be done an other way.
 
 **Depends On**:
-  - Led-driver
 
+- Led-driver
 
 ## Led-driver
-### Description
+
+### Description Led-driver
+
 Container responsable for driving led's, and listen to incomming color string on unix socket.
 
 ### Class documentation
+
 Class documentation will be build by Doxygen upon a cmake build, when you have this installed. Documentation will be placed in /led-driver/docs/gen_docs/ directory.
 
-### Container info
-![](https://img.shields.io/badge/C++-C++17-blue)
+### Container info Led-driver
 
+![c++](https://img.shields.io/badge/C++-C++17-blue)
 
 **Base Image**: gcc:latest
 
@@ -55,3 +66,11 @@ This project uses docker compose to start all necessesairy processes. Look to th
 ```bash
 docker compose up -d
 ```
+
+## mqtt2redis
+
+To make a connection from mqtt to redis.
+
+## dockercompose
+
+This file is to configure the led -client and -driver in docker.
