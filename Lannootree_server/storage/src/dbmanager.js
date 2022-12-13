@@ -23,7 +23,18 @@ export default class DBManager {
   }
 
   async migrate() {
-    await this.DBquery("CREATE TABLE IF NOT EXISTS media (id INTEGER PRIMARY KEY AUTO_INCREMENT, name TEXT, category TEXT, description TEXT, config_hash TEXT, filename_hash TEXT)");
+    const query = `
+      CREATE TABLE IF NOT EXISTS media (
+        id INTEGER PRIMARY KEY AUTO_INCREMENT,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL,
+        description TEXT NOT NULL,
+        config_hash TEXT NOT NULL,
+        filename_hash TEXT NOT NULL,
+        deleted TIMESTAMP NULL
+      );
+    `;
+    await this.DBquery(query);
   }
 
   async updateDBfromFiles() {
@@ -46,7 +57,7 @@ export default class DBManager {
     console.log(`UPDATEDB: added ${newMediaAdded} new files to the database`);
   }
 
-  async getMedia() {
+  async getAllMedia() {
     await this.updateDBfromFiles();
     const new_media = [];
     const [rows, fields] = await this.DBquery('SELECT * FROM media');
@@ -62,4 +73,15 @@ export default class DBManager {
     }
     return new_media;
   }
+
+  async getMediaRow(id) {
+    const [rows, fields] = await this.DBquery(`SELECT * FROM media WHERE id = ${id}`);
+    if(rows.length > 0) {
+      const row = rows[0];
+      if (row.deleted == null) return row;
+      else return null;
+    }
+    else return null;
+  }
+
 }

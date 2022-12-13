@@ -4,24 +4,23 @@ export default class Player {
   
   client;
   interval = null;
-  currentfile = null;
+  currentfilepathpath = null;
   
   constructor(mqttclient) {
     this.client = mqttclient;
   }
 
-  play(filename) {
+  play(filepath, streamTopic) {
     let rawdata = null;
     try {
-      rawdata = fs.readFileSync('./db/config1/' + filename);
+      rawdata = fs.readFileSync(filepath);
     } catch (err) {
       console.log("File not found!");
       return;
     }
-    if(this.currentfile != filename) {
+    if(this.currentfilepath != filepath) {
       this.stop();
-      this.currentfile = filename;
-      console.log(this.currentfile)
+      this.currentfilepath = filepath;
     }
     let jsonObj = JSON.parse(rawdata);
 
@@ -30,9 +29,9 @@ export default class Player {
     };
 
     let currentframe = 0;
-    this.client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": `stream_001`}));
+    this.client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": streamTopic}));
     this.interval = setInterval(() => {
-      this.client.publish('ledpanel/stream/stream_001', JSON.stringify({"frame": jsonObj.getByIndex(currentframe)}));
+      this.client.publish('ledpanel/stream/'+streamTopic, JSON.stringify({"frame": jsonObj.getByIndex(currentframe)}));
       currentframe++;
       if(currentframe==Object.keys(jsonObj).length) currentframe = 0;
     }, 33); // 30 FPS
