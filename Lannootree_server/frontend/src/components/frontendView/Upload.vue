@@ -3,7 +3,10 @@ import axios from 'axios'
 
   export default {
     data: () => ({
-      loading: [],
+      form: false,
+      name: null,
+      description: null,
+      loading: false,
       files: [],
       rules: [
         value => {
@@ -12,25 +15,36 @@ import axios from 'axios'
       ],
     }),
     methods: {
-      load (i) {
-        this.loading[i] = true
-        setTimeout(() => (this.loading[i] = false), 3000)
-      },
       post (files) {
-        //van hieruit zouden de files moeten worden verstuurd
-        // console.log(this.files)
-        axios.post('upload/post', this.files, {
+        if (!this.form) return
+        this.loading = true
+        setTimeout(() => (this.loading = false), 3000)
+        let formData = new FormData();
+        formData.append("name", this.name)
+        formData.append("description", this.description)
+        this.files.forEach(file => {
+          formData.append("file", file)
+          
+        });
+        
+        return axios.post('upload/post', formData, {
           headers: {
             "content-Type": "multipart/form-data",
           }
         })
-      }
+      },
+      required (v) {
+        return !!v || 'Field is required'
+      },
     },
   }
 </script>
 
 <template>
-  <v-row>
+  <v-form
+        v-model="form"
+        @submit.prevent="onSubmit"
+      >
     <v-file-input
       v-model="files"
       accept="image/png, image/jpeg, image/gif, image/bmp, video/mp4, video/quicktime"
@@ -42,7 +56,7 @@ import axios from 'axios'
       prepend-icon="mdi-camera"
       variant="outlined"
       :show-size="1000"
-      :rules="rules"
+      :rules="rules.concat(required)"
     >
       <template v-slot:selection="{ fileNames }">
         <template v-for="(fileName, index) in fileNames" :key="fileName">
@@ -65,15 +79,19 @@ import axios from 'axios'
         </template>
       </template>
     </v-file-input>
+  <v-row>
+    <v-text-field label="Add name" variant="solo" class="ml-8 my-4 px-8" :rules="[required]" v-model="name" clearable></v-text-field>
+    <v-text-field label="Add description" variant="solo" class="ml-8 my-4 px-8" :rules="[required]" v-model="description" clearable></v-text-field>
     <v-btn
-      :loading="loading[4]"
-      :disabled="loading[4]"
+      :loading="loading"
+      :disabled="!form"
       color="#00BD7E"
       icon="mdi-cloud-upload"
-      @click="load(4); post();"
-      class="ml-1"
+      @click="post();"
+      class="mt-4 mr-8"
     ></v-btn>
-</v-row>
+  </v-row>
+</v-form>
   </template>
 
 <style>
