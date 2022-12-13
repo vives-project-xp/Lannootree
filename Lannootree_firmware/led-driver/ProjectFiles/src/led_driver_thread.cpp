@@ -29,27 +29,44 @@ namespace Lannootree {
     int ret;
 
     while (_running) {
+      for (auto c : *_controllers) {
 
-      for (auto& [channel, led_buffer] : *_channel_mem) {
-        ws2811_t* controller = _controllers->at(channel.substr(0, 1) == "CA" ? 0 : 1);
-        
-        bool success = led_buffer->mem_read(controller->channel[channel.substr(1, 2) == "0" ? 0 : 1].leds);
+        bool success = _channel_mem->at("CA0")->mem_read(c->channel[0].leds);
 
         if (!success) break;
-        
-        // Because ws2811 driver is writen in C this mess exists
-        ret = ws2811_render(controller, [](void* arg, void* channel) {
-          
-          auto _this = (LedDriverThread*) arg;
-          _this->_channel_mem->at(*(std::string*) channel)->swap();
 
-        }, this, (void*) &channel);
+        ret = ws2811_render(c, 
+          [](void* arg, void* channel){ 
+            auto driver = (LedDriverThread*) arg;
+            driver->_channel_mem->at("CA0")->swap(); 
+          }, this, nullptr);
 
         if (ret != WS2811_SUCCESS) {
           std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
           error_log("Failed to render " << error);
         }
       }
+
+      // for (auto& [channel, led_buffer] : *_channel_mem) {
+      //   ws2811_t* controller = _controllers->at(channel.substr(0, 1) == "CA" ? 0 : 1);
+        
+      //   bool success = led_buffer->mem_read(controller->channel[channel.substr(1, 2) == "0" ? 0 : 1].leds);
+
+      //   if (!success) break;
+        
+      //   // Because ws2811 driver is writen in C this mess exists
+      //   ret = ws2811_render(controller, [](void* arg, void* channel) {
+          
+      //     auto _this = (LedDriverThread*) arg;
+      //     _this->_channel_mem->at(*(std::string*) channel)->swap();
+
+      //   }, this, (void*) &channel);
+
+      //   if (ret != WS2811_SUCCESS) {
+      //     std::string error = ws2811_get_return_t_str((ws2811_return_t)ret);
+      //     error_log("Failed to render " << error);
+      //   }
+      // }
     }
   }
 
