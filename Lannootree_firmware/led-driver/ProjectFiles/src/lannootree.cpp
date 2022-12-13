@@ -59,59 +59,15 @@ namespace Lannootree {
   }
 
   void LannooTree::initialize_memory(json &config) {
-    bool ca0 = false;
-    bool ca1 = false;
-    bool cb0 = false;
-    bool cb1 = false;
+    // Create ws2811 controllers for both channels
+    _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
+    _controllers.push_back(create_ws2811(config, 11, 9, 10, "CB"));
 
-    for (std::string c : config["inUseChannels"]) {
-      if (c.compare("CA0") == 0)
-        ca0 = true;
-      if (c.compare("CA1") == 0)
-        ca1 = true;
-      if (c.compare("CB0") == 0)
-        cb0 = true;
-      if (c.compare("CB1") == 0)
-        cb1 = true;
-    };
-
-    if ((ca0 || ca1) && (cb0 || cb1)) {
-      throw "Multiple channels are no implemented!";
-      // Creation of led controll blocks
-      _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
-      _controllers.push_back(create_ws2811(config, 11, 9, 10, "CB"));
-
-      // Creation of led buffers
-      if (_controllers.at(0)->channel[0].count)
-        _channel_mem["CA0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
-
-      if (_controllers.at(0)->channel[1].count)
-        _channel_mem["CA1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
-
-      if (_controllers.at(1)->channel[0].count)
-        _channel_mem["CB0"] = new LedBuffer(_controllers.at(1)->channel[0].count);
-
-      if (_controllers.at(1)->channel[1].count)
-        _channel_mem["CB1"] = new LedBuffer(_controllers.at(1)->channel[1].count);
-
-    }
-    else {
-      bool isChannelA = (ca0 || ca1);
-      // Creation of led control block
-      _controllers.push_back(create_ws2811(config, 10, 18, 19, isChannelA ? "CA" : "CB"));
-
-      info_log((isChannelA ? "Using channel A" : "Not using channel A") << "\n");
-
-      // Creation of led buffers
-      if (_controllers.at(0)->channel[0].count > 0)
-        _channel_mem[isChannelA ? "CA0" : "CB0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
-
-      info_log("ChanA0 led count: " << _controllers.at(0)->channel[0].count << "\n");
-
-      if (_controllers.at(0)->channel[1].count > 0)
-        _channel_mem[isChannelA ? "CA1" : "CB1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
-        
-    }
+    // Allocate a new buffer for each channel
+    _channel_mem["CA0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
+    _channel_mem["CA1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
+    _channel_mem["CB0"] = new LedBuffer(_controllers.at(1)->channel[0].count);
+    _channel_mem["CB1"] = new LedBuffer(_controllers.at(1)->channel[1].count);
 
     // Initialize led control blocks
     for (auto c : _controllers) {
@@ -146,9 +102,15 @@ namespace Lannootree {
   void LannooTree::socket_callback(void* arg, uint8_t* data, size_t data_len) {
     auto _channel_mem = (std::unordered_map<std::string, LedBuffer*>*) arg;
 
+    /**
+     * Todo: Make colors constant size
+     * Todo: use config to write to correct buffer
+     */
+
+    // This can be a constant buffer 
     std::vector<uint32_t> colors;
     for (int i = 0; i < 288; i++) {
-      color c;
+      Color c;
       c.data[0] = data[(3 * i) + 2]; // blue
       c.data[1] = data[(3 * i) + 1];  // green
       c.data[2] = data[(3 * i) + 0]; // Red
