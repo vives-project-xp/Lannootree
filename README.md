@@ -34,13 +34,27 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 - [Processor](Lannootree_processor/README.md)
 - [Firmware](Lannootree_firmware/README.md)
 
-## Docker structure
+## Folder Structure Lannootree
 
-![Lannootree drawio](https://user-images.githubusercontent.com/71697142/201103114-a8b4d791-ab4f-4459-9a90-6e0a4993ae48.png)
+### [certs](certs/README.md)
 
-## Data flow
+This folder Manage all client and server certificates.
 
-![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/205050305-787bca8d-d48e-46d5-b0a1-096201860b0a.png)
+### [Lannootree_firmware](Lannootree_firmware/README.md)
+
+In this folder you can find the led-client and -driver. This runs on the raspberry pi.
+
+### [Lannootree_hardware](Lannootree_hardware/README.md)
+
+In this folder you can find two samples of code for a remote control.
+
+### [Lannootree_processor](Lannootree_processor/README.md)
+
+This folder is used to set-up dockercontainers of the processor-api, redis and voronoi.
+
+### [Lannootree_server](Lannootree_server/README.md)
+
+This is the directory with all services that runs on the server itself.
 
 ## MQTT Topics
 
@@ -69,24 +83,10 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 * Logs
 * Status
 
-## Folder Structure Lannootree
+## Docker structure
 
-### [certs](certs/README.md)
+![Lannootree drawio](https://user-images.githubusercontent.com/71697142/201103114-a8b4d791-ab4f-4459-9a90-6e0a4993ae48.png)
 
-This folder Manage all client and server certificates.
+## Data flow
 
-### [Lannootree_firmware](Lannootree_firmware/README.md)
-
-In this folder you can find the led-client and -driver. This runs on the raspberry pi.
-
-### [Lannootree_hardware](Lannootree_hardware/README.md)
-
-In this folder you can find two samples of code for a remote control.
-
-### [Lannootree_processor](Lannootree_processor/README.md)
-
-This folder is used to set-up dockercontainers of the processor-api, redis and voronoi.
-
-### [Lannootree_server](Lannootree_server/README.md)
-
-This id the directory with all services that runs on the server itself.
+![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/205050305-787bca8d-d48e-46d5-b0a1-096201860b0a.png)
