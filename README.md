@@ -1,6 +1,20 @@
 # Lannootree
 
+Welcome to the Lannootree Project! The Lannootree is a modular LED display with a central server that allows users to display media and other content. You can display a wide range of media, including videos, images, and text, in a dynamic and engaging way. The central server makes it easy to manage and update the content that is displayed.
+
+This is a project for Project Experience 2022, and is designed to be both versatile and easy to use.
+
 ## Team
+
+[<img src="https://github.com/madness007.png" width="25"> Arno Schoutteten](https://github.com/madness007)
+
+[<img src="https://github.com/EmielCoucke.png" width="25"> Emiel Coucke](https://github.com/EmielCoucke)
+
+[<img src="https://github.com/JayDHulster.png" width="25"> Jay D'Hulster](https://github.com/JayDHulster)
+
+[<img src="https://github.com/JensVA.png" width="25"> Jens Vanhove](https://github.com/JensVA)
+
+[<img src="https://github.com/JoeyDeSmet.png" width="25"> Joey De Smet](https://github.com/JoeyDeSmet)
 
 ![Team](img/groupphoto.JPG)
 
