@@ -49,14 +49,31 @@ client.on('message', function (topic, message) {
   switch (topic) {
     case "storage/in":
       switch(data.command) {
+        case "add_file": add_file(data.json, data.name, data.category, data.description); break;
         case "send_media": send_media(); break;
-        case "play": play_stream(data.id, data.streamtopic); break;  //stream_001
+        case "play": play_stream(data.id, data.streamtopic); break;
         case "stop": stop_stream(); break;
       }
   }
 });
 
 const dbmanager = new DBManager("localhost","storage","storage","storage");
+
+async function add_file(json, name, category, description) {
+  let media_id = await dbmanager.addFile(name, category, description, CONFIGHASH);
+  if (media_id != null) {
+    fs.writeFile(`./db/${media_id}.json`, json, (err) => {
+      if (!err) {
+        logging(`[INFO] ADDED ${name} TO DB AND FILESYSTEM`)
+      } else {
+        logging(`[ERROR] FAILED TO ADD ${name} TO FILESYSTEM`)
+      }
+    });
+  }
+  else {
+    logging(`[ERROR] FAILED TO ADD ${name} TO DB`)
+  }
+}
 
 async function send_media() {
   let media = await dbmanager.getAllMedia();
@@ -67,24 +84,24 @@ async function play_stream(id, streamTopic) {
   const row = await dbmanager.getMediaRow(id);
   if(row != null) {
     if(row.config_hash == CONFIGHASH) {
-      const filepath = `./db/${row.config_hash}/${row.filename_hash}`
+      const filepath = `./db/${row.id}.json`
       if (fs.existsSync(filepath)) {
         if(player != null) {
           stop_stream();
           player.play(filepath, streamTopic);
         }
       } else {
-        logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE FILE ${row.filename_hash} DOESN'T EXIST ANYMORE IN db/${row.config_hash}`)
+        logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE FILE db/${id}.json DOESN'T EXIST ANYMORE`)
         return;
       }
     }
     else {
-      logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: CONFIG_HASH FOR MEDIA_ID IS ${row.config_hash} AND SHOULD BE ${CONFIGHASH}`)
+      logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: WRONG CONFIG HASH (${row.config_hash}), SHOULD BE ${CONFIGHASH}`)
       return;
     }
   }
   else {
-    logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE MEDIA_ID MIGHT DOESN'T EXIST ANYMORE IN THE DB, OR THE DELETED COLUMN IS NOT NULL ANYMORE`)
+    logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE MEDIA_ID DOES NOT EXIST!`)
     return;
   }
 }

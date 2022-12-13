@@ -30,35 +30,45 @@ export default class DBManager {
         category TEXT NOT NULL,
         description TEXT NOT NULL,
         config_hash TEXT NOT NULL,
-        filename_hash TEXT NOT NULL,
         deleted TIMESTAMP NULL
       );
     `;
     await this.DBquery(query);
   }
 
-  async updateDBfromFiles() {
-    let newMediaAdded = 0;
-    fs.readdir("./db/config1", (err, files) => {
-      files.forEach(async file => {
-        let media_obj = {
-          name: `${file.replace('.json','').replace('.gif','')}`,
-          category: "gif",
-          description: `description_${file}`
-        };
-        const [rows, fields] = await this.DBquery(`SELECT * FROM media WHERE filename_hash = '${file}'`)
-        if (!(rows.length > 0)) {
-          const insertQuery = `INSERT INTO media (name,category,description,config_hash,filename_hash) VALUES ('${media_obj.name}','${media_obj.category}','${media_obj.description}','config1','${file}')`;
-          await this.DBquery(insertQuery);
-          newMediaAdded++;
-        }
-      });
-    });
-    console.log(`UPDATEDB: added ${newMediaAdded} new files to the database`);
+  async addFile(name, category, description, config_hash) {
+    const insertQuery = `INSERT INTO media (name,category,description,config_hash) VALUES ('${name}','${category}','${description}','${config_hash}')`;
+    await this.DBquery(insertQuery);
+    const selectQuery = `SELECT id FROM media WHERE name = '${name}' AND category = '${category}' AND description = '${description}' AND config_hash = '${config_hash}'`;
+    const [rows, fields] = await this.DBquery(selectQuery);
+    if(rows.length > 0) {
+      return rows[0].id;
+    }
+    else return null;
   }
 
+  // async updateDBfromFiles() {
+  //   let newMediaAdded = 0;
+  //   fs.readdir("./db/config1", (err, files) => {
+  //     files.forEach(async file => {
+  //       let media_obj = {
+  //         name: `${file.replace('.json','').replace('.gif','')}`,
+  //         category: "gif",
+  //         description: `description_${file}`
+  //       };
+  //       const [rows, fields] = await this.DBquery(`SELECT * FROM media WHERE filename_hash = '${file}'`)
+  //       if (!(rows.length > 0)) {
+  //         const insertQuery = `INSERT INTO media (name,category,description,config_hash,filename_hash) VALUES ('${media_obj.name}','${media_obj.category}','${media_obj.description}','config1','${file}')`;
+  //         await this.DBquery(insertQuery);
+  //         newMediaAdded++;
+  //       }
+  //     });
+  //   });
+  //   console.log(`UPDATEDB: added ${newMediaAdded} new files to the database`);
+  // }
+
   async getAllMedia() {
-    await this.updateDBfromFiles();
+    //await this.updateDBfromFiles();
     const new_media = [];
     const [rows, fields] = await this.DBquery('SELECT * FROM media');
     console.log(`GETMEDIA: there are currently ${rows.length} files in the database\n`);
