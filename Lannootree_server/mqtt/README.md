@@ -2,7 +2,7 @@
 
 ## SSL-TLS certificates (ca_certificates)
 
-Generate certificates in the certs folder.
+Generate certificates in the [certs](/certs/README.MD) folder.
 
 ### files used
 
