@@ -71,7 +71,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 # Lannootree Documentation
 
-## Map Structure LANNOOTREE
+## Folder Structure Lannootree
 
 ### [certs](certs/README.md)
 
