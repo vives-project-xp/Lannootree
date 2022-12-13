@@ -18,10 +18,6 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 ![Team](img/groupphoto.JPG)
 
-## Blogpost about The Lannootree
-
-![Blogpost](img/Blogpost.png)
-
 ## Getting started
 
 ```bash
@@ -36,25 +32,11 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Folder Structure Lannootree
 
-### [certs](certs/README.md)
-
-This folder Manage all client and server certificates.
-
-### [Lannootree_firmware](Lannootree_firmware/README.md)
-
-In this folder you can find the led-client and -driver. This runs on the raspberry pi.
-
-### [Lannootree_hardware](Lannootree_hardware/README.md)
-
-In this folder you can find two samples of code for a remote control.
-
-### [Lannootree_processor](Lannootree_processor/README.md)
-
-This folder is used to set-up dockercontainers of the processor-api, redis and voronoi.
-
-### [Lannootree_server](Lannootree_server/README.md)
-
-This is the directory with all services that runs on the server itself.
+- [certs](certs/README.md) manages all client and server certificates.
+- [Lannootree_firmware](Lannootree_firmware/README.md) contains the led-client and led-driver. Those are running on the raspberry pi.
+- [Lannootree_hardware](Lannootree_hardware/README.md) In this folder you can find two samples of code for a remote control.
+- [Lannootree_processor](Lannootree_processor/README.md) is used to set-up dockercontainers of the processor. It runs on the server, but can be deployed on a stronger server or computer.
+- [Lannootree_server](Lannootree_server/README.md) is the directory with all services that runs on the server itself.
 
 ## MQTT Topics
 
@@ -72,7 +54,6 @@ This is the directory with all services that runs on the server itself.
   - Controll
   - Status
     - ID
-    - Power
   - Out
     - Metadata
 * Storage
@@ -80,8 +61,12 @@ This is the directory with all services that runs on the server itself.
     - Metadata
   - Play
   - Status
-* Logs
-* Status
+* Logs: All services can push logs to logs/\<service>
+* Status: Shows the status of all MQTT services ex Online or Offline
+
+## Blogpost about The Lannootree
+
+![Blogpost](img/Blogpost.png)
 
 ## Docker structure
 
