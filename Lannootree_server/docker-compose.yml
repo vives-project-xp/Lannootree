@@ -74,13 +74,15 @@ services:
     restart: always
     environment:
       - TZ=Europe/Brussels
+    user: 1001:1001
     volumes:
-      - nodered:/data
+      - ./nodered:/data
       - "../certs/ca/ca.crt:/app/ca.crt:ro"
       - "../certs/client:/app/clientcert:ro"  
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.nodered.rule=Host(`nodered.lannootree.devbitapp.be`)'
+      - 'traefik.http.routers.nodered.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/nodered`)'
+      - 'traefik.http.routers.nodered.priority=100'
       - 'traefik.http.services.nodered.loadbalancer.server.port=1880'
       - 'traefik.http.routers.nodered.entrypoints=web'
       - 'traefik.http.routers.nodered.middlewares=X-set-headers, authelia@docker'
@@ -119,8 +121,8 @@ services:
     build:
       context: ./frontend
       args:
-          VITE_LOGOUT_URL: ${VITE_LOGOUT_URL}
-          VITE_FRONTEND_WEBSOCKET: ${VITE_FRONTEND_WEBSOCKET}
+          VITE_LOGOUT_URL: "https://auth.lannootree.devbitapp.be/logout"
+          VITE_FRONTEND_WEBSOCKET: "wss://lannootree.devbitapp.be/wss"
     restart: always
     env_file:
       - ../.env
