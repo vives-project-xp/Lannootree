@@ -62,3 +62,10 @@ Optional arguments:
   --image               Path to image to process 
   --config              Path to config.json file [default: "./config.json"]
 ```
+
+# Building project on your own
+
+This project was developed on a linux machine so, for windows you will have to figure that out on you own for the moment. 
+But i know Visual Studio community supports CMake projects.
+
+
