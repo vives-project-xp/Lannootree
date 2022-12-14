@@ -61,7 +61,11 @@ namespace Lannootree {
   void LannooTree::initialize_memory(json &config) {
     // Create ws2811 controllers for both channels
     _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
+<<<<<<< HEAD
     _controllers.push_back(create_ws2811(config, 11, 13, 19, "CB"));
+=======
+    _controllers.push_back(create_ws2811(config, 11, 21, 20, "CB"));
+>>>>>>> ef16276db1abdf6866ea7a07fd10372cff474de6
 
     // Allocate a new buffer for each channel
     _channel_mem["CA0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
