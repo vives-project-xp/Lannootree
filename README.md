@@ -80,7 +80,9 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Blogpost about The Lannootree
 
-![Blogpost](img/Blogpost.png)
+<p align="center">
+  <img src="img/Blogpost.png">
+</p>
 
 ## Docker structure
 
