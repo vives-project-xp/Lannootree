@@ -29,7 +29,12 @@ This is a project for Project Experience 2022, and is designed to be both versat
 ## Features
 
 - A frontend to controll the whole project
-- ...
+- Livestreaming
+- Media page where you can select a gif out our selection
+- Play and pause the media
+- Stop the media
+- Upload your own media for example: gifs, photo's, video's
+- 
 
 ## Getting started
 
