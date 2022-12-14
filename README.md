@@ -52,31 +52,12 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 - [Lannootree_processor](Lannootree_processor/README.md) is used to set-up dockercontainers of the processor. It runs on the server, but can be deployed on a stronger server or computer.
 - [Lannootree_server](Lannootree_server/README.md) is the directory with all services that runs on the server itself.
 
-## MQTT Topics
+## MQTT API
 
-* Controller:
-  - In
-  - Out
-* Panel
-  - Control
-  - id#...
-  - Matrix
-  - Frame
-* Voronoi
-  - In
-  - id#...
-  - Controll
-  - Status
-    - ID
-  - Out
-    - Metadata
-* Storage
-  - In
-    - Metadata
-  - Play
-  - Status
-* Logs: All services can push logs to logs/\<service>
-* Status: Shows the status of all MQTT services ex Online or Offline
+The whole project is connected via a mqtt backbone.
+So everything is controllable externally.
+
+A complete list of topics can be found  in the [mqtt readme](Lannootree_server/mqtt)
 
 ## Blogpost about The Lannootree
 
