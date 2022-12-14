@@ -24,9 +24,9 @@ sh get_ca.sh
   - server. key: Private key for MQTT server TLS
 
 - client
- - client.csr: certificate signing request to sign client certs
- - client.crt: a public key for client TLS
- - client.key: Private key for MQTT client TLS
+  - client.csr: certificate signing request to sign client certs
+  - client.crt: a public key for client TLS
+  - client.key: Private key for MQTT client TLS
 
 All the files need to be generated, and the ca.crt needs to be shared with the clients.
 It can be downloaded to the clients from [this link](https://lannootree.devbitapp.be/ca.crt).
