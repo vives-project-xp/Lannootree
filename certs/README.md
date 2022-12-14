@@ -14,16 +14,19 @@ sh get_ca.sh
 
 ### Files used
 
-- ca.crt: own created certificate authority public key. Shared with te public clients
-- ca. key: own created certificate authority private key. For signing other certs
+- ca (certificate authority)
+  - ca.crt: own created certificate authority public key. Shared with te public clients
+  - ca. key: own created certificate authority private key. For signing other certs
 
-- server.csr: certificate signing request to sign server certs
-- server.crt: a public key for server TLS
-- server. key: Private key for MQTT server TLS
+- server
+  - server.csr: certificate signing request to sign server certs
+  - server.crt: a public key for server TLS
+  - server. key: Private key for MQTT server TLS
 
-- client.csr: certificate signing request to sign client certs
-- client.crt: a public key for client TLS
-- client.key: Private key for MQTT client TLS
+- client
+ - client.csr: certificate signing request to sign client certs
+ - client.crt: a public key for client TLS
+ - client.key: Private key for MQTT client TLS
 
 All the files need to be generated, and the ca.crt needs to be shared with the clients.
 It can be downloaded to the clients from [this link](https://lannootree.devbitapp.be/ca.crt).
