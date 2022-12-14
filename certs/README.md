@@ -60,4 +60,5 @@ Copy the cert file and place it inside the clients client folder as client.crt.
 Important: The Common Name of the ca and server needs to be the domain name! The other common names are names for clients.
 
 [guide for server certs](http://www.steves-internet-guide.com/mosquitto-tls/)
-[guidefor client certs](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)
+
+[guide for client certs](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)
