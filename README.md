@@ -30,11 +30,14 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 - A frontend to controll the whole project
 - Livestreaming
-- Media page where you can select a gif out our selection
-- Play and pause the media
-- Stop the media
+- Media page where you can select media out the storage
+- Play, pause and stop the media
 - Upload your own media for example: gifs, photo's, video's
-- 
+- Configure how many panels you have and on which channel they are active
+- Logging page:
+  - See wich containers are active
+  - Information of each docker container
+- Everything with authentication and permission control
 
 ## Getting started
 
