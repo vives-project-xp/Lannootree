@@ -711,6 +711,7 @@ static int check_hwver_and_gpionum(ws2811_t *ws2811)
             }
         }
     }
+
     else if (hwver >= 0x0004 && hwver <= 0x000f)  // Models B Rev2, A
     {
         for ( i = 0; i < (int)(sizeof(gpionums_B2) / sizeof(gpionums_B2[0])); i++)
@@ -721,10 +722,12 @@ static int check_hwver_and_gpionum(ws2811_t *ws2811)
             }
         }
     }
+
     else if (hwver >= 0x010) // Models B+, A+, 2B, 3B, Zero Zero-W
     {
         if ((ws2811->channel[0].count == 0) && (ws2811->channel[1].count > 0))
         {
+            printf("AAA\n");
             // Special case: nothing in channel 0, channel 1 only PWM1 allowed
             // PWM1 only available on 40 pin GPIO interface
             gpionum = ws2811->channel[1].gpionum;
@@ -737,6 +740,7 @@ static int check_hwver_and_gpionum(ws2811_t *ws2811)
                 return -1;
             }
         }
+
         for ( i = 0; i < (int)(sizeof(gpionums_40p) / sizeof(gpionums_40p[0])); i++)
         {
             if (gpionums_40p[i] == gpionum) {
@@ -897,12 +901,16 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
     const rpi_hw_t *rpi_hw;
     int chan;
 
+    printf("-3: Channel 1: %i\n", ws2811->channel[1].count);
+
     ws2811->rpi_hw = rpi_hw_detect();
     if (!ws2811->rpi_hw)
     {
         return WS2811_ERROR_HW_NOT_SUPPORTED;
     }
     rpi_hw = ws2811->rpi_hw;
+
+    printf("-3: Channel 1: %i\n", ws2811->channel[1].count);
 
     ws2811->device = malloc(sizeof(*ws2811->device));
     if (!ws2811->device)
@@ -912,16 +920,22 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
     memset(ws2811->device, 0, sizeof(*ws2811->device));
     device = ws2811->device;
 
+    printf("-2: Channel 1: %i\n", ws2811->channel[1].count);
+
     if (check_hwver_and_gpionum(ws2811) < 0)
     {
         return WS2811_ERROR_ILLEGAL_GPIO;
     }
+
+    printf("-1: Channel 1: %i\n", ws2811->channel[1].count);
 
     device->max_count = max_channel_led_count(ws2811);
 
     if (device->driver_mode == SPI) {
         return spi_init(ws2811);
     }
+
+    printf("0: Channel 1: %i\n", ws2811->channel[1].count);
 
     // Determine how much physical memory we need for DMA
     switch (device->driver_mode) {
@@ -937,6 +951,8 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
     }
     // Round up to page size multiple
     device->mbox.size = (device->mbox.size + (PAGE_SIZE - 1)) & ~(PAGE_SIZE - 1);
+
+    printf("1: Channel 1: %i\n", ws2811->channel[1].count);
 
     device->mbox.handle = mbox_open();
     if (device->mbox.handle == -1)
@@ -968,6 +984,8 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
         return WS2811_ERROR_MMAP;
     }
 
+    printf("2: Channel 1: %i\n", ws2811->channel[1].count);
+
     // Initialize all pointers to NULL.  Any non-NULL pointers will be freed on cleanup.
     device->pxl_raw = NULL;
     device->dma_cb = NULL;
@@ -976,13 +994,15 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
         ws2811->channel[chan].leds = NULL;
     }
 
+    printf("3 Channel 1: %i\n", ws2811->channel[1].count);
+
     // Allocate the LED buffers
     for (chan = 0; chan < RPI_PWM_CHANNELS; chan++)
     {
         ws2811_channel_t *channel = &ws2811->channel[chan];
-
-        // Removed this so i can allocate my own memory in C++
         
+        printf("Channel %i ledcount: %i\n", chan, ws2811->channel[chan].count);
+
         channel->leds = malloc(sizeof(ws2811_led_t) * channel->count);
         if (!channel->leds)
         {
@@ -1129,6 +1149,8 @@ ws2811_return_t ws2811_wait(ws2811_t *ws2811)
     return WS2811_SUCCESS;
 }
 
+#include <stdlib.h>
+
 /**
  * Render the DMA buffer from the user supplied LED arrays and start the DMA
  * controller.  This will update all LEDs on both PWM channels.
@@ -1173,6 +1195,8 @@ ws2811_return_t  ws2811_render(ws2811_t *ws2811, dma_finish_callback_t finish_ca
         {
             protocol_time = channel_protocol_time;
         }
+
+        printf("\nChann count: %i\n", channel->count);        
 
         for (i = 0; i < channel->count; i++)                // Led
         {
