@@ -66,7 +66,7 @@
       </h1>
 
       <div class="text-center">
-        <img src="../../assets/frontendView/Blogpost.png" alt="blogpost"/>
+        <img src="../../assets/frontendView/Blogpost.png" alt="blogpost" style="max-width: 90%"/>
       </div>
   </div>
 </template>
