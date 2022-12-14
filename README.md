@@ -1,10 +1,18 @@
 # Lannootree
 
+[![OS - Linux](https://img.shields.io/badge/OS-Linux-blue?logo=linux&logoColor=white)](https://www.linux.org/ "Go to Linux homepage")
+[![Made with Docker](https://img.shields.io/badge/Made_with-Docker-blue?logo=docker&logoColor=white)](https://www.docker.com/ "Go to Docker homepage")
+[![Made with Node.js](https://img.shields.io/badge/Node.js->=12-blue?logo=node.js&logoColor=white)](https://nodejs.org "Go to Node.js homepage")
+[![Made with TypeScript](https://img.shields.io/badge/TypeScript-4-blue?logo=typescript&logoColor=white)](https://typescriptlang.org "Go to TypeScript homepage")
+[![Made with Vue](https://img.shields.io/badge/Vue-3-blue?logo=vue.js&logoColor=white)](https://v3.vuejs.org "Go to Vue homepage")
+
 Welcome to the Lannootree Project! The Lannootree is a modular LED display with a central server that allows users to display media and other content. You can display a wide range of media, including videos, images, and text, in a dynamic and engaging way. The central server makes it easy to manage and update the content that is displayed.
 
 This is a project for Project Experience 2022, and is designed to be both versatile and easy to use.
 
 ## Team
+
+![Made with Love - by team Lannootree!](https://img.shields.io/static/v1?label=Made+with+Love&message=by+team+Lannootree!&color=2ea44f)
 
 [<img src="https://github.com/madness007.png" width="25"> Arno Schoutteten](https://github.com/madness007)
 
@@ -18,21 +26,51 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 ![Team](img/groupphoto.JPG)
 
-## Blogpost about The Lannootree
+## Features
 
-![Blogpost](img/Blogpost.png)
+- A frontend to controll the whole project
+- Livestreaming
+- Media page where you can select media out the storage
+- Play, pause and stop the media
+- Upload your own media for example: gifs, photo's, video's
+- Configure how many panels you have and on which channel they are active
+- Logging page:
+  - See wich containers are active
+  - Information of each docker container
+- Everything with authentication and permission control
 
-## Cloning git repo
+## Getting started
 
 ```bash
 git clone git@github.com:vives-project-xp/Lannootree.git
 ```
 
-## installation
+### installation
 
 - [Server](Lannootree_server/README.md)
 - [Processor](Lannootree_processor/README.md)
 - [Firmware](Lannootree_firmware/README.md)
+
+## Folder Structure Lannootree
+
+- [certs](certs/README.md) manages all client and server certificates.
+- [Lannootree_firmware](Lannootree_firmware/README.md) contains the led-client and led-driver. Those are running on the raspberry pi.
+- [Lannootree_hardware](Lannootree_hardware/README.md) In this folder you can find two samples of code for a remote control.
+- [Lannootree_processor](Lannootree_processor/README.md) is used to set-up dockercontainers of the processor. It runs on the server, but can be deployed on a stronger server or computer.
+- [Lannootree_server](Lannootree_server/README.md) is the directory with all services that runs on the server itself.
+
+## MQTT API
+
+The whole project is connected via a mqtt backbone.
+So everything is controllable externally.
+
+A complete list of topics can be found  in the [mqtt readme](Lannootree_server/mqtt)
+
+## Blogpost about The Lannootree
+
+<p align="center">
+  <img src="img/Blogpost.png">
+</p>
 
 ## Docker structure
 
@@ -42,57 +80,17 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/205050305-787bca8d-d48e-46d5-b0a1-096201860b0a.png)
 
-## MQTT Topics
+## Licence
 
-* Controller:
-  - In
-  - Out
-* Panel
-  - Control
-  - id#...
-  - Matrix
-  - Frame
-* Voronoi
-  - In
-  - id#...
-  - Controll
-  - Status
-    - ID
-    - Power
-  - Out
-    - Metadata
-* Storage
-  - In
-    - Metadata
-  - Play
-  - Status
-* Logs
-* Status
+### Hippity Hoppity. This project is our property! :smile:
 
-# Lannootree Documentation
+The [MIT License](LICENSE) is in place.
 
-## Map Structure LANNOOTREE
+So the following is allowed:
 
-### [certs](certs/README.md)
+- Commercial use
+- Modification
+- Distribution
+- Private use
 
-This folder Manage all client and server certificates.
-
-### [img](img/README.md)
-
-Here you will find the images that are displayed on the frontend and readme.
-
-### [Lannootree_firmware](Lannootree_firmware/README.md)
-
-In this folder you can find the led-client en -driver. This is used to control the leds on the Lannootree.
-
-### [Lannootree_hardware](Lannootree_hardware/README.md)
-
-In this folder you can find two samples of code for a remote control.
-
-### [Lannootree_processor](Lannootree_processor/README.md)
-
-This folder is used to set-up dockercontainers of the processor-api, redis and voronoi.
-
-### [Lannootree_server](Lannootree_server/README.md)
-
-Here are all
+### Please contribute and let this project live a long and happy life!

@@ -14,39 +14,51 @@ sh get_ca.sh
 
 ### Files used
 
-- ca.crt: own created certificate authority public key. Shared with te public clients
-- ca. key: own created certificate authority private key. For signing other certs
+- ca (certificate authority)
+  - ca.crt: the public certificate of the CA
+  - ca. key: private key for the CA, used for signing server crt and client crt's
 
-- server.csr: certificate signing request to sign server certs
-- server.crt: a public key for server TLS
-- server. key: Private key for MQTT server TLS
+- server
+  - server.csr: certificate signing request for the ca
+  - server.crt: pub server key signed by the CA
+  - server. key: Private key for MQTT server
 
-- client.csr: certificate signing request to sign client certs
-- client.crt: a public key for client TLS
-- client.key: Private key for MQTT client TLS
+- client
+  - client.csr: certificate signing request to sign client certs
+  - client.crt: a public key for client TLS
+  - client.key: Private key for MQTT client
 
 All the files need to be generated, and the ca.crt needs to be shared with the clients.
 It can be downloaded to the clients from [this link](https://lannootree.devbitapp.be/ca.crt).
 
 ### Generating using script
 
-This part generates the ca, server, and client certs (the client certs are for connecting MQTT clients DIRECTLY on the server with the broker).
-If you want to use this only as a client then ignore the server and ca directory.
-You need to sign the client certificate. No matter if you're a server or client.
+This part generates the ca, server, and client certs (the client certs on the server are for connecting MQTT clients DIRECTLY on the server with the broker).
 
-Run the script [generate_certs.sh](generate_certs.sh)
+Run the script on the server: [generate_server_certs.sh](generate_server_certs.sh)
 
 ```bash
-sh generate_certs.sh
+sh generate_server_certs.sh
 ```
+
+Then run this script on the rpi and by other clients (for ex developers pc for mqtt explorer): [generate_client_certs.sh](generate_client_certs.sh)
+
+```bash
+sh generate_client_certs.sh
+```
+
+Then copy the .csr file to the server folder: cert/signed_clients/new and run this script: [sign_new_clients.sh](sign_new_clients.sh)
+
+```bash
+sh sign_new_clients.sh
+```
+
+The generated cert is now inside the signed_clients folder.
+
+Copy the cert file and place it inside the clients client folder as client.crt.
 
 Important: The Common Name of the ca and server needs to be the domain name! The other common names are names for clients.
-[guide used to make this part](http://www.steves-internet-guide.com/mosquitto-tls/)
 
-## client certificates (certs)
+[guide for server certs](http://www.steves-internet-guide.com/mosquitto-tls/)
 
-```bash
-openssl x509 -req -in ./signed_clients/client.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./signed_clients/client.crt -days 3650
-```
-
-[guide used to make this part](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)
+[guide for client certs](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)
