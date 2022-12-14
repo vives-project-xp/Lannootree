@@ -32,7 +32,6 @@ namespace Lannootree {
     std::string channel_b = "CB";
 
     while (_running) {
-<<<<<<< HEAD
       // Render channel A Than Channel B
       auto controller_a = _controllers->at(0);
 
@@ -44,19 +43,6 @@ namespace Lannootree {
         auto _this = (LedDriverThread*) arg;
         _this->_channel_mem->at(*(std::string*) channel + "0")->swap();
         _this->_channel_mem->at(*(std::string*) channel + "1")->swap();
-=======
-      for (auto c : *_controllers) {
-
-        bool success = _channel_mem->at("CA0")->mem_read(c->channel[0].leds);
-
-        if (!success) break;
-
-        ret = ws2811_render(c, 
-          [](void* arg, void* channel){ 
-            auto driver = (LedDriverThread*) arg;
-            driver->_channel_mem->at("CA0")->swap(); 
-          }, this, nullptr);
->>>>>>> ef16276db1abdf6866ea7a07fd10372cff474de6
 
       }, this, &channel_a);
 
