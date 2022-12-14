@@ -33,23 +33,31 @@ It can be downloaded to the clients from [this link](https://lannootree.devbitap
 
 ### Generating using script
 
-This part generates the ca, server, and client certs (the client certs are for connecting MQTT clients DIRECTLY on the server with the broker).
-If you want to use this only as a client then ignore the server and ca directory.
-You need to sign the client certificate. No matter if you're a server or client.
+This part generates the ca, server, and client certs (the client certs on the server are for connecting MQTT clients DIRECTLY on the server with the broker).
 
-Run the script [generate_certs.sh](generate_certs.sh)
+Run the script on the server: [generate_server_certs.sh](generate_server_certs.sh)
 
 ```bash
-sh generate_certs.sh
+sh generate_server_certs.sh
 ```
+
+Then run this script on the rpi and by other clients (for ex developers pc for mqtt explorer): [generate_client_certs.sh](generate_client_certs.sh)
+
+```bash
+sh generate_client_certs.sh
+```
+
+Then copy the .csr file to the server folder: cert/signed_clients/new and run this script: [sign_new_clients.sh](sign_new_clients.sh)
+
+```bash
+sh sign_new_clients.sh
+```
+
+The generated cert is now inside the signed_clients folder.
+
+Copy the cert file and place it inside the clients client folder as client.crt.
 
 Important: The Common Name of the ca and server needs to be the domain name! The other common names are names for clients.
-[guide used to make this part](http://www.steves-internet-guide.com/mosquitto-tls/)
 
-## client certificates (certs)
-
-```bash
-openssl x509 -req -in ./signed_clients/client.csr -CA ./ca/ca.crt -CAkey ./ca/ca.key -CAcreateserial -out ./signed_clients/client.crt -days 3650
-```
-
-[guide used to make this part](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)
+[guide for server certs](http://www.steves-internet-guide.com/mosquitto-tls/)
+[guidefor client certs](http://www.steves-internet-guide.com/creating-and-using-client-certificates-with-mqtt-and-mosquitto/)
