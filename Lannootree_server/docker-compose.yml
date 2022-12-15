@@ -213,6 +213,30 @@ services:
     networks:
       - lannootree
 
+  mysql:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: storage
+      MYSQL_DATABASE: storage
+      TZ: Europe/Brussels
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - lannootree
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: admin
+      TZ: Europe/Brussels
+    networks:
+      - lannootree
+
   githook:
     restart: unless-stopped    
     build:
@@ -237,9 +261,11 @@ services:
 volumes:
   log-database:
   nodered:
+  mysql:
 
 networks:
   lannootree:
     name: lannootree
   traefik:
     external: true
+  
