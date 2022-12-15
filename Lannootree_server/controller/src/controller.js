@@ -127,13 +127,11 @@ setInterval(() => {
   if(checkTimeBetweenSetpoints() && !ledpanelOn) turnOnLedPanel();
   else if(!checkTimeBetweenSetpoints() && ledpanelOn) turnOffLedPanel();
 
-  //if(ledpanelOn && !paused) next_media();  // van gif veranderen terwijl het paneel aan staat
-
   client.publish('storage/in', JSON.stringify({"command": "send_media"}));
 
   sendStatus(); // herhaaldelijke sendStatus() om de frontends zeker up-to-date te houden
 
-}, 60*1000); // EVERY MINUTE
+}, 20*1000);
 
 function checkTimeBetweenSetpoints() {
   const [time_begin, time_end] = on_time.split('-');
