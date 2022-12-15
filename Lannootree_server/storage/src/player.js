@@ -12,6 +12,7 @@ export default class Player {
   }
 
   play(filepath, streamTopic, id) {
+    this.paused = false;
     let rawdata = null;
     try {
       rawdata = fs.readFileSync(filepath);

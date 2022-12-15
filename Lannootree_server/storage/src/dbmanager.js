@@ -55,7 +55,7 @@ export default class DBManager {
       const row = rows[i];
       new_media.push({
         id: row.id,
-        name: row.name,
+        name: `${row.id}. ${row.name}`,
         category: row.category,
         description: row.description
       });
