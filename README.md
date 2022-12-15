@@ -2,7 +2,6 @@
 
 [![OS - Linux](https://img.shields.io/badge/OS-Linux-blue?logo=linux&logoColor=white)](https://www.linux.org/ "Go to Linux homepage")
 [![Made with Docker](https://img.shields.io/badge/Made_with-Docker-blue?logo=docker&logoColor=white)](https://www.docker.com/ "Go to Docker homepage")
-[![Made with Python](https://img.shields.io/badge/Python->=3.6-blue?logo=python&logoColor=white)](https://python.org "Go to Python homepage")
 [![Made with Node.js](https://img.shields.io/badge/Node.js->=12-blue?logo=node.js&logoColor=white)](https://nodejs.org "Go to Node.js homepage")
 [![Made with TypeScript](https://img.shields.io/badge/TypeScript-4-blue?logo=typescript&logoColor=white)](https://typescriptlang.org "Go to TypeScript homepage")
 [![Made with Vue](https://img.shields.io/badge/Vue-3-blue?logo=vue.js&logoColor=white)](https://v3.vuejs.org "Go to Vue homepage")
@@ -30,7 +29,15 @@ This is a project for Project Experience 2022, and is designed to be both versat
 ## Features
 
 - A frontend to controll the whole project
-- ...
+- Livestreaming
+- Media page where you can select media out the storage
+- Play, pause and stop the media
+- Upload your own media for example: gifs, photo's, video's
+- Configure how many panels you have and on which channel they are active
+- Logging page:
+  - See wich containers are active
+  - Information of each docker container
+- Everything with authentication and permission control
 
 ## Getting started
 
@@ -52,35 +59,18 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 - [Lannootree_processor](Lannootree_processor/README.md) is used to set-up dockercontainers of the processor. It runs on the server, but can be deployed on a stronger server or computer.
 - [Lannootree_server](Lannootree_server/README.md) is the directory with all services that runs on the server itself.
 
-## MQTT Topics
+## MQTT API
 
-* Controller:
-  - In
-  - Out
-* Panel
-  - Control
-  - id#...
-  - Matrix
-  - Frame
-* Voronoi
-  - In
-  - id#...
-  - Controll
-  - Status
-    - ID
-  - Out
-    - Metadata
-* Storage
-  - In
-    - Metadata
-  - Play
-  - Status
-* Logs: All services can push logs to logs/\<service>
-* Status: Shows the status of all MQTT services ex Online or Offline
+The whole project is connected via a mqtt backbone.
+So everything is controllable externally.
+
+A complete list of topics can be found  in the [mqtt readme](Lannootree_server/mqtt)
 
 ## Blogpost about The Lannootree
 
-![Blogpost](img/Blogpost.png)
+<p align="center">
+  <img src="img/Blogpost.png">
+</p>
 
 ## Docker structure
 
@@ -88,7 +78,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 
 ## Data flow
 
-![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/205050305-787bca8d-d48e-46d5-b0a1-096201860b0a.png)
+![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/207845988-bd813f1a-9457-415b-9e8b-a822372b5395.png)
 
 ## Licence
 
