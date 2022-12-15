@@ -34,7 +34,7 @@ services:
       - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
-      - traefik
+      # - traefik
 
   authelia:
     image: authelia/authelia
@@ -266,6 +266,6 @@ volumes:
 networks:
   lannootree:
     name: lannootree
-  traefik:
-    external: true
+  # traefik:
+  #   external: true
   
