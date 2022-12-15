@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import mqtt from "mqtt";
 import * as fs from 'fs';
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../.env' })
 
 // MQTT ______________________________________________________________________________________
 var caFile = fs.readFileSync("./ca.crt");
