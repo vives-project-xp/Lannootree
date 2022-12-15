@@ -223,7 +223,7 @@ services:
     volumes:
       - mysql:/var/lib/mysql
     networks:
-      - mynetwork
+      - lannootree
   
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -235,7 +235,7 @@ services:
       MYSQL_ROOT_PASSWORD: admin
       TZ: Europe/Brussels
     networks:
-      - mynetwork
+      - lannootree
 
   githook:
     restart: unless-stopped    
