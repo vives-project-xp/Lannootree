@@ -59,7 +59,7 @@ client.on('message', async function (topic, message) {
   }
 });
 
-const dbmanager = new DBManager("localhost","root","storage","storage");   // host, user, password, database
+const dbmanager = new DBManager("mysql","root","storage","storage");   // host, user, password, database
 
 async function add_file(json, name, category, description) {
   let media_id = await dbmanager.addFile(name, category, description, CONFIGHASH);

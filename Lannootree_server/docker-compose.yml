@@ -207,6 +207,7 @@ services:
     restart: always
     volumes:
       - ./config.json:/config.json
+      - ./storage/db/:/app/db
       - "../certs/ca/ca.crt:/app/ca.crt:ro"     
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
