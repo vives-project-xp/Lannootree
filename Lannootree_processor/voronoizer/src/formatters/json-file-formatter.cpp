@@ -5,7 +5,7 @@
 namespace Processing {
 
   JSONFileFormatter::JSONFileFormatter(std::string save_path, bool save_preview)
-    : m_save_path(save_path), m_save_preview(save_preview) 
+    :  m_save_preview(save_preview), m_save_path(save_path)
   {
     m_json_file.open(m_save_path + "processed.json");
     if (!m_json_file.is_open()) {

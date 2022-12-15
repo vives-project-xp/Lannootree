@@ -1,8 +1,8 @@
 #pragma once
 
 #include <threadpool.hpp>
+#include <formatter.hpp>
 #include <frame-provider.hpp>
-#include <json-file-formatter.hpp>
 
 #include <json.hpp>
 #include <opencv4/opencv2/core/core.hpp>

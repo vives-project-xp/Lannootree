@@ -51,13 +51,14 @@ sudo apt-get install libwebp-dev libopenjp2-7 libgtk2.0-dev -y
 # Help menu
 
 ```text
-Usage: Voronoizer [--help] [--version] [--threads VAR] --frame-provider VAR [--redis-url VAR] [--image VAR] [--config VAR]
+Usage: Voronoizer [--help] [--version] [--threads VAR] --frame-provider VAR --formatter VAR [--redis-url VAR] [--image VAR] [--config VAR]
 
 Optional arguments:
   -h, --help            shows help message and exits 
   -v, --version         prints version information and exits 
   -t, --threads         Sets the number of theads to use [default: 4]
-  -p, --frame-provider  Sets the frame provider to use can be: [ "camera" "redis" "single-image" ] [required]
+  -p, --frame-provider  Sets the frame provider to use can be: [ "camera" "redis" "single-image" "video" ] [required]
+  -f, --formatter       Sets the formatter to use can be: [ "Json-local" "Json-redis" ] [required]
   --redis-url           redis url to use when frame provider is redis [default: "redis://localhost:6379"]
   --image               Path to image to process 
   --config              Path to config.json file [default: "./config.json"]
@@ -68,4 +69,16 @@ Optional arguments:
 This project was developed on a linux machine so, for windows you will have to figure that out on you own for the moment. 
 But i know Visual Studio community supports CMake projects.
 
+This project uses [opencv](https://github.com/opencv/opencv) version 4.x, [redis++](https://github.com/sewenew/redis-plus-plus), and [cuda](https://developer.nvidia.com/cuda-downloads) 11.8.
 
+Build project:
+
+```bash
+mkdir build && cd build
+
+cmake -D USE_CUDA=ON ..
+
+make -j4
+```
+
+If you don't want to use cuda set USE_CUDA to OFF.

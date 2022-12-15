@@ -19,13 +19,28 @@ namespace Processing {
       }
       ss << "]";
       return ss.str();
-    };
+    }();
+
+    auto formatter_help = [&]() {
+      std::stringstream ss;
+      ss << "Sets the formatter to use can be: [ ";
+      for (auto& [formatter, unused] : m_formatters_map) {
+        ss << '"' << formatter << '"' << " ";
+      }
+      ss << "]";
+      return ss.str();
+    }();
 
     m_arguments
       .add_argument("-p", "--frame-provider")
-      .help(provider_help())
+      .help(provider_help)
       .required();
       
+    m_arguments
+      .add_argument("-f", "--formatter")
+      .help(formatter_help)
+      .required();
+    
     m_arguments
       .add_argument("--redis-url")
       .help("redis url to use when frame provider is redis")
@@ -87,10 +102,11 @@ namespace Processing {
           break;
         }
 
-        // case FrameProviders::Video: {
-        //   provider = std::make_shared<Processing::VideoFrameProvider>("./big_bunny.avi");
-        //   break;
-        // }
+        case FrameProviders::Video: {
+          // provider = std::make_shared<Processing::VideoFrameProvider>("./big_bunny.avi");
+          throw std::runtime_error("Video not implemented");
+          break;
+        }
       }
     }
     catch (std::runtime_error& e) {
@@ -99,6 +115,42 @@ namespace Processing {
     }
 
     return provider;
+  }
+
+  std::shared_ptr<Formatter> VoronoizerArguments::get_formatter(void) {
+    std::shared_ptr<Formatter> formatter;
+    auto formatter_input = m_arguments.get<std::string>("-f");
+
+    try {
+      switch (m_formatters_map[formatter_input]) {
+        case Formatters::INVALID: {
+          std::cerr 
+            << "[ " << formatter_input << " ] " 
+            << "Invalid formatter."
+            << m_arguments 
+            << std::endl;
+
+          std::exit(1);
+        }
+
+        case Formatters::JSONLocalFile: {
+          formatter = std::make_shared<JSONFileFormatter>("./saves", true);
+          break;
+        }
+
+        case Formatters::JSONRedis: {
+          auto redis_url = m_arguments.get<std::string>("--redis-url");
+          formatter = std::make_shared<JsonRedisFormatter>(redis_url);
+          break;
+        }
+      }
+    }
+    catch (std::runtime_error& e) {
+      std::cerr << e.what() << std::endl;
+      std::exit(1);
+    }
+  
+    return formatter;
   }
 
 }

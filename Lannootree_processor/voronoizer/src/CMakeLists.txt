@@ -10,6 +10,7 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/frame-providers)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/libs)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/voronoizer)
 
+
 if(USE_CUDA)
   add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/cuda-kernels)
 endif()
