@@ -87,10 +87,10 @@ namespace Processing {
           break;
         }
 
-        case FrameProviders::Video: {
-          provider = std::make_shared<Processing::VideoFrameProvider>("./big_bunny.avi");
-          break;
-        }
+        // case FrameProviders::Video: {
+        //   provider = std::make_shared<Processing::VideoFrameProvider>("./big_bunny.avi");
+        //   break;
+        // }
       }
     }
     catch (std::runtime_error& e) {

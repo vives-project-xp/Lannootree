@@ -5,7 +5,7 @@
 #include <frame-provider.hpp>
 #include <redis-frame-provider.hpp>
 #include <single-image-provider.hpp>
-#include <video-frame-provider.hpp>
+// #include <video-frame-provider.hpp>
 
 #include <argparser.hpp>
 
