@@ -108,8 +108,8 @@ var on_time = '08:00-18:00';
 var ledpanelOn = false;
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();
 else sendColorLedPanel(0,0,0);
-client.publish('storage/in', JSON.stringify({"command": "stop_current"}));
 client.publish('storage/in', JSON.stringify({"command": "send_media"}));
+client.publish('storage/in', JSON.stringify({"command": "stop_current"}));
 
 var status = "stop";
 var paused = true;  // later opvragen aan ledclient, niet lokaal bijhouden
@@ -184,13 +184,8 @@ function turnOnLedPanel() {
 }
 
 function turnOffLedPanel() {
-  ledpanelOn = false;
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
-  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
   stop_leds();
+  ledpanelOn = false;
   logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
 }
 
