@@ -36,9 +36,8 @@ async function populateStorage() {
           description: `description_${file.replace('.gif','').replace('.json','')}`
         };
         const data = await fs.promises.readFile("./src/populate/jsonfiles/"+file);
-        setTimeout(function() {
+        setTimeout(function() {          
           client.publish('storage/in', JSON.stringify({"command": "add_file", "json": JSON.stringify(JSON.parse(data)), "name": media_obj.name, "category": media_obj.category, "description": media_obj.description}));
-          console.log(`Sent GIF ${media_obj.name}`)
         }, 5000);
       }
     }
