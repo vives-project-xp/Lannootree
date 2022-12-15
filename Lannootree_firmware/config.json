@@ -6,49 +6,43 @@
     "row": 2
   },
   "inUseChannels": [
-    "CA0",
-    "CA1"
+    "CA0"
   ],
   "channels": {
     "CA0": {
-      "ledCount": 144,
-      "head": "258264678621",
+      "ledCount": 288,
+      "head": "247366252607",
       "cells": [
         {
-          "uuid": "1167997546885",
+          "uuid": "1371704195321",
           "coordinate": {
             "col": 0,
             "row": 1
-          }
+          },
+          "connection": "681915343501"
         },
         {
-          "uuid": "258264678621",
-          "coordinate": {
-            "col": 0,
-            "row": 0
-          },
-          "connection": "1167997546885"
-        }
-      ]
-    },
-    "CA1": {
-      "ledCount": 144,
-      "head": "79808102162",
-      "cells": [
-        {
-          "uuid": "688185936147",
+          "uuid": "681915343501",
           "coordinate": {
             "col": 1,
             "row": 1
           }
         },
         {
-          "uuid": "79808102162",
+          "uuid": "247366252607",
+          "coordinate": {
+            "col": 0,
+            "row": 0
+          },
+          "connection": "148625831431"
+        },
+        {
+          "uuid": "148625831431",
           "coordinate": {
             "col": 1,
             "row": 0
           },
-          "connection": "688185936147"
+          "connection": "1371704195321"
         }
       ]
     }
