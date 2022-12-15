@@ -4,7 +4,7 @@ import DevCheck from './dev.js';
 import mqtt from "mqtt";
 import fs from "fs";
 import dotenv from "dotenv";
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 const debug = false;
 var production_server = process.env.PRODUCTION_SERVER
@@ -184,8 +184,13 @@ function turnOnLedPanel() {
 }
 
 function turnOffLedPanel() {
-  stop_leds();
   ledpanelOn = false;
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": 0, "green": 0, "blue": 0}));
+  stop_leds();
   logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
 }
 

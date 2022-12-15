@@ -1,6 +1,8 @@
 #include <lannootree.hpp>
 #include <logger.hpp>
 
+#include <chrono>
+
 namespace { // Used for signal handeling
   std::mutex mtx;
   std::condition_variable shutdown_request;
@@ -146,12 +148,13 @@ namespace Lannootree {
 
     std::vector<uint32_t> colors;
     for (int i = 0; i < 288; i++) {
-      int red_index = 3 * i;
-      int green_index = red_index + 1;
-      int blue_index = green_index + 1;
+      color c;
+      c.data[0] = data[(3 * i) + 2]; // blue
+      c.data[1] = data[(3 * i) + 1];  // green
+      c.data[2] = data[(3 * i) + 0]; // Red
+      c.data[3] = 0; // White
 
-      Color c(data[red_index], data[green_index], data[blue_index]);
-      colors.push_back(c.to_uint32_t());
+      colors.push_back(c.wrgb);
     }
 
     _channel_mem->at("CA0")->mem_write(colors.data(), colors.size() * sizeof(uint32_t));

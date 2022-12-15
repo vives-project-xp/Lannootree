@@ -1,0 +1,443 @@
+[
+    {
+        "id": "f6f2187d.f17ca8",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "8a3120f371607926",
+        "type": "tls-config",
+        "name": "",
+        "cert": "/app/clientcert/client.crt",
+        "key": "/app/clientcert/client.key",
+        "ca": "/app/ca.crt",
+        "certname": "",
+        "keyname": "",
+        "caname": "",
+        "servername": "lannootree.devbitapp.be",
+        "verifyservercert": true,
+        "alpnprotocol": ""
+    },
+    {
+        "id": "58426c8420e637f1",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "lannootree.devbitapp.be",
+        "port": "8883",
+        "tls": "8a3120f371607926",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": true,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "status/nodered",
+        "birthQos": "0",
+        "birthRetain": "true",
+        "birthPayload": "Online",
+        "birthMsg": {},
+        "closeTopic": "status/nodered",
+        "closeQos": "0",
+        "closeRetain": "true",
+        "closePayload": "Offline",
+        "closeMsg": {},
+        "willTopic": "status/nodered",
+        "willQos": "0",
+        "willRetain": "true",
+        "willPayload": "Offline",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "b3afd74e331ecdba",
+        "type": "mqtt-broker",
+        "name": "Mqtt-api",
+        "broker": "mqtt-api",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "27a604261b7faa35",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "esp_remote/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "b3afd74e331ecdba",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 150,
+        "y": 220,
+        "wires": [
+            [
+                "a405afa0ca699f60",
+                "0d8592ca02fdaf2d"
+            ]
+        ]
+    },
+    {
+        "id": "1ef6b18530739731",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "58426c8420e637f1",
+        "x": 630,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "a405afa0ca699f60",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 360,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "803cd283a752367e",
+        "type": "debug",
+        "z": "f6f2187d.f17ca8",
+        "name": "debug 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "039dc07e28019fac",
+        "type": "mqtt in",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "esp_remote_mini/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "b3afd74e331ecdba",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 280,
+        "wires": [
+            [
+                "4b19576fd6ef790e",
+                "a405afa0ca699f60"
+            ]
+        ]
+    },
+    {
+        "id": "0d8592ca02fdaf2d",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "function 1",
+        "func": "var newmsg = {};\nlet btn = msg.payload.button;\n\nnewmsg.topic = \"controller/in\"\nswitch (btn) {\n    case \"1\": newmsg.payload = { command: \"play_effect\", effect_name: 1 }; break;\n    case \"2\": newmsg.payload = { command: \"play_effect\", effect_name: 2 }; break;\n    case \"3\": newmsg.payload = { command: \"play_effect\", effect_name: 3 }; break;\n    case \"4\": newmsg.payload = { command: \"play_effect\", effect_name: 4 }; break;\n    case \"5\": newmsg.payload = { command: \"play_effect\", effect_name: 5 }; break;\n    case \"6\": newmsg.payload = { command: \"play_effect\", effect_name: 6 }; break;\n    case \"7\": newmsg.payload = { command: \"play_effect\", effect_name: 7 }; break;\n    case \"8\": newmsg.payload = { command: \"play_effect\", effect_name: 8 }; break;\n    case \"9\": newmsg.payload = { command: \"play_effect\", effect_name: 9 }; break;\n    case \"10\": newmsg.payload = { command: \"play_effect\", effect_name: 10 }; break;\n    case \"11\": newmsg.payload = { command: \"play_effect\", effect_name: 11 }; break;\n    case \"12\": newmsg.payload = { command: \"play_effect\", effect_name: 12 }; break;\n    case \"13\": newmsg.payload = { command: \"play_effect\", effect_name: 0 }; break;\n    case \"14\": newmsg.payload = { command: \"stop\" }; break;\n    case \"15\": newmsg.payload = { command: \"pause\" }; break;\n    case \"16\": newmsg.payload = { command: \"play\" }; break;\n    default:\n\n}\n\nreturn newmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4b19576fd6ef790e",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "function 2",
+        "func": "var newmsg = {};\nlet btn = msg.payload.button;\n\nnewmsg.topic = \"controller/in\"\nswitch (btn) {\n    case \"1\": newmsg.payload = { command: \"previous\" }; break;\n    case \"2\": newmsg.payload = { command: \"next\" }; break;\n}\n\nreturn newmsg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 360,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0641e60e8baf020b",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "on",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "00 08 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "controller/in",
+        "payload": "{\"command\":\"play_effect\",\"effect_name\":0}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 520,
+        "wires": [
+            [
+                "57f9bb8d6d9b8ea3",
+                "92adbcf6cb0776be"
+            ]
+        ]
+    },
+    {
+        "id": "eb2b07e67c92b0c3",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "off",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "01 18 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "controller/in",
+        "payload": "{\"command\":\"color\",\"red\":0,\"green\":0,\"blue\":0}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 560,
+        "wires": [
+            [
+                "57f9bb8d6d9b8ea3",
+                "aaa5486daf7abe3b"
+            ]
+        ]
+    },
+    {
+        "id": "57f9bb8d6d9b8ea3",
+        "type": "msg-resend",
+        "z": "f6f2187d.f17ca8",
+        "interval": "10",
+        "intervalUnit": "msecs",
+        "maximum": "10",
+        "bytopic": false,
+        "clone": false,
+        "firstDelayed": false,
+        "addCounters": false,
+        "waitForResend": false,
+        "highRate": false,
+        "outputCountField": "",
+        "outputMaxField": "",
+        "name": "",
+        "x": 330,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "43cd204e461f5ba3",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "",
+        "topic": "",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "58426c8420e637f1",
+        "x": 530,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "b3296cc6ee0a1ac0",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "logs",
+        "topic": "logs/nodered",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "58426c8420e637f1",
+        "x": 530,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "92adbcf6cb0776be",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "on",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[INFO] Turning tree on",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "aaa5486daf7abe3b",
+        "type": "change",
+        "z": "f6f2187d.f17ca8",
+        "name": "off",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "[INFO] Turning tree off",
+                "tot": "str"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3b81e8b8751a5088",
+        "type": "inject",
+        "z": "f6f2187d.f17ca8",
+        "name": "send every minute",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "*/1 8-17 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "controller/in",
+        "payload": "{\"command\":\"next\"}",
+        "payloadType": "json",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "2d3bcac61754c825"
+            ]
+        ]
+    },
+    {
+        "id": "227dd9689cacfe13",
+        "type": "mqtt out",
+        "z": "f6f2187d.f17ca8",
+        "name": "logs",
+        "topic": "logs/nodered",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "58426c8420e637f1",
+        "x": 530,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "2d3bcac61754c825",
+        "type": "function",
+        "z": "f6f2187d.f17ca8",
+        "name": "function 3",
+        "func": "msg.payload = `Sending: ${JSON.stringify(msg.payload)}`;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    }
+]

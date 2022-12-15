@@ -1,0 +1,49 @@
+# Its you my webcam that is awfull lol
+
+GPU:
+  Get next frame: 87ms | 87028us
+  Voronoize: 0ms | 178us
+  Processing && visualization: 5ms | 5439us
+  Argsort: 0ms | 40us
+  Sort: 0ms | 10us
+  Formatting: 35ms | 35244us
+  Total: 132ms | 132793us
+  
+  Get next frame: 90ms | 90242us
+  Voronoize: 0ms | 189us
+  Processing && visualization: 5ms | 5581us
+  Argsort: 0ms | 39us
+  Sort: 0ms | 10us
+  Formatting: 36ms | 36880us
+  Total: 136ms | 136583us
+  
+  Get next frame: 85ms | 85670us
+  Voronoize: 0ms | 186us
+  Processing && visualization: 5ms | 5353us
+  Argsort: 0ms | 41us
+  Sort: 0ms | 9us
+  Formatting: 35ms | 35486us
+  Total: 132ms | 132465us
+
+CPU (1 Thread):
+  Get next frame: 32ms | 32509us
+  Voronoize: 0ms | 39us
+  Processing && visualization: 80ms | 80714us
+  Argsort: 0ms | 9us
+  Formatting: 6ms | 6805us
+  Total: 122ms | 122015us
+  
+  Get next frame: 46ms | 46333us
+  Voronoize: 0ms | 47us
+  Processing && visualization: 82ms | 82799us
+  Argsort: 0ms | 9us
+  Formatting: 7ms | 7095us
+  Total: 138ms | 138492us
+  
+  Get next frame: 39ms | 39873us
+  Voronoize: 0ms | 84us
+  Processing && visualization: 91ms | 91950us
+  Argsort: 0ms | 10us
+  Formatting: 7ms | 7856us
+  Total: 141ms | 141714us
+  

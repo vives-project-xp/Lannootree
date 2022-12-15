@@ -9,6 +9,7 @@ log:
   level: debug
 theme: dark
 jwt_secret: Verry_secret_secret! # Change this!
+default_redirection_url: https://lannootree.devbitapp.be
 totp:
   issuer: authelia.com
 
