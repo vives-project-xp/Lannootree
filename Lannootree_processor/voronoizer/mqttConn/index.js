@@ -38,6 +38,7 @@ const main = async function() {
   
   while (true) {
     const data = await redis_client.brPop("nextframe", 0);
+    console.log("Adding frame");
     mqtt_client.publish('ledpanel/stream/stream_0', data.element);
   }
 }
