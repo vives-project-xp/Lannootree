@@ -116,18 +116,8 @@ class Lannootree:
       if not isSingleImage:
         for i, frame in enumerate(frames):
           print(f'processing frame [{i + 1}/{len(frames)}]')
-
-          gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-
-          image_height, image_width, _ = frame.shape
-
-          cstring = draw_voronoi(img_voronoi, facets, self.screen_LED_indexes, frame, gray)
-
-          data_to_send = []
-          for c in cstring:
-            data_to_send.append(int(c))
-
-          processed[f"frame{i}"] = data_to_send
+          cstring = self.process_frame(image, img_voronoi, facets)
+          processed[f"frame{i}"] = cstring
 
         with open(f"./processed_json/{self.i}.json", "w") as f:
           json.dump(processed, f, indent=2)
@@ -138,15 +128,14 @@ class Lannootree:
      
       # For png
       else:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        cstring = draw_voronoi(img_voronoi, facets, self.screen_LED_indexes, image, gray)
-        
-        data_to_send = []
-        for c in cstring:
-          data_to_send.append(int(c))
-        
+        self.process_frame(image, img_voronoi, facets)
         print("Done processing one image")
 
+
+  def process_frame(self, image, img_voronoi, facets):
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return draw_voronoi(img_voronoi, facets, self.screen_LED_indexes, image, gray)
+    
 
   def __init_config__(self):
     dsubx = 107.76
@@ -174,10 +163,9 @@ class Lannootree:
     for i in range(nPanels):
       self.screen_LED_indexes[self.panel_LED_indexes.shape[0]*i:self.panel_LED_indexes.shape[0]*i+self.panel_LED_indexes.shape[0]] = self.panel_LED_indexes+self.panel_LED_indexes.shape[0]*i
 
-
   def __init_redis__(self):
     self.redis = rd.Redis(
-      host='redis',
+      host='localhost',
       port=6379
     )
 

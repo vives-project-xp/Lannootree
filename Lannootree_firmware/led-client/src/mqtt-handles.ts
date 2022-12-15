@@ -1,27 +1,33 @@
 import fs from 'fs'
+import mqtt from 'mqtt'
+import streamPlayer from './stream-player.js'
 import { ledDriver } from './driver-connection.js'
 import { gifPlayer } from './temporary/gif-player.js'
 
 const config = JSON.parse(fs.readFileSync('./config.json').toString());
 
 export function pause_leds() {
-  gifPlayer.pause();
+  // gifPlayer.pause();
+  streamPlayer.pause();
 }
 
 export function play_leds() {
-  gifPlayer.play();
+  streamPlayer.play();
+  // gifPlayer.play();
 }
 
 export function stop_leds() {
-  gifPlayer.stop();
+  streamPlayer.stop();
+  // gifPlayer.stop();
 }
 
 export function play_gif(data: any) {
-  gifPlayer.set_gif(data.gif_number);
+  // gifPlayer.set_gif(data.gif_number);
 }
 
 export function set_color(data: any) {
   gifPlayer.stop();
+  streamPlayer.stop();
 
   let cString = new Array<number>(config.channels.CA0.ledCount * 3);
   
@@ -38,11 +44,15 @@ export function change_config(data: any) {
   fs.writeFileSync('./config.json', data);
 }
 
-// var activeStreamTopic: string | null = null;
+export function play_stream(mqtt_client: mqtt.Client, currentStreamID: string | null, data: any) {
+  if (currentStreamID != null) {
+    mqtt_client.unsubscribe(`ledpanel/stream/${currentStreamID}`)
+    currentStreamID = null;
+  }
 
-// export function play_stream(streamID: string, client: MqttClient) {
-//   if(activeStreamTopic != null) client.unsubscribe(activeStreamTopic);
-//   activeStreamTopic = streamID;
-//   client.subscribe(streamID);
-//   console.log(`LED client subscribed to "${streamID}"`);
-// }
+  currentStreamID = data.stream;
+  console.log(`Listening on stream: ${currentStreamID}`)
+  mqtt_client.subscribe(`ledpanel/stream/${currentStreamID}`);
+
+  streamPlayer.start();
+}
