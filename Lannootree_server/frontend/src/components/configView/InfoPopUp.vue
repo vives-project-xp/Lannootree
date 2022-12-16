@@ -22,24 +22,25 @@
 
 <template>
   <v-card
-    width="150px"
+    max-width="250px"
   >
     <v-row>
       <v-col>
-        <p
+        <div
           class="ma-3"
         >
-          {{ popup.description }}
-        </p>
+          <span style="white-space: pre-line">
+            {{ popup.description }}
+        </span>
+        </div>
       </v-col>
     </v-row>
 
-    <v-row>
+    <v-row v-if='popup.buttonText !== ""'>
       <v-col
         class="d-flex align-center justify-center ma-3"
       >
         <v-btn
-          v-if='popup.buttonText !== ""'
           @click="emit('button-clicked')"
         >
           {{ popup.buttonText }}

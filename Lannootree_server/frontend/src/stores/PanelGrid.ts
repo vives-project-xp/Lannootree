@@ -29,6 +29,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     to: { col: 0, row: 0 }
   });
 
+  const connectionEvent = ref<number>(0);
   const addConnection = function() {
     let fromPanel = panels.value.getValue(connection.value.from.col, connection.value.from.row);
     let toPanel = panels.value.getValue(connection.value.to.col, connection.value.to.row);
@@ -36,6 +37,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     if (fromPanel !== null && toPanel !== null) {
       fromPanel.connection = toPanel;
       toPanel.parentConnection = fromPanel;
+      connectionEvent.value++;
     }
 
     connectionPhase.value = false;
@@ -105,6 +107,7 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     return filter;
   });
 
+  const changeChannelEvent = ref(0);
   const changeChannel = function(coordinate: Coordinate, channel: string) {
     let panel = panels.value.getValue(coordinate.col, coordinate.row);
 
@@ -130,7 +133,8 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     }
 
     if (panel !== null && panel !== undefined) {
-      panel.channel = channel;    
+      panel.channel = channel;   
+      changeChannelEvent.value++; 
     }
   }
 
@@ -225,54 +229,6 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     deep: true 
   });
 
-  const toJsonOld = computed(() => {
-
-    obj.inUseChannels.forEach(chan => {
-      let panelsInChannel = panels.value.toArray().filter(p => {
-        if (p) return p.channel == chan;
-        return false;
-      });
-
-      let ledCount = panelsInChannel.length * 72;
-      let head = panelsInChannel.find(p => p?.parentConnection === null);
-      let cells = [];
-
-      let current = head;
-      let next = current?.connection;
-
-      do {
-        let corrected_coordinate: Coordinate = JSON.parse(JSON.stringify(current?.coordinate));
-        corrected_coordinate.row =  -((corrected_coordinate.row - 1) - obj.dimentions.row + 1);
-        corrected_coordinate.col = corrected_coordinate.col - 1;
-
-
-        cells.push({
-          uuid: current?.uuid,
-          coordinate: corrected_coordinate,
-          connection: next?.uuid
-        });
-
-        current = next;
-        next = current?.connection;
-
-      } while (current?.connection.uuid !== current?.uuid);
-
-      cells.push({
-        uuid: current?.uuid,
-        coordinate: current?.coordinate,
-      });
-
-      obj.channels[chan] = {
-        ledCount: ledCount,
-        head: head?.uuid,
-        cells: cells
-      };
-
-    });
-
-    return JSON.stringify(obj, null, 2);
-  });
-
   panels.value.setValue(1, 1, new Panel({ col: 1, row: 1 }));
   changeChannel({ col: 1, row: 1 }, "CA0");
 
@@ -291,6 +247,9 @@ export const usePanelGrid = defineStore('panel-grid', () => {
     channelToColor,
 
     toJson,
+
+    connectionEvent,
+    changeChannelEvent
   };
 
 });

@@ -25,8 +25,6 @@
   const panelStore = usePanelGrid();
   const display_options = useDisplayOptions();
 
-  const tutorialStep = ref(0);
-
   const { text, copy, copied, isSupported } = useClipboard({ source: panelStore.toJson });
 
   const centerScreen = computed(() => {
@@ -39,8 +37,8 @@
   });
 
   const popupInfo = ref<Popup>({
-    description: "Welcome to this tutorial. This will teach you how to use the config panel.",
-    buttonText: "Next",
+    description: "",
+    buttonText: "",
   });
 
   const copyToClipboard = function() {
@@ -61,9 +59,6 @@
     loggingStore.ws.send(JSON.stringify(obj));
   };
 
-  const startTutorial = function() {
-    showPopup.value = true;
-  };
   
   onUpdated(() => {
     posted.value = false;
@@ -74,15 +69,44 @@
     initialValue: { x: centerScreen.value.left, y: centerScreen.value.top },
     preventDefault: true
   });
-
+  
+  const tutorial = ref(false);
+  const tutorialStep = ref(0);
+  
   const panel = ref<HTMLElement | null>(null);
+  const options = ref<HTMLElement | null>(null);
   const json = ref<HTMLElement | null>(null);
+  
+  const startTutorial = function() {
+    popupInfo.value.description = "Welcome to this tutorial.\n\n\
+     Here i will teach you how to use the config panel.\n\n\
+     Just so you know:\n\
+     if i'm in the way, try draging me away 👋.";
+    popupInfo.value.buttonText = "Next";
+    showPopup.value = true;
+    tutorial.value = true;
+  };
+
+  const getTutorialTarget = computed(() => {
+    if (tutorialStep.value < 5) return panel;
+    if (tutorialStep.value == 5) return options;
+    if (tutorialStep.value == 6) return panel;
+    return json;
+  });
 
   const tutorialSteps = TutorialSteps(popupInfo, x, y);
 
   const nextPopup = function() {
-    
-    let requirement = tutorialSteps[tutorialStep.value](panel);
+    if (tutorialStep.value > 7) {
+      tutorialStep.value = 0;
+      tutorial.value = false;
+      showPopup.value = false;
+    }
+
+    let requirement: any = tutorialSteps[tutorialStep.value](getTutorialTarget.value);
+
+    if (requirement != undefined) 
+      requirement(nextPopup);
 
     tutorialStep.value++;
   };
@@ -106,18 +130,20 @@
 
     <v-row style="max-height: 50px">
       <v-col cols="11" class="d-flex align-start justify-start" max-height="100px">
-        <OptionMenu/>
+        <div ref="options">
+          <OptionMenu/>
+        </div>
       </v-col>
       <v-col cols="1">
 
         <v-btn
-        @click="startTutorial"
+          @click="startTutorial"
         >
         Tutorial
           <v-overlay 
             :z-index="0" 
             :persistent="true"
-            activator="parent"
+            v-model="tutorial"
             location-strategy="connected"
           ></v-overlay>
         </v-btn>
