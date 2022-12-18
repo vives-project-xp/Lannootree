@@ -36,8 +36,10 @@ export default (popupWindow: Ref<Popup>, x: Ref<number>, y: Ref<number>) => {
     targetChangeFocus(target);
     
     popupWindow.value.description =
-      "Here you can see the visual representation of the Lannootree.\n\n\
-      This is where we will configure the panels.";
+      `Here you can see the visual representation of the Lannootree.
+
+      As you can see, this tree is made up of various panels that can be configured to your liking. 
+      In the following steps, we will walk you through the process of setting up and configuring these panels to suit your needs.`;
     
     moveToTarget(target, -100, -100);
     
@@ -50,8 +52,9 @@ export default (popupWindow: Ref<Popup>, x: Ref<number>, y: Ref<number>) => {
     targetChangeFocus(target);
 
     popupWindow.value.description =
-      "To add a panel simply click on one of the available panels.\n\n\
-      Go ahead and add one panel 😃."
+      `Adding panels to the Lannootree is easy – just click on one of the available options. 
+      You can add as many panels as you like, so go ahead and give it a try! 
+      Customizing the panels to fit your needs is a great way to make the Lannootree even more powerful and effective. 😃`;
 
     popupWindow.value.buttonText = "";
 
@@ -71,10 +74,11 @@ export default (popupWindow: Ref<Popup>, x: Ref<number>, y: Ref<number>) => {
     targetChangeFocus(target);
 
     popupWindow.value.description =
-      "Now that we have 2 pannels we can connect them.\n\n\
-      To connect 2 pannels hold your mouse down for 250ms on one the pannels.\n\n\
-      You will know when you pressed long enough when a line start to follow you cursor\n\n\
-      To then make the conection click on the panel you want to connect to.";
+      `Now that you have added two panels to the Lannootree, it's time to connect them. 
+
+        To connect two panels, hold your mouse down on one of the panels for 250 milliseconds. 
+        You will know when you have held the mouse down long enough when a line starts to follow your cursor. 
+        To complete the connection, simply click on the panel you want to connect to.`;
 
     return (next: any) => {
       let undoWatch: any;
@@ -95,9 +99,14 @@ export default (popupWindow: Ref<Popup>, x: Ref<number>, y: Ref<number>) => {
     targetChangeFocus(target);
 
     popupWindow.value.description =
-      "But what if we accedentaly made the wrong connection 🤔 ?\n\n\
-      To unconnect a connection, you have to just connect the panel with itself.\n\n\
-      Go ahead and ty it.";
+      `Sometimes, you may accidentally make a connection between two panels that you didn't mean to. 
+        If this happens, don't worry – it's easy to fix! 
+
+        To unconnect a panel from another panel, simply connect it to itself. 
+        To do this, hold your mouse down on the panel for 250 milliseconds, then click on the same panel again. 
+        This will disconnect the panel from any other panel it was previously connected to. 
+
+        Try it out for yourself and see how it works. Remember, it's always a good idea to double-check your panel connections to make sure they are set up the way you want them.`;
 
       return (next: any) => {
         let undoWatch: any;
