@@ -78,7 +78,7 @@ A complete list of topics can be found  in the [mqtt readme](Lannootree_server/m
 
 ## Data flow
 
-![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/208321284-521777b6-5140-46dc-9269-3dc107e713f1.png)
+![DataflowLT drawio](https://user-images.githubusercontent.com/71697142/208321403-e0d33cfb-8f1f-4190-acce-cd2586f3b850.png)
 
 ## Licence
 
