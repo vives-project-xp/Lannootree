@@ -36,7 +36,10 @@ export default class Player {
       if(!this.paused) {
         this.client.publish('ledpanel/stream/'+streamTopic, JSON.stringify({"frame": jsonObj.getByIndex(currentframe)}));
         currentframe++;
-        if(currentframe==Object.keys(jsonObj).length) currentframe = 0;
+        if(currentframe==Object.keys(jsonObj).length) {
+          this.client.publish('storage/out', JSON.stringify({"message": "endOfGIF"}));
+          currentframe = 0;
+        } 
       }
     }, 33); // 30 FPS
 
