@@ -2,6 +2,14 @@
 
 This part of the Lannootree is the `controller`. The controller handles all the request sent over MQTT by the frontend (client-api). Based on those requests, it will send commands (also over MQTT) to both the storage and led-client to control the LedPanel.
 
+## Starting the controller
+
+The controller should be running inside a `docker` container, but if you want to run your own development-controller:
+
+```bash
+npm run dev
+```
+
 ## Features
 
 * When a `development-controller` starts (started local with 'npm run dev'), the controller on the server (docker) will automatically go in sleep-mode to prevent conflicts.
