@@ -10,6 +10,9 @@ const debug = false;
 var production_server = process.env.PRODUCTION_SERVER
 const developement_time = process.env.CONTROLLER_DEV_SECONDS;
 
+// When you start the controller local with npm run dev, the DevCheck will make sure that
+// the controller running on the server in docker will automatically go in sleep-mode
+// to avoid conflicts with the local controller
 var instanceName = "controller";
 if (typeof production_server == 'undefined') {
   production_server = false;
