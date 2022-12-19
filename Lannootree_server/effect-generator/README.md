@@ -12,7 +12,7 @@ npm run dev
 
 ## Already implemented effects
 
-Inside the `src/effect_generator.js` file, you find this line of code: 
+Inside the `src/effect_generator.js` file, you find this line of code:
 
 ```js
 manager.generate_gifs([10, 10], 10);  // generates 100x100px gifs (scaled from 10x10)
