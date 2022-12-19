@@ -18,6 +18,7 @@ if (typeof production_server == 'undefined') {
 const devCheck = new DevCheck(production_server, developement_time);
 
 // MQTT______________________________________________________________
+
 var caFile = fs.readFileSync("./ca.crt");
 var clientcrt = fs.readFileSync("./client.crt");
 var clientkey = fs.readFileSync("./client.key");
@@ -105,7 +106,7 @@ client.on('message', function (topic, message) {
 // CONTROLLER______________________________________________________________
 
 var on_time = '08:00-18:00';                                                // default ontime
-var ledpanelOn = false;                                                     // if false, the LedPanel can't be controlled from the frontend
+var ledpanelOn = false;                                                     // if false, most of the LedPanel control functions will be blocked
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();                           // when starting, check if current time is between on_time, if so... turn on the LedPanel
 else sendColorLedPanel(0,0,0);                                              // if not, send offcolor to LedPanel
 client.publish('storage/in', JSON.stringify({"command": "send_media"}));    // On startup: ask storage to send current available media
@@ -122,17 +123,23 @@ function update_media(new_media) {  // Function to update the media array
   sendStatus();
 }
 
-setInterval(() => {
+setInterval(() => {   // Interval that executes every 20 seconds
   
+  // The controller checks if the LedPanel should turn on or off
   if(checkTimeBetweenSetpoints() && !ledpanelOn) turnOnLedPanel();
   else if(!checkTimeBetweenSetpoints() && ledpanelOn) turnOffLedPanel();
 
+  // The controller asks the storage to send its stored media. It will send it back to the controller under the controller/in topic with the command "media"
   client.publish('storage/in', JSON.stringify({"command": "send_media"}));
 
-  sendStatus(); // herhaaldelijke sendStatus() om de frontends zeker up-to-date te houden
+  // The status of the variables and the stored media get sent every 20 seconds to the frontend (makes sure the frontend is up-to-date)
+  sendStatus();
 
 }, 20*1000);
 
+// This function checks if the current time is between the on_time variable or not to automatically turn off/on the LedPanel
+// EX: if its 12:45 and the ontime is '08:00-18:00', the function returns true
+// EX: if its 05:78 and the ontime is '08:00-18:00', the function returns false
 function checkTimeBetweenSetpoints() {
   const [time_begin, time_end] = on_time.split('-');
   const [hours_begin, minutes_begin] = time_begin.split(':');
@@ -152,6 +159,7 @@ function checkTimeBetweenSetpoints() {
   }
 }
 
+// With this function, you can set the on_time variable. It checks if the string is valid or not
 function set_ontime(ontime) {
   const date_begin = new Date();
   const date_end = new Date();
@@ -175,21 +183,24 @@ function set_ontime(ontime) {
   else logging(`[ERROR] Possible wrong ontime format ('${ontime}'), must be like: '08:00-18:00'`)
 }
 
+// Function to turn on the LedPanel
 function turnOnLedPanel() {
   ledpanelOn = true;
-  sendColorLedPanel(50,0,0);
+  sendColorLedPanel(50,0,0);  // When turned on (idle-state), the color red will be shown
   logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
 }
 
+// Function to turn off the LedPanel
 function turnOffLedPanel() {
   stop_leds();
   ledpanelOn = false;
   logging(`[INFO] LedPanel turned OFF (ontime-schedule: ${on_time})`);
 }
 
+// Function to pause the LedPanel
 function pause_leds() {
-  if(ledpanelOn) {
-    client.publish('storage/in', JSON.stringify({"command": "pause_current"}));
+  if(ledpanelOn) {  // Can only be executed when ledpanelOn is true (if the time is between on_time)
+    client.publish('storage/in', JSON.stringify({"command": "pause_current"})); // Ask the storage to pause the current stream
     status = "pause";
     paused = true;
     sendStatus();
@@ -198,9 +209,10 @@ function pause_leds() {
   else logging(`[WARNING] CANT PAUSE, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
+// When paused, this function can resume the LedPanel again
 function play_leds() {
   if(ledpanelOn) {
-    client.publish('storage/in', JSON.stringify({"command": "play_current"}));
+    client.publish('storage/in', JSON.stringify({"command": "play_current"})); // Ask the storage to resume the current stream
     status = "playing";
     paused = false;
     sendStatus();
@@ -209,16 +221,18 @@ function play_leds() {
   else logging(`[WARNING] CANT PLAY, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
+// This function sends 5 times a static color to the LedPanel (just to be sure :) )
 function sendColorLedPanel(r,g,b) {
   for(let i = 0; i<5; i++) {
     client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": r, "green": g, "blue": b}));
   }
 }
 
+// This function stops the LedPanel
 function stop_leds() {
   if(ledpanelOn) {
-    client.publish('storage/in', JSON.stringify({"command": "stop_current"}));
-    sendColorLedPanel(0,0,0);
+    client.publish('storage/in', JSON.stringify({"command": "stop_current"}));  // Ask the storage to stop the current stream
+    sendColorLedPanel(0,0,0); // Send color black to the LedPanel, it won't be lit up anymore
     status = "stop";
     paused = true;
     activeStream = null;
@@ -229,9 +243,10 @@ function stop_leds() {
   else logging(`[WARNING] CANT STOP, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
+// This function sends a static color to the LedPanel
 function set_color(red, green, blue) {
   if(ledpanelOn) {
-    client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": red, "green": green, "blue": blue}));
+    sendColorLedPanel(red, green, blue);
     current_media_id = null;
     sendStatus();
     logging(`[INFO] static color (${red},${green},${blue}) set`);
@@ -239,20 +254,25 @@ function set_color(red, green, blue) {
   else logging(`[WARNING] CANT SET COLOR, LedPanel is OFF (ontime-schedule: ${on_time})`);
 }
 
+// If being called, this function asks the storage to begin playing a stream for some media with a specific media_id.
+// The storage will perform some checks on the media_id, and if everything's allright, it will give a response under the controller/in topic and command 'acceptstream'.
+// Only then, the play_media function will be called (see below)
 function ask_play_media(media_id) {
   if(ledpanelOn) {
     if(media_id == current_media_id) {
       logging(`[INFO] MEDIA ${media_id} IS ALREADY PLAYING`);
     } else {
-      let streamID = generateStreamID();
-      client.publish('storage/in', JSON.stringify({"command": "play", "id": media_id, "streamtopic": `stream_${streamID}`}));
+      let streamID = generateStreamID();  // This generated a steamID (goes from 000 to 999)
+      client.publish('storage/in', JSON.stringify({"command": "play", "id": media_id, "streamtopic": `stream_${streamID}`})); // Ask storage to play media_id ... on streamtopic ...
     }
   }
   else logging(`[WARNING] CANT PLAY MEDIA, LedPanel is OFF (ontime-schedule)`);
 }
 
+// If the storage accepted the request (see 'ask_play_media'), it will return the topic and media_id that the 'ask_play_media' function gave.
+// At this point, the storage is already streaming the media with media_id ... under that topic 
 function play_media(topic, id) {
-  client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": topic}));
+  client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": topic})); // Let the LedPanel listen on that streamtopic
   current_media_id = id;
   activeStream = topic;
   status = "playing";
@@ -261,6 +281,7 @@ function play_media(topic, id) {
   logging(`[INFO] playing media (${id})`);
 }
 
+// This function generates a streamID between 000 and 999
 var currentID = 0;
 function generateStreamID() {
   function padLeft(nr, n, str){
@@ -271,8 +292,8 @@ function generateStreamID() {
   return padLeft(currentID,3);
 }
 
+// This function sends the value of the stored variables to the frontend on the controller/status topic so it can be updated
 function sendStatus() {
-
   let obj = JsonGenerator.statusToJson(
     status,
     paused,
