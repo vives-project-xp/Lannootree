@@ -1,9 +1,9 @@
 # Remote Controls
 
-## hardware_controller_esp32
+The `Remote controls` are the 2 physical Lannootree controllers (ESP32's). These microcontrollers read the state of their buttons and send a command over MQTT when they're pressed. Those commands will be mapped to [controller](../Lannootree_server/controller/README.md) commands by the [button-mapper](../Lannootree_server/button-mapper/README.md).
 
-In this folder you will find the code for the remote control like a TV remote control with different gifs that you can choose or play and pause them.
+The `ESP32 mini` had 2 big blue buttons connected (next, previous)
 
-## hardware_controller_esp32_mini
+The `ESP32` (picture below) had 16 buttons connected (gif 0-12, pause, play and stop)
 
-This is code for two buttons you can press to go to the next or previous gif.
+![ESP32](./img/controller_esp32.jpg).
