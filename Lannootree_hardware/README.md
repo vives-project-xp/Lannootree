@@ -6,4 +6,4 @@ The `ESP32 mini` had 2 big blue buttons connected (next, previous)
 
 The `ESP32` (picture below) had 16 buttons connected (gif 0-12, pause, play and stop)
 
-![ESP32](./img/controller_esp32.jpg).
+![ESP32](./img/controller_esp32.jpg)
