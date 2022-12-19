@@ -104,20 +104,20 @@ client.on('message', function (topic, message) {
 
 // CONTROLLER______________________________________________________________
 
-var on_time = '08:00-18:00';
-var ledpanelOn = false;
-if(checkTimeBetweenSetpoints()) turnOnLedPanel();
-else sendColorLedPanel(0,0,0);
-client.publish('storage/in', JSON.stringify({"command": "send_media"}));
-client.publish('storage/in', JSON.stringify({"command": "stop_current"}));
+var on_time = '08:00-18:00';                                                // default ontime
+var ledpanelOn = false;                                                     // if false, the LedPanel can't be controlled from the frontend
+if(checkTimeBetweenSetpoints()) turnOnLedPanel();                           // when starting, check if current time is between on_time, if so... turn on the LedPanel
+else sendColorLedPanel(0,0,0);                                              // if not, send offcolor to LedPanel
+client.publish('storage/in', JSON.stringify({"command": "send_media"}));    // On startup: ask storage to send current available media
+client.publish('storage/in', JSON.stringify({"command": "stop_current"}));  // On startup: ask starge to stop currently playing media
 
-var status = "stop";
-var paused = true;  // later opvragen aan ledclient, niet lokaal bijhouden
-var activeStream = null;
-var current_media_id = null;
-var media = [];
+var status = "stop";            // Default status is stopped
+var paused = true;              // Controller is paused
+var activeStream = null;        // Active stream topic (storage streams under that topic, LedClient listens on that topic)
+var current_media_id = null;    // Media id (database id) from currently playing media
+var media = [];                 // Local stored media array (received from storage)
 
-function update_media(new_media) {
+function update_media(new_media) {  // Function to update the media array
   media = new_media;
   sendStatus();
 }
