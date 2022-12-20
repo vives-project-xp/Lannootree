@@ -15,26 +15,30 @@ It can be downloaded to the clients via [this link](https://lannootree.devbitapp
 
 ### Topics
 
-* Controller:
-  - In
-  - Out
-* Panel
-  - Control
-  - id#...
-  - Matrix
-  - Frame
-* Voronoi
-  - In
+- `controller`
+  - in
+  - status
+- `storage`
+  - in
+  - out
+- `ledpanel`
+  - in
+  - stream
+    - stream_xxx = {"frame":[15,89,35,12,14,47,48...]}
+- `logs`
+  - \<service1> = (Log message1)
+  - \<service2> = (Log message2)
+  - \<service...> = ...
+- `status`
+  - \<service1> = (Online/Offline)
+  - \<service2> = (Online/Offline)
+  - \<service...> = ...
+<!-- - `voronoi`
+  - in
   - id#...
   - Controll
   - Status
     - ID
   - Out
-    - Metadata
-* Storage
-  - In
-    - Metadata
-  - Play
-  - Status
-* Logs: All services can push logs to logs/\<service>
-* Status: Shows the status of all MQTT services ex Online or Offline
+    - Metadata -->
+<!-- Voronoi doesn't listen over mqtt yet -->
