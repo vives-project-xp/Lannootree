@@ -36,7 +36,7 @@ client.on('connect', function () {
   logging("[INFO] mqtt connected")
   client.publish("status/" + instanceName, 'Online', {retain: true});
   client.subscribe("storage/in");
-  player = new Player(client);
+  player = new Player(client); // the Player should only be created when the client is connected
 });
 
 client.on('message', async function (topic, message) {
@@ -61,8 +61,9 @@ client.on('message', async function (topic, message) {
 
 const dbmanager = new DBManager("mysql","root","storage","storage");   // host, user, password, database
 
+// This function uses the dbmanager to add the file to the DB. If everythings OK, the json file will also be written to the filesystem
 async function add_file(json, name, category, description) {
-  let media_id = await dbmanager.addFile(name, category, description, CONFIGHASH);
+  let media_id = await dbmanager.addFile(name, category, description, CONFIGHASH);  // The media_id gets returned if succesful (used in filename)
   if (media_id != null) {
     fs.writeFile(`./db/${media_id}.json`, json, (err) => {
       if (!err) {
@@ -77,21 +78,23 @@ async function add_file(json, name, category, description) {
   }
 }
 
+// This function sends the media over MQTT to the controller
 async function send_media() {
   let media = await dbmanager.getAllMedia();
-  client.publish('controller/in', JSON.stringify({"command": "media", "media": media})); // SHOULD BE CHANGED
+  client.publish('controller/in', JSON.stringify({"command": "media", "media": media}));
 }
 
+// This function performs checks if the media with a media_id can be played. If all checks pass, the call the player.play function to actually start the streaming process.
 async function play_stream(id, streamTopic) {
-  const row = await dbmanager.getMediaRow(id);
-  if(row != null) {
-    if(row.deleted == null) {
-      if(row.config_hash == CONFIGHASH) {
-        const filepath = `./db/${row.id}.json`
-        if (fs.existsSync(filepath)) {
-          if(player != null) {
-            stop_current_stream();
-            player.play(filepath, streamTopic, id);
+  const row = await dbmanager.getMediaRow(id);  // Will return a row when its valid, otherwise null
+  if(row != null) {                             // If the media_id is found:
+    if(row.deleted == null) {                   // If the deleted column is NULL (NULL means no timestamp, means not deleted)
+      if(row.config_hash == CONFIGHASH) {       // If the confighash is 'config1'
+        const filepath = `./db/${row.id}.json`    
+        if (fs.existsSync(filepath)) {          // If the file exists on the filesystem
+          if(player != null) {                      // Only then:
+            stop_current_stream();                  // Stop the current stream
+            player.play(filepath, streamTopic, id); // Use the player to start a new stream
           }
         } else {
           logging(`[ERROR] CANNOT PLAY STREAM FOR MEDIA_ID ${id}: THE FILE db/${id}.json DOESN'T EXIST ANYMORE`)
@@ -124,7 +127,6 @@ function pause_current_stream() {
 function play_current_stream() {
   if(player != null) player.unpause();
 }
-
 
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
