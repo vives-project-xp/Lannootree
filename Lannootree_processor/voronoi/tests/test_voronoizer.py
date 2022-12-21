@@ -25,6 +25,9 @@ args = parser.parse_args()
 
 images = []
 
+import sys
+np.set_printoptions(threshold=sys.maxsize)
+
 def draw_voronoi(img, facets, indices) :
   colors = []
 
@@ -40,7 +43,7 @@ def draw_voronoi(img, facets, indices) :
     values = frame[np.where(mask == 255)]
 
     # Calculate average color
-    color = (np.average(values,axis=0))
+    color = (np.average(values, axis=0))
     
     # Gamma correction
     cor_color = (np.power(color/255,2.4)*255).astype(int) 
@@ -95,14 +98,15 @@ prim_unit = np.array([[83.08, 368.57],
                       [101.12, 298.58],
                       [137.07, 275.03]])
 
+
 # Create panel coordinates
 panel = np.zeros((9*prim_unit.shape[0],2))
 for i in range(3):
   for j in range(3):
     idx = prim_unit.shape[0]*(i+j*3)
-    panel[idx:idx+prim_unit.shape[0],:] = prim_unit+np.tile([i*dsubx, -j*dsuby], [prim_unit.shape[0], 1])
+    panel[idx:idx+prim_unit.shape[0]:] = prim_unit + np.tile([i*dsubx, -j*dsuby], (prim_unit.shape[0], 1))
 
-# sort by x cord
+
 panel = panel[np.argsort(panel[:,0]),:]
 unique_xs = np.unique(panel[:,0])
 for xs in unique_xs:
@@ -112,6 +116,8 @@ for xs in unique_xs:
 
 width, height = 2, 2
 nPanels = width * height
+
+# print(panel)
 
 # Create current configuration
 screen = np.zeros((nPanels*panel.shape[0],2))
@@ -139,11 +145,12 @@ screen = screen * scale
 
 
 # Shift screen right up
-xt = np.abs(np.max(screen[:,0])-size[1])/2
-yt = np.abs(np.max(screen[:,1])-size[0])/2
+xt = np.abs(np.max(screen[:,0]) - size[1]) /2
+yt = np.abs(np.max(screen[:,1]) - size[0]) /2
 
 screen = screen + np.array([xt,yt])
 
+print(screen)
 
 # Indexes for color data
 panel_LED_indexes = np.array([ 0, 22, 46, 20, 44, 61, 21, 45, 62,  1, 23, 47, 19, 43, 63, 18, 42,

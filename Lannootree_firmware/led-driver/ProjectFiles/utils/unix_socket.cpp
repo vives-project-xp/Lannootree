@@ -116,7 +116,7 @@ namespace Lannootree {
     socklen_t cli_len = sizeof(cli_addr);
 
     // Get the connected client's fd
-    std::cout << "Accepting incomming connection\n";
+    std::cout << "Accepting incomming connection" << std::endl;
     if ((m_client_sock_fd = accept(m_socket_fd, (struct sockaddr* ) & cli_addr, & cli_len)) == -1) {
       return;
     };
@@ -134,12 +134,12 @@ namespace Lannootree {
       int read_status = read(m_client_sock_fd, buffer, m_max_read);
 
       if (read_status == -1) {
-        std::cout << "Failed to read socket\n";
+        std::cout << "Failed to read socket" << std::endl;
         continue;
       }
 
       if (read_status == 0) {
-        std::cout << "Client disconnected\n";
+        std::cout << "Client disconnected" << std::endl;
         break;
       }
 

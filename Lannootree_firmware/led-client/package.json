@@ -17,6 +17,7 @@
     "https": "^1.0.0",
     "mqtt": "^4.3.7",
     "nodemon": "^2.0.20",
+    "redis": "^4.5.1",
     "ts-node": "^10.9.1"
   },
   "devDependencies": {

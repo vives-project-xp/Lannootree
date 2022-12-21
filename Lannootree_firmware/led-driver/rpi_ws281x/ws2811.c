@@ -711,6 +711,7 @@ static int check_hwver_and_gpionum(ws2811_t *ws2811)
             }
         }
     }
+
     else if (hwver >= 0x0004 && hwver <= 0x000f)  // Models B Rev2, A
     {
         for ( i = 0; i < (int)(sizeof(gpionums_B2) / sizeof(gpionums_B2[0])); i++)
@@ -721,6 +722,7 @@ static int check_hwver_and_gpionum(ws2811_t *ws2811)
             }
         }
     }
+
     else if (hwver >= 0x010) // Models B+, A+, 2B, 3B, Zero Zero-W
     {
         if ((ws2811->channel[0].count == 0) && (ws2811->channel[1].count > 0))
@@ -737,6 +739,7 @@ static int check_hwver_and_gpionum(ws2811_t *ws2811)
                 return -1;
             }
         }
+
         for ( i = 0; i < (int)(sizeof(gpionums_40p) / sizeof(gpionums_40p[0])); i++)
         {
             if (gpionums_40p[i] == gpionum) {
@@ -980,8 +983,6 @@ ws2811_return_t ws2811_init(ws2811_t *ws2811)
     for (chan = 0; chan < RPI_PWM_CHANNELS; chan++)
     {
         ws2811_channel_t *channel = &ws2811->channel[chan];
-
-        // Removed this so i can allocate my own memory in C++
         
         channel->leds = malloc(sizeof(ws2811_led_t) * channel->count);
         if (!channel->leds)
@@ -1129,6 +1130,8 @@ ws2811_return_t ws2811_wait(ws2811_t *ws2811)
     return WS2811_SUCCESS;
 }
 
+#include <stdlib.h>
+
 /**
  * Render the DMA buffer from the user supplied LED arrays and start the DMA
  * controller.  This will update all LEDs on both PWM channels.
@@ -1137,7 +1140,7 @@ ws2811_return_t ws2811_wait(ws2811_t *ws2811)
  *
  * @returns  None
  */
-ws2811_return_t  ws2811_render(ws2811_t *ws2811, dma_finish_callback_t finish_callback, void* arg)
+ws2811_return_t  ws2811_render(ws2811_t *ws2811, dma_finish_callback_t finish_callback, void* arg, void* channel)
 {
     volatile uint8_t *pxl_raw = ws2811->device->pxl_raw;
     int driver_mode = ws2811->device->driver_mode;
@@ -1248,7 +1251,7 @@ ws2811_return_t  ws2811_render(ws2811_t *ws2811, dma_finish_callback_t finish_ca
     }
 
     // Here buffers should swap
-    finish_callback(arg);
+    finish_callback(arg, channel);
 
     if (ws2811->render_wait_time != 0) {
         const uint64_t current_timestamp = get_microsecond_timestamp();

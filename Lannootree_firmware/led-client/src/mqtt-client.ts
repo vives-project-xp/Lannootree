@@ -3,11 +3,15 @@ import net from 'net'
 import mqtt from 'mqtt'
 import dotenv from 'dotenv'
 import process from 'process'
+import { createClient } from 'redis'
 import * as handel from './mqtt-handles.js'
-
+import { ledDriver } from './driver-connection.js'
 dotenv.config({ path: '../../.env' });
 
 class LannooTreeMqttClient {
+
+  private redis_client;
+  private currentStreamId: string | null = null;
 
   private driverSocket: net.Socket = new net.Socket();
 
@@ -61,6 +65,12 @@ class LannooTreeMqttClient {
   constructor() {
     this.client = mqtt.connect(this.mqttOptions);
     this.client.on('connect', this.connectCallback);
+    
+    this.redis_client = createClient({
+      url: 'redis://redis:6379'
+    });
+
+    this.redis_client.connect();
   }
 
   send(topic: string, msg: string) {
@@ -122,12 +132,28 @@ class LannooTreeMqttClient {
   private messageCallback = (topic: string, message: Buffer) => {
     let data = JSON.parse(message.toString());
     
+    if (topic.match(/^ledpanel\/stream\/.*/)) {
+      ledDriver.frame_to_ledcontroller(data.frame);
+    }
+
+    if (data.command == 'stream') {
+      handel.play_stream(this.client, this.currentStreamId, data);
+      return;
+    } 
+
     if (this.messageTopicMap.has(topic)) {
       let topicMap = this.messageTopicMap.get(topic);
 
+
       if (topicMap?.has(data.command)) {
-        let command = topicMap.get(data.command);
-        if (command !== undefined) command(data);
+        if (data.command == 'stream') {
+          handel.play_stream(this.client, this.currentStreamId, data);
+        } 
+        
+        else {
+          let command = topicMap.get(data.command);
+          if (command !== undefined) command(data);
+        }
       }
 
       else if (topic == 'controller/config') {
