@@ -68,7 +68,7 @@ A complete list of topics can be found  in the [mqtt readme](Lannootree_server/m
 
 ## Blogpost about The Lannootree
 
-<p align="center">
+<p align="center"> 
   <img src="img/Blogpost.png">
 </p>
 
