@@ -26,12 +26,12 @@ import router from './router';
         group: 'admins'
       },
       {
-        title: 'ConfigPanel',
+        title: 'Config',
         value: 'config',
         group: 'admins'
       },
       {
-        title: 'LogPanel',
+        title: 'Logs',
         value: 'logging',
         group: 'admins'
       },

@@ -28,13 +28,34 @@ namespace Lannootree {
       ~LannooTree();
 
     private:
+    /**
+     * Initializes the hardware resources and starts the threads for the
+     * LED driver and Unix socket.
+     */
       void start(void);
 
     private:
       static void socket_callback(void* arg, uint8_t* data, size_t data_len);
 
     private:
+    /**
+     * Initializes memory by creating LED controllers and LED buffers based
+     * on the provided configuration data.
+     * 
+     * @param config A JSON object containing configuration data.
+     */
       void initialize_memory(json& config);
+    
+    /**
+     * Creates an LED controller object based on the provided parameters
+     * and configuration data.
+     * 
+     * @param config A JSON object containing configuration data.
+     * @param gpio1 & gpio0 The GPIO pin number to use for the LED controller.
+     * @param mda The DMA controller to use for the LED controller.
+     * @param channel The prefix for the channels (e.g. "CA" or "CB").
+     * @return A pointer to the newly created LED controller object.
+     */
       ws2811_t* create_ws2811(json& config, int dma, int gpio1, int gpio2, std::string channel);
 
     private:

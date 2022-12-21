@@ -1,3 +1,9 @@
+/*
+This class has 2 functions:
+  frame_to_string: converts a frame (matrix) to a string so it can be printed in the console (debugging)
+  frame_to_json: instead of converting the frame to a string, it converts it to json
+*/
+
 export default class MatrixParser {
 
   static frame_to_string(frame) {
