@@ -47,10 +47,6 @@ class LannooTreeMqttClient {
       "ledpanel/control",
       new Map( 
       [ // Commands for ledpanel/controll topic
-        ["pause", handel.pause_leds],
-        ["play",  handel.play_leds],
-        ["stop",  handel.stop_leds],
-        ["gif",   handel.play_gif],
         ["color", handel.set_color],
       ])
     ], 
@@ -131,7 +127,7 @@ class LannooTreeMqttClient {
 
   private messageCallback = (topic: string, message: Buffer) => {
     let data = JSON.parse(message.toString());
-    
+        
     if (topic.match(/^ledpanel\/stream\/.*/)) {
       ledDriver.frame_to_ledcontroller(data.frame);
     }
@@ -151,6 +147,11 @@ class LannooTreeMqttClient {
         } 
         
         else {
+          // if (this.currentStreamId != null) {
+          //   this.client.unsubscribe(`ledpanel/stream/${this.currentStreamId}`)
+          //   this.currentStreamId = null;
+          // }
+
           let command = topicMap.get(data.command);
           if (command !== undefined) command(data);
         }
