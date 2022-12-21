@@ -6,7 +6,7 @@ import process from 'process'
 import { createClient } from 'redis'
 import * as handel from './mqtt-handles.js'
 import { ledDriver } from './driver-connection.js'
-dotenv.config({ path: '../.env' });
+dotenv.config({ path: '../../.env' });
 
 class LannooTreeMqttClient {
 

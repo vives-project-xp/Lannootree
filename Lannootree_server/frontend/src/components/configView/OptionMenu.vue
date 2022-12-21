@@ -18,9 +18,23 @@
     <template v-slot:activator="{ props }">
       <v-btn
         v-bind="props"
+        class="ma-4"
       >
         Options
       </v-btn>
+
+      <v-btn href="http://traefik.lannootree.devbitapp.be" target="_blank" class="ma-4">
+        Traefik
+      </v-btn>
+
+      <v-btn href="https://lannootree.devbitapp.be/nodered" target="_blank" class="ma-4">
+        Nodered
+      </v-btn>
+
+      <v-btn href="https://lannootree.devbitapp.be/phpmyadmin" target="_blank" class="ma-4">
+        phpmyadmin
+      </v-btn>
+  
     </template>
 
     <v-card>
