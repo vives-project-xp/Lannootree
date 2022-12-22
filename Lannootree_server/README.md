@@ -58,3 +58,11 @@ This is an API that allows users to upload images to a specified MQTT broker. It
 ```bash
 docker-compose up -d
 ```
+
+## Important! ⚠️
+
+Make sure to set the ownership of all local files to the same user.
+
+> This is because some containers need to access the local file system.
+
+* Don't forget to set the user ID in the .env fle in the current lannootree_server folder!
