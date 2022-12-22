@@ -29,15 +29,15 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 ## Features
 
-- A frontend to controll the whole project
+- A frontend to control the whole project
 - Livestreaming
-- Media page where you can select media out the storage
+- Media page where you can select media from storage
 - Play, pause and stop the media
 - Upload your own media for example: gifs, photo's, video's
 - Configure how many panels you have and on which channel they are active
 - Logging page:
-  - See wich containers are active
-  - Information of each docker container
+  - View active Docker containers
+  - Information logs of each container
 - Everything with authentication and permission control
 
 ## Getting started
@@ -55,17 +55,18 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 ## Folder Structure Lannootree
 
 - [certs](certs/README.md) manages all client and server certificates.
-- [Lannootree_firmware](Lannootree_firmware/README.md) contains the led-client and led-driver. Those are running on the raspberry pi.
+- [Lannootree_firmware](Lannootree_firmware/README.md) contains the led-client and led-driver. Those are running on the Raspberry Pi.
 - [Lannootree_hardware](Lannootree_hardware/README.md) In this folder you can find two samples of code for a remote control.
 - [Lannootree_processor](Lannootree_processor/README.md) is used to set-up dockercontainers of the processor. It runs on the server, but can be deployed on a stronger server or computer.
 - [Lannootree_server](Lannootree_server/README.md) is the directory with all services that runs on the server itself.
 
-## MQTT API
+## 
+API
 
-The whole project is connected via a mqtt backbone.
+The whole project is connected via a MQTT backbone.
 So everything is controllable externally.
 
-A complete list of topics can be found  in the [mqtt readme](Lannootree_server/mqtt)
+A complete list of topics can be found  in the [MQTT readme](Lannootree_server/mqtt)
 
 ## Blogpost about The Lannootree
 
