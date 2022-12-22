@@ -28,7 +28,7 @@ sh get_ca.sh
   - client.crt: a public key for client TLS
   - client.key: Private key for MQTT client
 
-All the files need to be generated, and the ca.crt needs to be shared with the clients.
+All those files needs to be generated. The ca.crt needs to be shared with the clients.
 It can be downloaded to the clients from [this link](https://lannootree.devbitapp.be/ca.crt).
 
 ### Generating using script
@@ -57,7 +57,7 @@ The generated cert is now inside the signed_clients folder.
 
 Copy the cert file and place it inside the clients client folder as client.crt.
 
-Important: The Common Name of the ca and server needs to be the domain name! The other common names are names for clients.
+Important: The Common Name of the server needs to be the domain name! The other common names are names for clients.
 
 [guide for server certs](http://www.steves-internet-guide.com/mosquitto-tls/)
 
