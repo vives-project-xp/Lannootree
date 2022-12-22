@@ -18,11 +18,11 @@ This code is using various libraries to establish a connection to an MQTT broker
 
 ## Button-mapper
 
-This code is using the mqtt library to establish two connections to an MQTT broker: one using MQTTS with client certificates for secure communication, and one using plain MQTT. It subscribes to two topics, esp_remote and esp_remote_mini, and when it receives messages on these topics it parses the message and maps the received button presses to specific commands that it then publishes on the controller/in topic using the MQTTS connection. This allows the button mapper service to securely communicate with the controller service using MQTTS.
+This code is using the MQTT library to establish two connections to an MQTT broker: one using MQTT**S** with client certificates for secure communication, and one using plain MQTT. It subscribes to two topics, esp_remote and esp_remote_mini, and when it receives messages on these topics it parses the message and maps the received button presses to specific commands that it then publishes on the controller/in topic using the MQTTS connection. This allows the button mapper service to securely communicate with the controller service using MQTTS.
 
 ## Client-api
 
-This code is a WebSocket server that receives commands from clients and sends them to an MQTT broker. It also listens for messages from the MQTT broker and sends them to connected clients. It is using the mqtt library to establish a secure MQTT connection using MQTTS and client certificates. The commands that the server can handle include stop, pause, play, media, and color. When the server receives one of these commands, it publishes the appropriate message on the controller/in topic using the MQTTS connection. When it receives a message on the controller/status or lannootree/out topics, it parses the message and sends it to connected clients.
+This code is a WebSocket server that receives commands from clients and sends them to an MQTT broker. It also listens for messages from the MQTT broker and sends them to connected clients. It is using the MQTT library to establish a secure MQTT connection using MQTTS and client certificates. The commands that the server can handle include stop, pause, play, media, and color. When the server receives one of these commands, it publishes the appropriate message on the controller/in topic using the MQTTS connection. When it receives a message on the controller/status or lannootree/out topics, it parses the message and sends it to connected clients.
 
 ## Controller
 
@@ -38,10 +38,10 @@ In this map you can find the Vuetify code to control the lannootree. Here you ha
 
 This webhook receives a POST request from Git whenever a code push is made, triggering the code to be updated online. This allows for seamless and automated deployment of code changes.
 
-## Mqtt
+## MQTT
 
 Mosquitto needs certificates for SSL-TLS and for each client to connect securely.
-Follow [this guide](mqtt/README.md) in the mqtt directory.
+Follow [this guide](mqtt/README.md) in the MQTT directory.
 
 ## Storage
 
@@ -51,7 +51,7 @@ Traefik is a modern HTTP reverse proxy and load balancer that makes deploying mi
 
 ## Uploader-api
 
-This is an API that allows users to upload images to a specified MQTT broker. It uses the express and mqtt libraries to create an API endpoint and connect to the MQTT broker. The API uses dotenv to load environment variables from a .env file, which is used to configure the MQTT connection. The API also uses the body-parser library to parse the body of incoming requests, allowing it to access the files being uploaded. When a user uploads an image, the API publishes the image to the MQTT broker, which can then be accessed by other applications.
+This is an API that allows users to upload images to a specified MQTT broker. It uses the express and MQTT libraries to create an API endpoint and connect to the MQTT broker. The API uses dotenv to load environment variables from a .env file, which is used to configure the MQTT connection. The API also uses the body-parser library to parse the body of incoming requests, allowing it to access the files being uploaded. When a user uploads an image, the API publishes the image to the MQTT broker, which can then be accessed by other applications.
 
 ## Deploy all containers
 
