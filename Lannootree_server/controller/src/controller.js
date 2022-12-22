@@ -30,7 +30,7 @@ var options = {
   port: process.env.MQTT_BROKER_LOCAL_PORT,
   host: process.env.MQTT_BROKER_LOCAL_URL,
   protocol:'mqtts',
-  rejectUnauthorized : true,
+  rejectUnauthorized : false,
   ca:caFile,
   cert: clientcrt,
   key: clientkey,
