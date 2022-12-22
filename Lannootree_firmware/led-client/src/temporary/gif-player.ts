@@ -24,7 +24,6 @@ class _GifPlayer extends EventEmitter {
     let pause: any = null;
 
     this.on('stop',  () => {
-      console.log("Stop event received");
       this.emit('play');
       running = false;
     });
@@ -52,12 +51,6 @@ class _GifPlayer extends EventEmitter {
 
       await new Promise(resolve => setTimeout(resolve, 50));
     }
-
-    // this.removeAllListeners('pause');
-    // this.removeAllListeners('play');
-    // this.removeAllListeners('stop');
-
-    console.log('Stopped');
   }
 
   set_gif(index: number) {

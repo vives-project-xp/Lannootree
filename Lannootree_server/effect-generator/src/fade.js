@@ -1,3 +1,10 @@
+/*
+This class isn't being used currently in the project, but it's ready to be implemented.
+It enables a fade effect between 2 given frames previous/next-frame (form of matrix).
+Based on the fade_counter (0 to 255), it calculates the right RGB value for each 'pixel/cell' in the matrix.
+An effect can for example generate the next_frame, but instead of instantly 'jumping' to that new frame, it will go in 255 steps ... creating a fade between 2 given frames
+*/
+
 export default class Fade {
 
   static calculate_subframe(previous_frame, next_frame, fade_counter) {

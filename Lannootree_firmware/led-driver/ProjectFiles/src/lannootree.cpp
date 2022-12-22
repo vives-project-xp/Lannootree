@@ -1,6 +1,9 @@
 #include <lannootree.hpp>
 #include <logger.hpp>
 
+#include <chrono>
+#include <future>
+
 namespace { // Used for signal handeling
   std::mutex mtx;
   std::condition_variable shutdown_request;
@@ -57,59 +60,16 @@ namespace Lannootree {
   }
 
   void LannooTree::initialize_memory(json &config) {
-    bool ca0 = false;
-    bool ca1 = false;
-    bool cb0 = false;
-    bool cb1 = false;
+    std::cout << "Init memory" << std::endl;
+    // Create ws2811 controllers for both channels
+    _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
+    // _controllers.push_back(create_ws2811(config, 11, 12, 13, "CB"));
 
-    for (std::string c : config["inUseChannels"]) {
-      if (c.compare("CA0") == 0)
-        ca0 = true;
-      if (c.compare("CA1") == 0)
-        ca1 = true;
-      if (c.compare("CB0") == 0)
-        cb0 = true;
-      if (c.compare("CB1") == 0)
-        cb1 = true;
-    };
-
-    if ((ca0 || ca1) && (cb0 || cb1)) {
-      throw "Multiple channels are no implemented!";
-      // Creation of led controll blocks
-      _controllers.push_back(create_ws2811(config, 10, 18, 19, "CA"));
-      _controllers.push_back(create_ws2811(config, 11, 9, 10, "CB"));
-
-      // Creation of led buffers
-      if (_controllers.at(0)->channel[0].count)
-        _channel_mem["CA0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
-
-      if (_controllers.at(0)->channel[1].count)
-        _channel_mem["CA1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
-
-      if (_controllers.at(1)->channel[0].count)
-        _channel_mem["CB0"] = new LedBuffer(_controllers.at(1)->channel[0].count);
-
-      if (_controllers.at(1)->channel[1].count)
-        _channel_mem["CB1"] = new LedBuffer(_controllers.at(1)->channel[1].count);
-
-    }
-    else {
-      bool isChannelA = (ca0 || ca1);
-      // Creation of led control block
-      _controllers.push_back(create_ws2811(config, 10, 18, 19, isChannelA ? "CA" : "CB"));
-
-      info_log((isChannelA ? "Using channel A" : "Not using channel A") << "\n");
-
-      // Creation of led buffers
-      if (_controllers.at(0)->channel[0].count > 0)
-        _channel_mem[isChannelA ? "CA0" : "CB0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
-
-      info_log("ChanA0 led count: " << _controllers.at(0)->channel[0].count << "\n");
-
-      if (_controllers.at(0)->channel[1].count > 0)
-        _channel_mem[isChannelA ? "CA1" : "CB1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
-        
-    }
+    // Allocate a new buffer for each channel
+    _channel_mem["CA0"] = new LedBuffer(_controllers.at(0)->channel[0].count);
+    _channel_mem["CA1"] = new LedBuffer(_controllers.at(0)->channel[1].count);
+    // _channel_mem["CB0"] = new LedBuffer(_controllers.at(1)->channel[0].count);
+    // _channel_mem["CB1"] = new LedBuffer(_controllers.at(1)->channel[1].count);
 
     // Initialize led control blocks
     for (auto c : _controllers) {
@@ -138,23 +98,60 @@ namespace Lannootree {
         .strip_type = STRIP_TYPE,
         .brightness = 255,
     };
+
     return instance;
   }
 
   void LannooTree::socket_callback(void* arg, uint8_t* data, size_t data_len) {
     auto _channel_mem = (std::unordered_map<std::string, LedBuffer*>*) arg;
 
-    std::vector<uint32_t> colors;
+    // This can be a constant buffer 
+    std::vector<uint32_t> colorsa0;
     for (int i = 0; i < 288; i++) {
-      int red_index = 3 * i;
-      int green_index = red_index + 1;
-      int blue_index = green_index + 1;
+      Color c;
+      c.data[0] = data[(3 * i) + 2];  // blue
+      c.data[1] = data[(3 * i) + 1];  // green
+      c.data[2] = data[(3 * i) + 0];  // Red
+      c.data[3] = 0; // White
 
-      Color c(data[red_index], data[green_index], data[blue_index]);
-      colors.push_back(c.to_uint32_t());
+      colorsa0.push_back(c.wrgb);
     }
 
-    _channel_mem->at("CA0")->mem_write(colors.data(), colors.size() * sizeof(uint32_t));
+    // std::vector<uint32_t> colorsa1;
+    // for (int i = 144; i < 288; i++) {
+    //   Color c;
+    //   c.data[0] = data[(3 * i) + 2];  // blue
+    //   c.data[1] = data[(3 * i) + 1];  // green
+    //   c.data[2] = data[(3 * i) + 0];  // Red
+    //   c.data[3] = 0; // White
+
+    //   colorsa1.push_back(c.wrgb);
+    // }
+
+    // std::vector<uint32_t> colorsb0;
+    // std::vector<uint32_t> colorsb1;
+
+    
+    auto channelA0 = std::async(std::launch::async, [&]() {
+      _channel_mem->at("CA0")->mem_write(colorsa0.data(), colorsa0.size() * sizeof(uint32_t));
+    });
+
+    // auto channelA1 = std::async(std::launch::async, [&]() {
+    //   _channel_mem->at("CA1")->mem_write(colorsa1.data(), colorsa1.size() * sizeof(uint32_t));
+    // });
+
+    // auto channelB0 = std::async(std::launch::async, [&]() {
+    //   _channel_mem->at("CB0")->mem_write(colorsb0.data(), colorsb0.size() * sizeof(uint32_t));
+    // });
+
+    // auto channelB1 = std::async(std::launch::async, [&]() {
+    //   _channel_mem->at("CB1")->mem_write(colorsb1.data(), colorsb1.size() * sizeof(uint32_t));
+    // });
+
+    channelA0.wait();
+    // channelA1.wait();
+    // channelB0.wait();
+    // channelB1.wait();
   }
 
 }

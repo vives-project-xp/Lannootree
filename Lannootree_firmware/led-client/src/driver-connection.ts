@@ -2,7 +2,7 @@ import net from 'net'
 
 class LedDriver {
 
-  private leddriver_connection: boolean = false;
+  private leddriver_connection: boolean = true;
   private socket: net.Socket = new net.Socket();
 
   constructor(leddriver_connection: boolean) {

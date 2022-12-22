@@ -1,5 +1,7 @@
 #include <led_buffer.hpp>
 
+#include <iostream>
+
 namespace Lannootree {
 
   LedBuffer::LedBuffer(unsigned int buffer_size) : _buffer_size(buffer_size) {
