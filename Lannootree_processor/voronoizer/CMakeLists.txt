@@ -34,7 +34,7 @@ endif()
 
 find_package( OpenCV REQUIRED )
 find_package( redis++ REQUIRED )
-find_package( PahoMqttCpp REQUIRED )
+# find_package( PahoMqttCpp REQUIRED )
 find_package( Iconv )
 
 message( ${OpenCV_INCLUDE_DIRS} )
