@@ -189,6 +189,8 @@ services:
     environment:
       - PRODUCTION_SERVER=true
     restart: always
+    extra_hosts:
+      - "fenix.devbit.be:172.18.0.2"
     volumes:
       - ./config.json:/config.json
       - "../certs/ca/ca.crt:/app/ca.crt:ro"     
