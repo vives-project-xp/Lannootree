@@ -182,7 +182,7 @@ if( window.localStorage )
 
       <div>
         Lannootree project - {{ new Date().getFullYear() }}
-        <p style="font-size: small;">Hosted by <a href="https://prowifi.be" target="_blank">ProWifi</a></p>
+        <p style="font-size: small;">Sponsored by <a href="https://prowifi.be" target="_blank">ProWifi</a></p>
       </div>
     </v-footer>
   </v-app>
