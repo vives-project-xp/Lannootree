@@ -27,8 +27,8 @@ var clientcrt = fs.readFileSync("./client.crt");
 var clientkey = fs.readFileSync("./client.key");
 var options = {
   clientId:"controller_" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_local_PORT,
-  host: process.env.MQTT_BROKER_local_URL,
+  port: process.env.MQTT_BROKER_LOCAL_PORT,
+  host: process.env.MQTT_BROKER_LOCAL_URL,
   protocol:'mqtts',
   rejectUnauthorized : true,
   ca:caFile,
