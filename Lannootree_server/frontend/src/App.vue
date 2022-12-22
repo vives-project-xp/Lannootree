@@ -71,6 +71,19 @@ import router from './router';
         break;
     }
 });
+
+//force reload once, this ensures that logging out and going back to the url does not display the frontend page and redirects to authelia
+if( window.localStorage )
+  {
+    if( !localStorage.getItem('firstLoad') )
+    {
+      localStorage['firstLoad'] = true;
+      window.location.reload(true);
+    }  
+    else
+      localStorage.removeItem('firstLoad');
+  }
+
 </script>
 
 <template>
