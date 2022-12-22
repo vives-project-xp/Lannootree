@@ -14,7 +14,7 @@ namespace Processing {
     public:
       /**
        * @brief 
-       * Method to let voronoizer know is there are more frames to come
+       * Method to let voronoizer know if there are more frames to come
        * 
        * @return true 
        * When more frames will come

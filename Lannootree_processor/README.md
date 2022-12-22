@@ -1,11 +1,8 @@
 # Lannootree_processor
 
-## processorAPI
+## Voronoizer
 
-processed: where proccesorAPI reads from
+[Documentation](./voronoizer/README.md).
 
-## redis
+This is the program that processes images and video. 
 
-voronoi: where voronoi container reads from
-
-## voronoi
