@@ -7,6 +7,7 @@ target_include_directories(voronoizer-frame-providers INTERFACE
 target_sources(voronoizer-frame-providers INTERFACE
   ${CMAKE_CURRENT_LIST_DIR}/camera.cpp
   ${CMAKE_CURRENT_LIST_DIR}/redis-frame-provider.cpp
+  # ${CMAKE_CURRENT_LIST_DIR}/video-frame-provider.cpp
   ${CMAKE_CURRENT_LIST_DIR}/single-image-provider.cpp
 )
 

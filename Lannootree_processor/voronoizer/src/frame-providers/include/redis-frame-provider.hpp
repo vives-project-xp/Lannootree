@@ -30,6 +30,8 @@ namespace Processing {
 
     private:
       cv::Mat m_frame;
+      cv::Mat m_video;
+      cv::VideoCapture m_video_cap;
       std::unique_ptr<sw::redis::Redis> m_redis_client;
 
 

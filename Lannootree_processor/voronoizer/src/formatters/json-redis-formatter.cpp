@@ -6,11 +6,11 @@ namespace Processing {
     m_redis_client = std::make_unique<sw::redis::Redis>(redis_url);
   } 
 
-  void JsonRedisFormatter::format(std::vector<uint8_t>& cstring, cv::Mat& frame) {
+  void JsonRedisFormatter::format(std::vector<uint8_t>& cstring, __attribute_maybe_unused__ cv::Mat& frame) {
     json next_frame;
     next_frame["frame"] = cstring;
 
-    m_redis_client->lpush("nextframe", next_frame.dump());
+    m_redis_client->lpush("processed", next_frame.dump());
   } 
 
 }

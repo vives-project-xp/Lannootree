@@ -6,7 +6,7 @@
 namespace Processing {
 
   Voronoizer::Voronoizer(std::shared_ptr<FrameProvider> provider, std::shared_ptr<Formatter> fromatter, const std::string& config_path)
-    : m_frame_provider(provider), m_fromatter(fromatter)
+    :  m_fromatter(fromatter), m_frame_provider(provider)
   {
     configure_json(config_path);
 
@@ -32,14 +32,14 @@ namespace Processing {
         int row_offset = m_prim_unit.rows * (i + j * 3);
 
         // Create offset data
-        double offset_data[2 * m_prim_unit.rows];
+        std::vector<double> offset_data(2 * m_prim_unit.rows);
         for (int k = 0; k < 2 * m_prim_unit.rows; k += 2) {
           offset_data[k + 0] = i * m_dsubx;
           offset_data[k + 1] = (-j) * m_dsuby;
         }
 
         // Add prim_unit to offset
-        cv::Mat result(m_prim_unit.rows, 2, m_prim_unit.type(), offset_data);
+        cv::Mat result(m_prim_unit.rows, 2, m_prim_unit.type(), offset_data.data());
         cv::add(m_prim_unit, result, result);
 
         // Copy to panel with correct offset
@@ -94,7 +94,7 @@ namespace Processing {
 
     m_screen_led_indexes = cv::Mat(1, m_number_of_panels * led_indexes.cols, led_indexes.type(), cv::Scalar(0));
     
-    for (int i = 0; i < m_number_of_panels; i++) {
+    for (size_t i = 0; i < m_number_of_panels; i++) {
       cv::Mat modified = led_indexes.clone();
       double offset = led_indexes.cols * i;
       cv::add(offset, led_indexes, modified);
@@ -108,8 +108,6 @@ namespace Processing {
   void Voronoizer::start(uint32_t number_of_workers) {
     uint32_t actual_workers = m_thread_pool.start(number_of_workers);
     std::cout << "Asked for " << number_of_workers << " workers received: " << actual_workers << std::endl;
-
-    int frames_rendered = 0;
 
     cv::Mat frame;
     cv::Mat screen(m_screen.rows, m_screen.cols, m_screen.type());
@@ -261,9 +259,9 @@ namespace Processing {
       #else
         for (int i = 0; i < argsort.cols; i++) {
           uint3 c = cstring[argsort.at<int>(i)];
-          next.push_back(c.x);
-          next.push_back(c.y);
           next.push_back(c.z);
+          next.push_back(c.y);
+          next.push_back(c.x);
         }
       #endif
 
@@ -278,6 +276,11 @@ namespace Processing {
       auto end = std::chrono::high_resolution_clock::now();
       auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
 
+      auto frameCap = std::chrono::milliseconds(33);
+      std::this_thread::sleep_for(std::chrono::milliseconds(frameCap - std::chrono::duration_cast<std::chrono::milliseconds>(duration)));
+
+      end = std::chrono::high_resolution_clock::now();
+      duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
       std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(duration).count() << "ms | " << duration.count() << "us" << std::endl;
     }
 
@@ -291,20 +294,21 @@ namespace Processing {
     for (auto& [channel, panels] : m_channel_map) {
       static double channel_offset = 0;
       
-      for (int n = 0; n < panels.size(); n++){
+      for (size_t n = 0; n < panels.size(); n++){
         double row_offset = channel_offset + (n * 72);
 
         int col = std::get<0>(panels[n]);
         int row = std::get<1>(panels[n]);
 
-        double offset_data[2 * m_panel.rows];
+        std::vector<double> offset_data(2 * m_panel.rows);
+
         for (int k = 0; k < 2 * m_panel.rows; k += 2) {
           offset_data[k + 0] = col * m_dx;
           offset_data[k + 1] = (1 - row) * m_dy;
         }
 
         // Add palel to offset
-        cv::Mat result(m_panel.rows, m_panel.cols, m_panel.type(), offset_data);
+        cv::Mat result(m_panel.rows, m_panel.cols, m_panel.type(), offset_data.data());
 
         cv::add(m_panel, result, result);
 
