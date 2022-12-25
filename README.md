@@ -36,7 +36,7 @@ This is a project for Project Experience 2022, and is designed to be both versat
 - Upload your own media for example: gifs, photo's, video's
 - Configure how many panels you have and on which channel they are active
 - Nodered for creating collections or other automations.
-- phpmyadmin for modifying the storage database
+- Phpmyadmin for modifying the storage database
 - Logging page:
   - View active Docker containers
   - Information logs of each container
