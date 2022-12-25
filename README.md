@@ -68,7 +68,9 @@ API
 The whole project is connected via a MQTT backbone.
 So everything is controllable externally.
 
-A complete list of topics can be found  in the [MQTT readme](Lannootree_server/mqtt)
+The topic structure can be found in the [MQTT readme](Lannootree_server/mqtt)
+Controller API documentation and examples [Controller readme](Lannootree_server/controller)
+Storage API documentation and examples [Storage readme](Lannootree_server/storage)
 
 ## Blogpost about The Lannootree
 
