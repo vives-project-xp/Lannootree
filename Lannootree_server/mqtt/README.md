@@ -1,6 +1,8 @@
-# MQTT setup
+# MQTT
 
-## SSL-TLS certificates (ca_certificates)
+## Setup
+
+### SSL-TLS certificates (ca_certificates)
 
 Generate certificates in the [certs](/certs/README.md) folder.
 
@@ -13,7 +15,7 @@ Generate certificates in the [certs](/certs/README.md) folder.
 All the files need to be generated, the ca.crt needs to be shared with the clients.
 It can be downloaded to the clients via [this link](https://lannootree.devbitapp.be/ca.crt)
 
-### Topics
+## Topics
 
 - `controller`
   - in
@@ -42,3 +44,7 @@ It can be downloaded to the clients via [this link](https://lannootree.devbitapp
   - Out
     - Metadata -->
 <!-- Voronoi doesn't listen over mqtt yet -->
+
+
+Controller API documentation and examples [Controller readme](../controller)
+Storage API documentation and examples [Storage readme](../storage)
