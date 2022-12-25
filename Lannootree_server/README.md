@@ -2,10 +2,6 @@
 
 ## Configuration before install
 
-### Admin-api
-
-This code is using various libraries to establish a connection to an MQTT broker, which it uses to receive log messages from other services. It then stores these log messages in an SQLite database, and uses a WebSocket server to push the logs to connected clients in real-time. It also maintains a buffer of the latest status messages it receives from the MQTT broker and pushes these to connected clients as well.
-
 ### Authelia
 
 #### Setup
@@ -15,6 +11,35 @@ This code is using various libraries to establish a connection to an MQTT broker
 3. Copy user_database_example.yml to user_Database.yml
 4. Add all the users to the file. Also place the users in the correct group. This sets the permissions.
 5. Once authelia and traefik are online, Reset the passwords for all the users bu clicking reset password. and click the link in notification.txt.
+
+### MQTT
+
+Mosquitto needs certificates for SSL-TLS and for each client to connect securely.
+Follow [this guide](mqtt/README.md) in the MQTT directory.
+
+### Deploy all containers
+
+```bash
+docker-compose up -d
+```
+
+### Important! ⚠️
+
+Make sure to set the ownership of all local files to the same user.
+
+> This is because some containers need to access the local file system.
+
+* Don't forget to set the user ID in the .env fle in the current lannootree_server folder!
+
+## Containers
+
+### Authelia
+
+### MQTT
+
+### Admin-api
+
+This code is using various libraries to establish a connection to an MQTT broker, which it uses to receive log messages from other services. It then stores these log messages in an SQLite database, and uses a WebSocket server to push the logs to connected clients in real-time. It also maintains a buffer of the latest status messages it receives from the MQTT broker and pushes these to connected clients as well.
 
 ## Button-mapper
 
@@ -38,11 +63,6 @@ In this map you can find the Vuetify code to control the lannootree. Here you ha
 
 This webhook receives a POST request from Git whenever a code push is made, triggering the code to be updated online. This allows for seamless and automated deployment of code changes.
 
-## MQTT
-
-Mosquitto needs certificates for SSL-TLS and for each client to connect securely.
-Follow [this guide](mqtt/README.md) in the MQTT directory.
-
 ## Storage
 
 ## Traefik
@@ -53,16 +73,4 @@ Traefik is a modern HTTP reverse proxy and load balancer that makes deploying mi
 
 This is an API that allows users to upload images to a specified MQTT broker. It uses the express and MQTT libraries to create an API endpoint and connect to the MQTT broker. The API uses dotenv to load environment variables from a .env file, which is used to configure the MQTT connection. The API also uses the body-parser library to parse the body of incoming requests, allowing it to access the files being uploaded. When a user uploads an image, the API publishes the image to the MQTT broker, which can then be accessed by other applications.
 
-## Deploy all containers
 
-```bash
-docker-compose up -d
-```
-
-## Important! ⚠️
-
-Make sure to set the ownership of all local files to the same user.
-
-> This is because some containers need to access the local file system.
-
-* Don't forget to set the user ID in the .env fle in the current lannootree_server folder!
