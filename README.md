@@ -62,8 +62,7 @@ git clone git@github.com:vives-project-xp/Lannootree.git
 - [Lannootree_processor](Lannootree_processor/README.md) is used to set-up dockercontainers of the processor. It runs on the server, but can be deployed on a stronger server or computer.
 - [Lannootree_server](Lannootree_server/README.md) is the directory with all services that runs on the server itself.
 
-## 
-API
+## API
 
 The whole project is connected via a MQTT backbone.
 So everything is controllable externally.
