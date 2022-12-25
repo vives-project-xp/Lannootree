@@ -79,6 +79,9 @@ This code is using the MQTT library to establish two connections to an MQTT brok
 
 ### Effect-generator
 
+The effect generator is a nodejs project to generate effects. such as random_full and random_each. this script spits out gifs to process in a later process.
+
+
 ### Githook
 
 This webhook receives a POST request from Git whenever a code push is made, triggering the code to be updated online. This allows for seamless and automated deployment of code changes. the script then pulls the repo and builds tall thge changed containers.
