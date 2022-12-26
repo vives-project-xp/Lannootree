@@ -33,7 +33,7 @@ This is a project for Project Experience 2022, and is designed to be both versat
 - Livestreaming
 - Media page where you can select media from storage
 - Play, pause and stop the media
-- Upload your own media for example: gifs, photo's, video's
+- Upload your own media for example: gifs, photo's, video's (MAX 256MB)
 - Configure how many panels you have and on which channel they are active
 - Nodered for creating collections or other automations.
 - Phpmyadmin for modifying the storage database
