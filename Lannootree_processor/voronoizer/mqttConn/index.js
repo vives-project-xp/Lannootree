@@ -8,8 +8,8 @@ const clientkey = fs.readFileSync("../../../certs/client/client.key");
 
 const mqttOptions = {
   clientId: `steamer`,
-  port: 8883,
-  host: "lannootree.devbitapp.be",
+  port: 38883,
+  host: "fenix.devbit.be",
   protocol: 'mqtts',
   rejectUnauthorized: true,
   ca: caCert,

@@ -1,11 +1,31 @@
 version: "3"
 services:
-  voronoi:
-    build: 
-      context: ${PWD}/voronoi/
   
   redis:
     image: redis:latest
-    # Temp just for testing
-    ports:
-      - 6379:6379
+    restart: unless-stopped
+
+  voronoi:
+    build: 
+      context: ${PWD}/voronoizer/
+    environment:
+      - ARG0=-t 1
+      - ARG1=--frame-provider redis
+      - ARG2=--formatter Json-redis
+      - AGR3=--redis-url redis://redis:6379
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  api:
+    build:
+      context: ${PWD}/processorAPI/
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - "../certs/ca.crt:/app/certs/ca.crt:ro"
+      - "../certs/client/client.crt:/app/certs/client/client.crt:ro"
+      - "../certs/client/client.key:/app/certs/client/client.key:ro"
+    restart: unless-stopped
+    depends_on:
+      - redis

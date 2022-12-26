@@ -265,11 +265,11 @@ namespace Processing {
         }
       #endif
 
-      cv::imshow("Processed", frame);
-      // TODO: [Feature] -> Find better way to exit program (waitKey is only needed when live visualisation is active)
-      if (cv::waitKey(1) == 113) {
-        break;
-      }
+      // cv::imshow("Processed", frame);
+      // // TODO: [Feature] -> Find better way to exit program (waitKey is only needed when live visualisation is active)
+      // if (cv::waitKey(1) == 113) {
+      //   break;
+      // }
 
       m_fromatter->format(next, frame);
 

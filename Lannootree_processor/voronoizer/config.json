@@ -11,38 +11,38 @@
   "channels": {
     "CA0": {
       "ledCount": 288,
-      "head": "132733333860",
+      "head": "247366252607",
       "cells": [
         {
-          "uuid": "405891876865",
+          "uuid": "1371704195321",
           "coordinate": {
             "col": 0,
             "row": 1
           },
-          "connection": "1417557237154"
+          "connection": "681915343501"
         },
         {
-          "uuid": "1417557237154",
+          "uuid": "681915343501",
           "coordinate": {
             "col": 1,
             "row": 1
           }
         },
         {
-          "uuid": "132733333860",
+          "uuid": "247366252607",
           "coordinate": {
             "col": 0,
             "row": 0
           },
-          "connection": "1097990633059"
+          "connection": "148625831431"
         },
         {
-          "uuid": "1097990633059",
+          "uuid": "148625831431",
           "coordinate": {
             "col": 1,
             "row": 0
           },
-          "connection": "405891876865"
+          "connection": "1371704195321"
         }
       ]
     }
