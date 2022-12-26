@@ -56,6 +56,7 @@ This code is using various libraries to establish a connection to an MQTT broker
 ### Uploader-api
 
 This is an API that allows users to upload images to a specified MQTT broker. It uses the express and MQTT libraries to create an API endpoint and connect to the MQTT broker. The API uses dotenv to load environment variables from a .env file, which is used to configure the MQTT connection. The API also uses the body-parser library to parse the body of incoming requests, allowing it to access the files being uploaded. When a user uploads an image, the API publishes the image to the MQTT broker, which can then be accessed by other applications.
+The max uplopad file size is 256MB. This is the max size of 1 mqtt packet.
 
 ### MQTT
 
