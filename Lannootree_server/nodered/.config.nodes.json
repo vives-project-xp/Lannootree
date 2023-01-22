@@ -415,24 +415,5 @@
                 "file": "/usr/src/node-red/node_modules/@node-red/nodes/core/storage/23-watch.js"
             }
         }
-    },
-    "node-red-contrib-msg-resend": {
-        "name": "node-red-contrib-msg-resend",
-        "version": "1.0.0",
-        "local": true,
-        "user": true,
-        "nodes": {
-            "msg-resend": {
-                "name": "msg-resend",
-                "types": [
-                    "msg-resend"
-                ],
-                "enabled": true,
-                "local": true,
-                "user": false,
-                "module": "node-red-contrib-msg-resend",
-                "file": "/data/node_modules/node-red-contrib-msg-resend/msg_resend.js"
-            }
-        }
     }
 }

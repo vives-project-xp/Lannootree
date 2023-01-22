@@ -21,10 +21,10 @@ const handleError = (err, res) => {
 var caFile = fs.readFileSync("ca.crt");
 var options={
   clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_PORT,
-  host: process.env.MQTT_BROKER_URL,
+  port: process.env.MQTT_BROKER_LOCAL_PORT,
+  host: process.env.MQTT_BROKER_LOCAL_URL,
   protocol:'mqtts',
-  rejectUnauthorized : true,
+  rejectUnauthorized : false,
   ca:caFile,
   cert: clientcrt,
   key: clientkey, 

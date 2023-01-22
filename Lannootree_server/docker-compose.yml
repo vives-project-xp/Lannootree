@@ -3,7 +3,7 @@ services:
   mqtt:
     image: eclipse-mosquitto
     restart: always
-    user: "1001:1001"
+    user: "${DOCKER_USER_ID}:${DOCKER_USER_ID}"
     env_file:
       - ../.env
     volumes:
@@ -19,10 +19,10 @@ services:
     restart: always
     environment:
       - TZ=Europe/Brussels
-    # ports:
-      # - "80:80"
+    ports:
+      - "80:80"
       # - "443:443"
-      # - "3100:8080"
+      # - "8080:8080"
     volumes:
       - "./traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -31,7 +31,7 @@ services:
       - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.lannootree.devbitapp.be`)'
       - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
       - 'traefik.http.routers.traefik-dashboard.entrypoints=web'
-      - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
       # - traefik
@@ -39,7 +39,7 @@ services:
   authelia:
     image: authelia/authelia
     restart: always
-    user: "1001:1001"
+    user: "${DOCKER_USER_ID}:${DOCKER_USER_ID}"
     volumes:
       - ./authelia/config:/config
     env_file:
@@ -59,7 +59,7 @@ services:
   mqtt-api:
     image: eclipse-mosquitto
     restart: always
-    user: "1001:1001"
+    user: "${DOCKER_USER_ID}:${DOCKER_USER_ID}"
     environment:
       - TZ=Europe/Brussels
     volumes:
@@ -74,7 +74,7 @@ services:
     restart: always
     environment:
       - TZ=Europe/Brussels
-    user: 1001:1001
+    user: "${DOCKER_USER_ID}:${DOCKER_USER_ID}"
     volumes:
       - ./nodered:/data
       - "../certs/ca/ca.crt:/app/ca.crt:ro"
@@ -231,35 +231,43 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     restart: always
-    ports:
-      - 8080:80
+    # ports:
+    #   - 8080:80
     environment:
       PMA_HOST: mysql
       MYSQL_ROOT_PASSWORD: admin
       TZ: Europe/Brussels
     networks:
       - lannootree
-
-  githook:
-    restart: unless-stopped    
-    build:
-      context: ./githook/docker-webhook   
-    env_file:
-      - ./githook/githook.env
-    volumes:
-        - ./githook/scripts:/code
-        - ../:/home/ubuntu/Lannootree #Set to directory of repo! also change this in the deploy script
-        - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - WEBHOOK_HOOKS_DIR=/code/hooks
-      - WEBHOOK_BRANCH_LIST=main  
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.githook.rule=Host(`githook.lannootree.devbitapp.be`)'
-      - 'traefik.http.services.githook.loadbalancer.server.port=8000'
-      - 'traefik.http.routers.githook.entrypoints=web'
-    networks:
-      - lannootree
+      - 'traefik.http.routers.phpmyadmin.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/phpmyadmin`)'
+      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+      - 'traefik.http.routers.phpmyadmin.priority=100'
+      - 'traefik.http.routers.phpmyadmin.entrypoints=web'
+      - 'traefik.http.routers.phpmyadmin.middlewares=X-set-headers, authelia@docker'
+
+#  githook:
+#    restart: unless-stopped    
+#    build:
+#      context: ./githook/docker-webhook   
+#    env_file:
+#      - ./githook/githook.env
+#    volumes:
+#        - ./githook/scripts:/code
+#        - ../:/home/ubuntu/Lannootree #Set to directory of repo! also change this in the deploy script
+#        - /var/run/docker.sock:/var/run/docker.sock
+#    environment:
+#      - WEBHOOK_HOOKS_DIR=/code/hooks
+#      - WEBHOOK_BRANCH_LIST=main  
+#    labels:
+#      - 'traefik.enable=true'
+#      - 'traefik.http.routers.githook.rule=Host(`githook.lannootree.devbitapp.be`)'
+#      - 'traefik.http.services.githook.loadbalancer.server.port=8000'
+#      - 'traefik.http.routers.githook.entrypoints=web'
+#    networks:
+#      - lannootree
 
 volumes:
   log-database:

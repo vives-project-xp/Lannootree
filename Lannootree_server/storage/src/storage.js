@@ -16,10 +16,10 @@ var clientcrt = fs.readFileSync("client.crt");
 var clientkey = fs.readFileSync("client.key");
 var options={
   clientId:"storage_" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_PORT,
-  host: process.env.MQTT_BROKER_URL,
+  port: process.env.MQTT_BROKER_LOCAL_PORT,
+  host: process.env.MQTT_BROKER_LOCAL_URL,
   protocol:'mqtts',
-  rejectUnauthorized : true,
+  rejectUnauthorized : false,
   ca:caFile,
   cert: clientcrt,
   key: clientkey,
