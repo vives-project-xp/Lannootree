@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "Node",
+    "target": "es2022",                          
+    "module": "es2022",                    
+    "lib": ["ES6"],                     
+    "allowJs": true,
+    "outDir": "dist",                          
+    "rootDir": ".",
+    "strict": true,         
+    "noImplicitAny": true,
+    "esModuleInterop": true,
+    "types": ["node"],
+  },
+  "exclude": ["node_modules", "dist", "src_js"]
+}
+

@@ -7,6 +7,7 @@ const { json } = require('express');
 
 dotenv.config({ path: '../../.env' });
 
+
 var caFile = fs.readFileSync("ca.crt");
 var clientcrt = fs.readFileSync("client.crt");
 var clientkey = fs.readFileSync("client.key");
@@ -21,8 +22,8 @@ const handleError = (err, res) => {
 var caFile = fs.readFileSync("ca.crt");
 var options={
   clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_LOCAL_PORT,
-  host: process.env.MQTT_BROKER_LOCAL_URL,
+  port: process.env.MQTT_BROKER_PORT,
+  host: process.env.MQTT_BROKER_URL,
   protocol:'mqtts',
   rejectUnauthorized : false,
   ca:caFile,
@@ -35,6 +36,17 @@ var options={
     }
 };
 
+const multer = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, callback) {
+    callback(null, './uploads/')
+  },
+  filename: function (req, file, callback) {
+    callback(null, file.fieldname + '-' + Date.now())
+  },
+});
+
+const uploadFiles = multer({ storage: storage }).array('multi-files', 10);
 
 var mqtt_connected = false;
 
@@ -54,15 +66,22 @@ client.on('connect', () => {
 
 app.use(express.static('public'));
 
-app.post("/upload/post", function(req, res) {
+app.post('/upload/post', upload.('image'), function(req, res, next) {
+  const image = req.file.buffer;
+  console.log(image.toString());
+  return res.send('OK');
+});
+
+app.post("/upload/", function(req, res) {
   if(mqtt_connected){
+    console.log(req);
     test1 = JSON.stringify(req.files)
     client.publish('/$SYS/broker/uploads', test1, options);
-    console.log(req.files);
 
-    res.send('Image is send.')
-    // logging("[INFO] image is uploaded to mqtt.")
+    return res.send('Image is send.')
   }
+
+  res.sendStatus(505);
 });
 
 function logging(message, msgdebug = false){
