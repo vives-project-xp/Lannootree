@@ -13,7 +13,7 @@ services:
       - 8883:8883
     networks:
       - lannootree
-  
+
   lannootree-traefik:
     image: "traefik:v2.9"
     restart: always
@@ -68,7 +68,7 @@ services:
       - 1883:1883
     networks:
       - lannootree
-      
+
   nodered:
     image: nodered/node-red:latest
     restart: always
@@ -88,7 +88,7 @@ services:
       - 'traefik.http.routers.nodered.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
-      
+
   certificate-api:
     image: "nginx:alpine"
     restart: always
@@ -117,7 +117,7 @@ services:
       - 'traefik.http.routers.whoami.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
-      
+
   frontend:
     build:
       context: ./frontend
@@ -135,7 +135,7 @@ services:
       - 'traefik.http.routers.frontend.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
-      
+
   client-api:
     build:
       context: ./client-api
@@ -157,7 +157,7 @@ services:
       - 'traefik.http.routers.client-api.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
-      
+
   admin-api:
     build:
       context: ./admin-api
@@ -165,7 +165,7 @@ services:
     env_file:
       - ../.env
     volumes:
-      - "../certs/ca/ca.crt:/app/ca.crt:ro"         
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
       - "log-database:/app/db"
@@ -180,10 +180,10 @@ services:
       - 'traefik.http.routers.admin-api.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
-      
+
   controller:
     build:
-      context: ./controller 
+      context: ./controller
     env_file:
       - ../.env
     environment:
@@ -191,15 +191,15 @@ services:
     restart: always
     volumes:
       - ./config.json:/config.json
-      - "../certs/ca/ca.crt:/app/ca.crt:ro"     
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
     networks:
       - lannootree
-      
+
   storage:
     build:
-      context: ./storage 
+      context: ./storage
     env_file:
       - ../.env
     environment:
@@ -208,7 +208,7 @@ services:
     volumes:
       - ./config.json:/config.json
       - ./storage/db/:/app/db
-      - "../certs/ca/ca.crt:/app/ca.crt:ro"     
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
     networks:
@@ -227,9 +227,9 @@ services:
       - mysql:/var/lib/mysql
     networks:
       - lannootree
-  
+
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    build: ./phpmyadmin
     restart: always
     # ports:
     #   - 8080:80
@@ -279,4 +279,4 @@ networks:
     name: lannootree
   # traefik:
   #   external: true
-  
+
