@@ -32,7 +32,7 @@
         "certname": "",
         "keyname": "",
         "caname": "",
-        "servername": "lannootree.devbitapp.be",
+        "servername": "lannootree.be",
         "verifyservercert": false,
         "alpnprotocol": ""
     },

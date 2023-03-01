@@ -9,7 +9,7 @@ log:
   level: debug
 theme: dark
 jwt_secret: Verry_secret_secret! # Change this!
-default_redirection_url: https://lannootree.devbitapp.be
+default_redirection_url: https://lannootree.be
 totp:
   issuer: authelia.com
 
@@ -27,9 +27,9 @@ access_control:
   default_policy: deny
   rules:
     # Rules applied to everyone
-    - domain: 'lannootree.devbitapp.be'
+    - domain: 'lannootree.be'
       policy: one_factor
-    - domain: '*.lannootree.devbitapp.be'
+    - domain: '*.lannootree.be'
       policy: one_factor
       subject:
       - ["group:admins"]
@@ -39,7 +39,7 @@ session:
   secret: Verry_secret_secret! # Change this!
   expiration: 3600  # 1 hour
   inactivity: 300  # 5 minutes
-  domain: lannootree.devbitapp.be  # Should match whatever your root protected domain is
+  domain: lannootree.be  # Should match whatever your root protected domain is
 
 regulation:
   max_retries: 3
