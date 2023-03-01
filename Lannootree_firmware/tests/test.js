@@ -6,7 +6,7 @@ import fs from 'fs'
 // var options={
 //   clientId:"test-ledriver" + Math.random().toString(16).substring(2, 8),
 //   port: 8883,
-//   host: "lannootree.devbitapp.be",
+//   host: "lannootree.be",
 //   protocol:'mqtts',
 //   rejectUnauthorized : true,
 //   ca:caFile,

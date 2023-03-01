@@ -17,7 +17,7 @@ const char* WIFI_SSID = "MY_SSID";
 const char* WIFI_PASSWD = "MY_PASS";
 const uint8_t newMACAddress[] = {0x58, 0xCF, 0x79, 0xE3, 0x66, 0x80};
 
-const char* MQTT_HOST = "lannootree.devbitapp.be";
+const char* MQTT_HOST = "lannootree.be";
 const uint32_t MQTT_PORT = 1883;
 
 volatile int MQTTFlag;

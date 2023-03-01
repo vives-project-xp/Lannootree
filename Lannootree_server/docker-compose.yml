@@ -31,7 +31,7 @@ services:
       - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${APP_WEB_URL}`)'
       - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
       - 'traefik.http.routers.traefik-dashboard.entrypoints=web'
-      # - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
+      - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
       - traefik

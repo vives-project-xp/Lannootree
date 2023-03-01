@@ -83,7 +83,7 @@ class callback : public virtual mqtt::callback, public virtual mqtt::iaction_lis
 namespace Processing {
 
   JSONMqttFormatter::JSONMqttFormatter(std::string topic) {
-    mqtt::async_client client("ssl://lannootree.devbitapp.be:8883", "VoronoizerLiveStream");
+    mqtt::async_client client("ssl://lannootree.be:8883", "VoronoizerLiveStream");
 
     std::stringstream client_cert;
     std::stringstream client_key;
