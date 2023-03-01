@@ -28,7 +28,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.lannootree.devbitapp.be`)'
+      - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.${APP_WEB_URL}`)'
       - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
       - 'traefik.http.routers.traefik-dashboard.entrypoints=web'
       # - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
@@ -46,10 +46,10 @@ services:
       - ../.env
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.authelia.rule=Host(`auth.lannootree.devbitapp.be`)'
+      - 'traefik.http.routers.authelia.rule=Host(`auth.${APP_WEB_URL}`)'
       - 'traefik.http.services.authelia.loadbalancer.server.port=9091'
       - 'traefik.http.routers.authelia.entryPoints=web'
-      - 'traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.lannootree.devbitapp.be%2F'
+      - 'traefik.http.middlewares.authelia.forwardAuth.address=http://authelia:9091/api/verify?rd=https%3A%2F%2Fauth.${APP_WEB_URL}%2F'
       - 'traefik.http.middlewares.authelia.forwardAuth.trustForwardHeader=true'
       - 'traefik.http.middlewares.authelia.forwardAuth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email'
       - 'traefik.http.middlewares.X-set-headers.headers.customrequestheaders.X-Forwarded-Proto=https'
@@ -81,7 +81,7 @@ services:
       - "../certs/client:/app/clientcert:ro"  
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.nodered.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/nodered`)'
+      - 'traefik.http.routers.nodered.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/nodered`)'
       - 'traefik.http.routers.nodered.priority=100'
       - 'traefik.http.services.nodered.loadbalancer.server.port=1880'
       - 'traefik.http.routers.nodered.entrypoints=web'
@@ -98,7 +98,7 @@ services:
       - "../certs/ca/ca.crt:/usr/share/nginx/html/ca.crt:ro"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.certificate-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/ca.crt`)'
+      - 'traefik.http.routers.certificate-api.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/ca.crt`)'
       - 'traefik.http.routers.certificate-api.priority=100'
       - 'traefik.http.routers.certificate-api.entrypoints=web'
     networks:
@@ -111,7 +111,7 @@ services:
       - ../.env
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.whoami.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/whoami`)'
+      - 'traefik.http.routers.whoami.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/whoami`)'
       - 'traefik.http.routers.whoami.priority=100'
       - 'traefik.http.routers.whoami.entrypoints=web'
       - 'traefik.http.routers.whoami.middlewares=X-set-headers, authelia@docker'
@@ -122,14 +122,14 @@ services:
     build:
       context: ./frontend
       args:
-          VITE_LOGOUT_URL: "https://auth.lannootree.devbitapp.be/logout"
-          VITE_FRONTEND_WEBSOCKET: "wss://lannootree.devbitapp.be/wss"
+          VITE_LOGOUT_URL: "https://auth.${APP_WEB_URL}/logout"
+          VITE_FRONTEND_WEBSOCKET: "wss://${APP_WEB_URL}/wss"
     restart: always
     env_file:
       - ../.env
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.frontend.rule=Host(`lannootree.devbitapp.be`)'
+      - 'traefik.http.routers.frontend.rule=Host(`${APP_WEB_URL}`)'
       - 'traefik.http.routers.frontend.priority=1'
       - 'traefik.http.routers.frontend.entrypoints=web'
       - 'traefik.http.routers.frontend.middlewares=X-set-headers, authelia@docker'
@@ -148,7 +148,7 @@ services:
       - "../certs/client/client.key:/app/client.key:ro"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.client-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/wss`)'
+      - 'traefik.http.routers.client-api.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/wss`)'
       - "traefik.http.routers.client-api.middlewares=client-api-stripprefix"
       - "traefik.http.middlewares.client-api-stripprefix.stripprefix.prefixes=/wss"
       - 'traefik.http.routers.client-api.priority=100'
@@ -171,7 +171,7 @@ services:
       - "log-database:/app/db"
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.admin-api.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/admin/wss`)'
+      - 'traefik.http.routers.admin-api.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/admin/wss`)'
       - "traefik.http.routers.admin-api.middlewares=admin-api-stripprefix"
       - "traefik.http.middlewares.admin-api-stripprefix.stripprefix.prefixes=/admin/wss"
       - 'traefik.http.routers.admin-api.priority=100'
@@ -242,7 +242,7 @@ services:
       - lannootree
     labels:
       - 'traefik.enable=true'
-      - 'traefik.http.routers.phpmyadmin.rule=Host(`lannootree.devbitapp.be`) && PathPrefix(`/phpmyadmin`)'
+      - 'traefik.http.routers.phpmyadmin.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/phpmyadmin`)'
       - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
       - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
       - 'traefik.http.routers.phpmyadmin.priority=100'
@@ -264,7 +264,7 @@ services:
 #      - WEBHOOK_BRANCH_LIST=main  
 #    labels:
 #      - 'traefik.enable=true'
-#      - 'traefik.http.routers.githook.rule=Host(`githook.lannootree.devbitapp.be`)'
+#      - 'traefik.http.routers.githook.rule=Host(`githook.${APP_WEB_URL}`)'
 #      - 'traefik.http.services.githook.loadbalancer.server.port=8000'
 #      - 'traefik.http.routers.githook.entrypoints=web'
 #    networks:

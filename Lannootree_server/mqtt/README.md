@@ -13,7 +13,7 @@ Generate certificates in the [certs](/certs/README.md) folder.
 - server.key: Private key for mqtt server TLS
 
 All the files need to be generated, the ca.crt needs to be shared with the clients.
-It can be downloaded to the clients via [this link](https://lannootree.devbitapp.be/ca.crt)
+It can be downloaded to the clients via [https://\<Domainname\>/ca.crt](https://\<Domainname\>/ca.crt)
 
 ## Topics
 

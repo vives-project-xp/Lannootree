@@ -29,7 +29,7 @@ sh get_ca.sh
   - client.key: Private key for MQTT client
 
 All those files needs to be generated. The ca.crt needs to be shared with the clients.
-It can be downloaded to the clients from [this link](https://lannootree.devbitapp.be/ca.crt).
+It can be downloaded to the clients via [https://\<Domainname\>/ca.crt](https://\<Domainname\>/ca.crt)
 
 ### Generating using script
 
