@@ -58,9 +58,9 @@ Vergeet zeker niet om de reverse checkbox in te duwen en om daarna op Submit te 
 
 Nu is je afbeelding klaar om te renderen.
 
-### Problemen
+# Problemen
 
-#### Achtergrond verdwijnt
+### Achtergrond verdwijnt
 
 Het kan mogelijk zijn dat na het renderen van de voronoizer een deel van de achtergrond zwart wordt op het eindresultaat. 
 
@@ -90,7 +90,7 @@ Daarna scrol je naar onder naar Effects en kies je de instellingen zoals de afbe
 
 ![afbeelding](https://user-images.githubusercontent.com/71697142/222716362-2aefa099-5b31-4400-926f-e41b4e1ae7b1.png)
 
-#### 'Scn' is 1
+## 'Scn' is 1
 
 Als de voronoizer een error gooit met ‘scn’ is 1, dan wilt dit zeggen dat de gif maar 1 kleurkanaal heeft, dit komt voor in gifs die frames bevatten die zwart en wit/grayscale zijn. De workaround hiervoor is om iedere frame om te zetten naar een afbeelding met RGB data. Dit kan je doen door opnieuw naar ezgifs te gaan, op Effects > Censor image.
 
