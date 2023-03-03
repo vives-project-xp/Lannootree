@@ -64,7 +64,7 @@ Nu is je afbeelding klaar om te renderen.
 
 Het kan mogelijk zijn dat na het renderen van de voronoizer een deel van de achtergrond zwart wordt op het eindresultaat. 
 
-![afbeelding](https://user-images.githubusercontent.com/71697142/222715802-5a20f37f-be9d-4fbe-a9ed-c747476f2571.png)
+![proccesed_niewvives](https://user-images.githubusercontent.com/71697142/222732421-2565e661-f782-43c7-b4f4-64adf1443f22.gif)
 
 Om dit op te lossen moet je een achtergrondafbeeldingcreëren met dezelfde afmetingen en kleur als de input gif.
 
@@ -112,3 +112,8 @@ Daarna duw je op het Set knopje en Submit je de gif
 ![afbeelding](https://user-images.githubusercontent.com/71697142/222716630-adb6be91-4532-47e5-b583-3754cc67f059.png)
 
 Hiermee zou je nu de gif kunnen renderen met de voronoizer
+
+# :tada: Eindresultaat
+
+![proccesed_EOICTVIVES](https://user-images.githubusercontent.com/71697142/222732657-1092371b-28e6-4abd-bf72-599bd86a6f6e.gif)
+
