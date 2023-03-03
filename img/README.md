@@ -4,7 +4,7 @@ In this folder you find all de images we use in the repository.
 
 ![EOICTVIVES](https://user-images.githubusercontent.com/71697142/222718432-d3345379-1384-4fd0-916a-3d61b71f73a9.gif)
 ![EOICTVIVES_V2](https://user-images.githubusercontent.com/71697142/221525904-182d7f6c-9854-4e3e-b6c9-7c4dd5f8f4ae.gif)
-![vivesiotlab](https://user-images.githubusercontent.com/71697142/222718435-460f1383-9e7d-4f69-ad09-9166bd40633a.gif)
+![vivesiotlab_fix](https://user-images.githubusercontent.com/71697142/222734913-418dafb0-a54b-42cc-8373-15255b67475b.gif)
 
 ## Tutorial: Scrolling gif maken voor de Lannootree
 
