@@ -221,8 +221,8 @@ services:
       MYSQL_ROOT_PASSWORD: storage
       MYSQL_DATABASE: storage
       TZ: Europe/Brussels
-    ports:
-      - 3306:3306
+    # ports:
+      # - 3306:3306
     volumes:
       - mysql:/var/lib/mysql
     networks:
