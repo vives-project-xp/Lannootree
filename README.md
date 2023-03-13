@@ -27,6 +27,10 @@ This is a project for Project Experience 2022, and is designed to be both versat
 
 ![Team](img/groupphoto.JPG)
 
+## Video
+
+[![Watch the video](https://img.youtube.com/vi/O0IyOmSQqIg/maxresdefault.jpg)](https://youtu.be/O0IyOmSQqIg)
+
 ## Features
 
 - A frontend to control the whole project
