@@ -21,7 +21,6 @@ services:
       - TZ=Europe/Brussels
     ports:
       - "80:80"
-      # - "443:443"
       # - "8080:8080"
     volumes:
       - "./traefik:/etc/traefik"
@@ -31,7 +30,7 @@ services:
       - 'traefik.http.routers.traefik-dashboard.rule=Host(`traefik.lannootree.devbitapp.be`)'
       - 'traefik.http.services.traefik-dashboard.loadbalancer.server.port=8080'
       - 'traefik.http.routers.traefik-dashboard.entrypoints=web'
-      # - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
+      - 'traefik.http.routers.traefik-dashboard.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
       # - traefik
@@ -221,8 +220,8 @@ services:
       MYSQL_ROOT_PASSWORD: storage
       MYSQL_DATABASE: storage
       TZ: Europe/Brussels
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3306:3306
     volumes:
       - mysql:/var/lib/mysql
     networks:
