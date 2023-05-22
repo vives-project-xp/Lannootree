@@ -108,7 +108,7 @@ client.on('message', function (topic, message) {
 
 // CONTROLLER______________________________________________________________
 
-var on_time = '08:00-18:00';                                                // default ontime
+var on_time = '08:00-23:00';                                                // default ontime
 var ledpanelOn = false;                                                     // if false, most of the LedPanel control functions will be blocked
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();                           // when starting, check if current time is between on_time, if so... turn on the LedPanel
 else sendColorLedPanel(0,0,0);                                              // if not, send offcolor to LedPanel
@@ -189,7 +189,7 @@ function set_ontime(ontime) {
 // Function to turn on the LedPanel
 function turnOnLedPanel() {
   ledpanelOn = true;
-  sendColorLedPanel(50,0,0);  // When turned on (idle-state), the color red will be shown
+  sendColorLedPanel(0,0,0);  // When turned on (idle-state), the color red will be shown
   logging(`[INFO] LedPanel turned ON (ontime-schedule: ${on_time})`);
 }
 
