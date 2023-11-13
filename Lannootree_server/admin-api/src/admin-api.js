@@ -15,27 +15,54 @@ var clientcrt = fs.readFileSync("client.crt");
 var clientkey = fs.readFileSync("client.key");
 var mqttOptions={
   clientId:"admin-api_" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_LOCAL_PORT,
-  host: process.env.MQTT_BROKER_LOCAL_URL,
-  protocol:'mqtts',
-  rejectUnauthorized : false,
-  ca:caFile,
-  cert: clientcrt,
-  key: clientkey,
+  protocol: process.env.MQTT_BROKER_PROTOCOL,
     will: {
         topic: "status/admin-api",
         payload: "Offline",
         retain: true
     }
 }
+
+if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+  if (process.env.NO_CREDENTIALS === 'false') {
+   mqttOptions.password = process.env.MQTT_BROKER_PASSWORD;
+   mqttOptions.user = process.env.MQTT_BROKER_USER;
+  }
+ mqttOptions.port = process.env.MQTT_BROKER_PORT;
+ mqttOptions.host = process.env.MQTT_BROKER_URL;
+} 
+else {
+ mqttOptions.port = process.env.MQTT_BROKER_LOCAL_PORT;
+ mqttOptions.host = process.env.MQTT_BROKER_LOCAL_URL;
+ mqttOptions.rejectUnauthorized = false;
+ mqttOptions.ca = caFile;
+ mqttOptions.cert = clientcrt;
+ mqttOptions.key = clientkey;
+}
 const client = mqtt.connect(mqttOptions);
 
 client.on('connect', function () {
-    logging("[INFO] mqtt connected")
+  if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+    logging("[INFO] mqtt connected to external broker") }
+    else { 
+      logging("[INFO] mqtt connected to local broker")
+    }
     client.publish('status/admin-api', 'Online', {retain: true});
     client.subscribe('logs/#');
     client.subscribe('status/#');
 })
+
+client.on('close', function () {
+  logging("[INFO] mqtt connection closed");
+});
+
+client.on('offline', function () {
+  logging("[INFO] mqtt connection offline");
+});
+
+client.on('end', function () {
+  logging("[INFO] mqtt connection ended");
+});
     
     
 
@@ -168,7 +195,7 @@ function logging(message, msgdebug = false){
       console.log(message);
       client.publish('logs/admin-api', message);
     }
-    else if(msgdebug && debug) {
+    else if(msgdebug && debug) {m
       console.log(message);
     }
   }

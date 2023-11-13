@@ -27,19 +27,31 @@ var clientcrt = fs.readFileSync("./client.crt");
 var clientkey = fs.readFileSync("./client.key");
 var options = {
   clientId:"controller_" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_LOCAL_PORT,
-  host: process.env.MQTT_BROKER_LOCAL_URL,
-  protocol:'mqtts',
-  rejectUnauthorized : false,
-  ca:caFile,
-  cert: clientcrt,
-  key: clientkey,
+  protocol: process.env.MQTT_BROKER_PROTOCOL,
   will: {
       topic: "status/" + instanceName,
       payload: "Offline",
       retain: true
   }
 };
+
+if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+  if (process.env.NO_CREDENTIALS === 'false') {
+    options.password = process.env.MQTT_BROKER_PASSWORD;
+    options.user = process.env.MQTT_BROKER_USER;
+  }
+  options.port = process.env.MQTT_BROKER_PORT;
+  options.host = process.env.MQTT_BROKER_URL;
+} 
+else {
+  options.port = process.env.MQTT_BROKER_LOCAL_PORT;
+  options.host = process.env.MQTT_BROKER_LOCAL_URL;
+  options.rejectUnauthorized = false;
+  options.ca = caFile;
+  options.cert = clientcrt;
+  options.key = clientkey;
+}
+
 const client = mqtt.connect(options);
 
 const topics = [
@@ -47,7 +59,11 @@ const topics = [
 ]
 
 client.on('connect', function () {
-  logging("[INFO] mqtt connected");
+  if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+    logging("[INFO] mqtt connected to external broker") }
+    else { 
+      logging("[INFO] mqtt connected to local broker")
+    }
   client.subscribe("status/controller-dev");
   
   devCheck.on('startup', () => {
@@ -73,6 +89,18 @@ client.on('connect', function () {
   });
 
   devCheck.Start();
+});
+
+client.on('close', function () {
+  logging("[INFO] mqtt connection closed");
+});
+
+client.on('offline', function () {
+  logging("[INFO] mqtt connection offline");
+});
+
+client.on('end', function () {
+  logging("[INFO] mqtt connection ended");
 });
 
 client.on('error', function(error) {
