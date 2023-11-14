@@ -21,13 +21,7 @@ const handleError = (err, res) => {
 var caFile = fs.readFileSync("ca.crt");
 var options={
   clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_LOCAL_PORT,
-  host: process.env.MQTT_BROKER_LOCAL_URL,
-  protocol:'mqtts',
-  rejectUnauthorized : false,
-  ca:caFile,
-  cert: clientcrt,
-  key: clientkey, 
+  protocol: process.env.MQTT_BROKER_PROTOCOL,
     will: {
         topic: "status/uploader-api",
         payload: "Offline",
@@ -35,6 +29,22 @@ var options={
     }
 };
 
+if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+  if (process.env.NO_CREDENTIALS === 'false') {
+   mqttOptions.password = process.env.MQTT_BROKER_PASSWORD;
+   mqttOptions.user = process.env.MQTT_BROKER_USER;
+  }
+ mqttOptions.port = process.env.MQTT_BROKER_PORT;
+ mqttOptions.host = process.env.MQTT_BROKER_URL;
+} 
+else {
+ mqttOptions.port = process.env.MQTT_BROKER_LOCAL_PORT;
+ mqttOptions.host = process.env.MQTT_BROKER_LOCAL_URL;
+ mqttOptions.rejectUnauthorized = false;
+ mqttOptions.ca = caFile;
+ mqttOptions.cert = clientcrt;
+ mqttOptions.key = clientkey;
+}
 
 var mqtt_connected = false;
 
