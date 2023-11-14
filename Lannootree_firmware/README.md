@@ -64,6 +64,7 @@ To change location of sockets bind the desired path to /lannootree/dev and socke
 This project uses docker compose to start all necessesairy processes. Look to the mentions containers above to know what volumes/envirioments you will have to add.
 
 ```bash
+# ENABLE SPI FIRST!!
 docker compose up -d
 ```
 
