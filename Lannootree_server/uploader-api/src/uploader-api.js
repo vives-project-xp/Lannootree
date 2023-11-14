@@ -23,7 +23,7 @@ var options={
   clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
   protocol: process.env.MQTT_BROKER_PROTOCOL,
     will: {
-        topic: "status/uploader-api",
+        topic: process.env.TOPIC_PREFIX + "/status/uploader-api",
         payload: "Offline",
         retain: true
     }
@@ -55,9 +55,9 @@ app.use(bodyParser.json());
 
 client.on('connect', () => {
     logging("[INFO] mqtt connected")
-    client.publish('status/uploader-api', 'Online', {retain: true});
+    client.publish(process.env.TOPIC_PREFIX + '/status/uploader-api', 'Online', {retain: true});
 
-    client.subscribe('voronoi/in');
+    client.subscribe(process.env.TOPIC_PREFIX + '/voronoi/in');
 
     mqtt_connected = true;
 });
@@ -67,7 +67,7 @@ app.use(express.static('public'));
 app.post("/upload/post", function(req, res) {
   if(mqtt_connected){
     test1 = JSON.stringify(req.files)
-    client.publish('/$SYS/broker/uploads', test1, options);
+    client.publish(process.env.TOPIC_PREFIX + '/uploads', test1, options);
     console.log(req.files);
 
     res.send('Image is send.')
@@ -78,7 +78,7 @@ app.post("/upload/post", function(req, res) {
 function logging(message, msgdebug = false){
     if (!msgdebug) {
       console.log(message);
-      client.publish('logs/uploader-api', message);
+      client.publish(process.env.TOPIC_PREFIX + '/logs/uploader-api', message);
     }
     else if(msgdebug && debug) {
       console.log(message);

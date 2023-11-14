@@ -11,14 +11,16 @@ const CONFIGHASH = "config1";
 
 // MQTT ______________________________________________________________________________________
 var instanceName = "storage";
-var caFile = fs.readFileSync("ca.crt");
-var clientcrt = fs.readFileSync("client.crt");
-var clientkey = fs.readFileSync("client.key");
+if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+  var caFile = fs.readFileSync("ca.crt");
+  var clientcrt = fs.readFileSync("client.crt");
+  var clientkey = fs.readFileSync("client.key");
+}
 var options={
   clientId:"storage_" + Math.random().toString(16).substring(2, 8),
   protocol: process.env.MQTT_BROKER_PROTOCOL,
   will: {
-    topic: "status/" + instanceName,
+    topic: process.env.TOPIC_PREFIX + "/status/" + instanceName,
     payload: "Offline",
     retain: true
   }
@@ -48,8 +50,8 @@ client.on('connect', function () {
     else { 
       logging("[INFO] mqtt connected to local broker")
     }
-  client.publish("status/" + instanceName, 'Online', {retain: true});
-  client.subscribe("storage/in");
+  client.publish(process.env.TOPIC_PREFIX + "/status/" + instanceName, 'Online', {retain: true});
+  client.subscribe(process.env.TOPIC_PREFIX + "/storage/in");
   player = new Player(client); // the Player should only be created when the client is connected
 });
 
@@ -61,7 +63,7 @@ client.on('message', async function (topic, message) {
     data = message;
   }
   switch (topic) {
-    case "storage/in":
+    case process.env.TOPIC_PREFIX + "/storage/in":
       switch(data.command) {
         case "add_file": add_file(data.json, data.name, data.category, data.description); break;
         case "send_media": send_media(); break;
@@ -95,7 +97,7 @@ async function add_file(json, name, category, description) {
 // This function sends the media over MQTT to the controller
 async function send_media() {
   let media = await dbmanager.getAllMedia();
-  client.publish('controller/in', JSON.stringify({"command": "media", "media": media}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "media", "media": media}));
 }
 
 // This function performs checks if the media with a media_id can be played. If all checks pass, the call the player.play function to actually start the streaming process.
@@ -145,7 +147,7 @@ function play_current_stream() {
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
     console.log(message);
-    client.publish('logs/' + instanceName, message);
+    client.publish(process.env.TOPIC_PREFIX + '/logs/' + instanceName, message);
   }
   else if(msgdebug && debug) {
     console.log(message);

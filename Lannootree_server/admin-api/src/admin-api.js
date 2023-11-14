@@ -10,14 +10,16 @@ const websocket = new WebSocketServer({ port: 3000 });
 var statusBuffer = {};
 
 // MQTT___________________________________________________________________________________________________
-var caFile = fs.readFileSync("ca.crt");
-var clientcrt = fs.readFileSync("client.crt");
-var clientkey = fs.readFileSync("client.key");
+if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+  var caFile = fs.readFileSync("ca.crt");
+  var clientcrt = fs.readFileSync("client.crt");
+  var clientkey = fs.readFileSync("client.key");
+}
 var mqttOptions={
   clientId:"admin-api_" + Math.random().toString(16).substring(2, 8),
   protocol: process.env.MQTT_BROKER_PROTOCOL,
     will: {
-        topic: "status/admin-api",
+        topic: process.env.TOPIC_PREFIX + "/status/admin-api",
         payload: "Offline",
         retain: true
     }
@@ -47,9 +49,9 @@ client.on('connect', function () {
     else { 
       logging("[INFO] mqtt connected to local broker")
     }
-    client.publish('status/admin-api', 'Online', {retain: true});
-    client.subscribe('logs/#');
-    client.subscribe('status/#');
+    client.publish(process.env.TOPIC_PREFIX + '/status/admin-api', 'Online', {retain: true});
+    client.subscribe(process.env.TOPIC_PREFIX + '/logs/#');
+    client.subscribe(process.env.TOPIC_PREFIX + '/status/#');
 })
 
 client.on('close', function () {
@@ -77,8 +79,8 @@ db.serialize(() => {
 
 
 client.on('message', function (topic, message) {
-  if(topic.startsWith('logs')){
-    let container = topic.substring(5);
+  if(topic.startsWith(process.env.TOPIC_PREFIX + '/logs')){
+    let container = topic.substring(process.env.TOPIC_PREFIX.length + 6);
 
     let today = new Date();
     let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
@@ -87,8 +89,8 @@ client.on('message', function (topic, message) {
 
     addLog(container, timestamp, message);
   }
-  if(topic.startsWith('status')){
-    let container = topic.substring(7);
+  if(topic.startsWith(process.env.TOPIC_PREFIX + '/status')){
+    let container = topic.substring(process.env.TOPIC_PREFIX.length + 8);
     statusBuffer[container] = message.toString();
 
     websocket.clients.forEach(function each(client) {
@@ -161,7 +163,7 @@ websocket.on('connection', (ws, req) => {
 
     if (message.type === 'config') {
       logging(`[INFO] Received config: ${message.config}`)
-      client.publish('controller/config', JSON.stringify(message.config));
+      client.publish(process.env.TOPIC_PREFIX + '/controller/config', JSON.stringify(message.config));
     }
 
   })
@@ -193,7 +195,7 @@ app.listen(port, () => {
 function logging(message, msgdebug = false){
     if (!msgdebug) {
       console.log(message);
-      client.publish('logs/admin-api', message);
+      client.publish(process.env.TOPIC_PREFIX + '/logs/admin-api', message);
     }
     else if(msgdebug && debug) {m
       console.log(message);

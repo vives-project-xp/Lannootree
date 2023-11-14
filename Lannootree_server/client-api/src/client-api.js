@@ -7,14 +7,16 @@ dotenv.config({ path: '../../.env' })
 
 // MQTT ______________________________________________________________________________________
 
-var caFile = fs.readFileSync("ca.crt");
-var clientcrt = fs.readFileSync("client.crt");
-var clientkey = fs.readFileSync("client.key");
+if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+  var caFile = fs.readFileSync("ca.crt");
+  var clientcrt = fs.readFileSync("client.crt");
+  var clientkey = fs.readFileSync("client.key");
+}
 var options={
   clientId:"client-api_" + Math.random().toString(16).substring(2, 8),
   protocol: process.env.MQTT_BROKER_PROTOCOL,
     will: {
-        topic: "status/client-api",
+        topic: process.env.TOPIC_PREFIX + "/status/client-api",
         payload: "Offline",
         retain: true
     }
@@ -43,10 +45,10 @@ client.on('connect', function () {
     else { 
       logging("[INFO] mqtt connected to local broker")
     }
-    client.publish('status/client-api', 'Online', {retain: true});
+    client.publish(process.env.TOPIC_PREFIX + '/status/client-api', 'Online', {retain: true});
 
-    client.subscribe('controller/#');
-    client.subscribe('lannootree/out');
+    client.subscribe(process.env.TOPIC_PREFIX + '/controller/#');
+    client.subscribe(process.env.TOPIC_PREFIX + '/lannootree/out');
 });
 
 client.on('close', function () {
@@ -104,7 +106,7 @@ websocket.on('connection', (ws, req) => {
 
   client.on('message', function (topic, message) {
     switch (topic) {
-      case "controller/status":
+      case process.env.TOPIC_PREFIX + '/controller/status':
         try {
           statusJSON = JSON.parse(message);
           ws.send(JSON.stringify(statusJSON));
@@ -115,7 +117,7 @@ websocket.on('connection', (ws, req) => {
         }
           break;
         
-        case "lannootree/out":
+        case process.env.TOPIC_PREFIX + '/lannootree/out':
           ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
           break;
                 
@@ -128,32 +130,32 @@ websocket.on('connection', (ws, req) => {
 // Sending updates_________________________________________
 function stop(sender) {
   logging(`[INFO] {${sender}} is sending stop`);
-  client.publish('controller/in', JSON.stringify({"command": "stop"}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "stop"}));
 }
 
 function pause(sender) {
   logging(`[INFO] {${sender}} is sending pause`);
-  client.publish('controller/in', JSON.stringify({"command": "pause"}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "pause"}));
 }
 
 function play(sender) {
   logging(`[INFO] {${sender}} is sending play`);
-  client.publish('controller/in', JSON.stringify({"command": "play"}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "play"}));
 }
 
 function togglepause(sender) {
   logging(`[INFO] {${sender}} is sending togglepause`);
-  client.publish('controller/pause', JSON.stringify({"value": "togglepause"}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/pause', JSON.stringify({"value": "togglepause"}));
 }
 
 function media(media_id, sender) {
   logging(`[INFO] {${sender}} is sending set-media: ${media_id}`);
-  client.publish('controller/in', JSON.stringify({"command": "play_media", "media_id": media_id}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "play_media", "media_id": media_id}));
 }
 
 function setcolor(color, sender) {
   logging(`[INFO] {${sender}} is sending color: ${color}`);
-  client.publish('controller/in', JSON.stringify({"command": "color", "red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "color", "red": parseInt(color[0]), "green": parseInt(color[1]), "blue": parseInt(color[2])}));
 }
 
 function parseColor(input, sender) {
@@ -177,7 +179,7 @@ function parseColor(input, sender) {
 function logging(message, msgdebug = false){
   if (!msgdebug) {
     console.log(message);
-    client.publish('logs/client-api', message);
+    client.publish(process.env.TOPIC_PREFIX + '/logs/client-api', message);
   }
   else if(msgdebug && debug) {
     console.log(message);
