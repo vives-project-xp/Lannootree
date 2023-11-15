@@ -11,7 +11,7 @@ import router from './router';
 
   const userInfo = useUserStore();
 
-  const logoutUrl = import.meta.env.VITE_LOGOUT_URL;
+  const logoutUrl = import.meta.env.LOGOUT_URL;
   
   const items = computed(() => {    
     const _routes = [
