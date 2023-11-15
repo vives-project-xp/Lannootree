@@ -32,13 +32,13 @@ export default class Player {
     };
 
     let currentframe = 0;
-    this.client.publish('controller/in', JSON.stringify({"command": "acceptstream", "stream": streamTopic, "id": id})); // Only now, accept the request by the controller to let the led-client listen on the streamtopic
+    this.client.publish(process.env.TOPIC_PREFIX + '/controller/in', JSON.stringify({"command": "acceptstream", "stream": streamTopic, "id": id})); // Only now, accept the request by the controller to let the led-client listen on the streamtopic
     this.interval = setInterval(() => {
       if(!this.paused) {  // only stream when paused is false
-        this.client.publish('ledpanel/stream/'+streamTopic, JSON.stringify({"frame": jsonObj.getByIndex(currentframe)})); // Send the current frame over the topic
+        this.client.publish(process.env.TOPIC_PREFIX + '/ledpanel/stream/'+streamTopic, JSON.stringify({"frame": jsonObj.getByIndex(currentframe)})); // Send the current frame over the topic
         currentframe++;
         if(currentframe==Object.keys(jsonObj).length) { // when currentframe is lastframe+1
-          this.client.publish('storage/out', JSON.stringify({"message": "endOfGIF"}));  // Not used yet, but this could be used by ex. the controller to wait for a long gif/movie while blocking other functions so the progress isn't lost.
+          this.client.publish(process.env.TOPIC_PREFIX + '/storage/out', JSON.stringify({"message": "endOfGIF"}));  // Not used yet, but this could be used by ex. the controller to wait for a long gif/movie while blocking other functions so the progress isn't lost.
           currentframe = 0; // reset the currentframe, keep looping the gif
         } 
       }
