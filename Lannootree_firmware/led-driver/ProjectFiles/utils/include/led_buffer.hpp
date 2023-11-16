@@ -70,7 +70,7 @@ namespace Lannootree {
       uint32_t** _current = &_buff1;
 
     private:
-      uint _buffer_size = 0;
+      uint32_t _buffer_size = 0;
 
     private:
       int writen = 0;
