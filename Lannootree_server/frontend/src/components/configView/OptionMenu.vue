@@ -1,11 +1,15 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { usePanelGrid } from '@/stores/PanelGrid';
   import { useDisplayOptions } from '@/stores/DisplayOptions';
 
   const tab = ref(null);
   const panelStore =  usePanelGrid();
   const display_options = useDisplayOptions();
+
+  const traefikUrl = computed(() => `http://traefik.${import.meta.env.VITE_APP_URL}`);
+  const noderedUrl = computed(() => `https://${import.meta.env.VITE_APP_URL}/nodered`);
+  const phpmyadminUrl = computed(() => `https://${import.meta.env.VITE_APP_URL}/phpmyadmin`);
 
 </script>
 
@@ -23,15 +27,15 @@
         Options
       </v-btn>
 
-      <v-btn href="http://traefik.lannootree.devbitapp.be" target="_blank" class="ma-4">
+      <v-btn :href="traefikUrl" target="_blank" class="ma-4">
         Traefik
-      </v-btn>
+      </v-btn> 
 
-      <v-btn href="https://lannootree.devbitapp.be/nodered" target="_blank" class="ma-4">
+      <v-btn :href="noderedUrl" target="_blank" class="ma-4">
         Nodered
       </v-btn>
 
-      <v-btn href="https://lannootree.devbitapp.be/phpmyadmin" target="_blank" class="ma-4">
+      <v-btn :href="phpmyadminUrl" target="_blank" class="ma-4">
         phpmyadmin
       </v-btn>
   

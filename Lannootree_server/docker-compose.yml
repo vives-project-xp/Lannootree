@@ -122,6 +122,7 @@ services:
     build:
       context: ./frontend
       args:
+          APP_WEB_URL: ${APP_WEB_URL}
           LOGOUT_URL: "https://auth.${APP_WEB_URL}/logout"
           APP_URL: "wss://${APP_WEB_URL}/wss"
     restart: always

@@ -19,7 +19,7 @@ const status_json: Ref<MqttStatus> = ref({
   
 
   const websocketactive = ref(false);
-  const ws = new WebSocket(import.meta.env.APP_URL);
+  const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
 
 
   const websocketClient = function () {

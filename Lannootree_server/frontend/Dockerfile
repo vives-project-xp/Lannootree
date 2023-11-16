@@ -10,6 +10,7 @@ ARG LOGOUT_URL
 ARG APP_URL
 
 COPY ./ ./
+
 RUN npm run build
 
 FROM nginx:alpine
