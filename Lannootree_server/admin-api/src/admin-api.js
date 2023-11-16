@@ -52,21 +52,7 @@ client.on('connect', function () {
     client.publish(process.env.TOPIC_PREFIX + '/status/admin-api', 'Online', {retain: true});
     client.subscribe(process.env.TOPIC_PREFIX + '/logs/#');
     client.subscribe(process.env.TOPIC_PREFIX + '/status/#');
-})
-
-client.on('close', function () {
-  logging("[INFO] mqtt connection closed");
 });
-
-client.on('offline', function () {
-  logging("[INFO] mqtt connection offline");
-});
-
-client.on('end', function () {
-  logging("[INFO] mqtt connection ended");
-});
-    
-    
 
 // ___________________________________________________________________________________________________
 // Log parser

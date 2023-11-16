@@ -93,18 +93,6 @@ client.on('connect', function () {
   devCheck.Start();
 });
 
-client.on('close', function () {
-  logging("[INFO] mqtt connection closed");
-});
-
-client.on('offline', function () {
-  logging("[INFO] mqtt connection offline");
-});
-
-client.on('end', function () {
-  logging("[INFO] mqtt connection ended");
-});
-
 client.on('error', function(error) {
   logging("[ERROR] mqtt:  " + error);
 });
