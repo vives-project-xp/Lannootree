@@ -40,12 +40,12 @@ namespace Lannootree {
     info_log("Cleaning up...\n");
     f.close();
 
-    initialize_memory(config);    
+    initialize_memory(config);
 
     LedDriverThread led_driver(&_channel_mem, &_controllers);
     led_driver.start();
 
-    UnixSocket lannootree_socket("./dev/lannootree.socket", 288 * 3, socket_callback, &_channel_mem);
+    UnixSocket lannootree_socket("./dev/lannootree.socket", 864 * 3, socket_callback, &_channel_mem); //288*3
     lannootree_socket.start();
 
     // Wait for shutdown signal
@@ -105,9 +105,9 @@ namespace Lannootree {
   void LannooTree::socket_callback(void* arg, uint8_t* data, size_t data_len) {
     auto _channel_mem = (std::unordered_map<std::string, LedBuffer*>*) arg;
 
-    // This can be a constant buffer 
+    // This can be a constant buffer
     std::vector<uint32_t> colorsa0;
-    for (int i = 0; i < 288; i++) {
+    for (int i = 0; i < 864; i++) {
       Color c;
       c.data[0] = data[(3 * i) + 2];  // blue
       c.data[1] = data[(3 * i) + 1];  // green
@@ -131,7 +131,7 @@ namespace Lannootree {
     // std::vector<uint32_t> colorsb0;
     // std::vector<uint32_t> colorsb1;
 
-    
+
     auto channelA0 = std::async(std::launch::async, [&]() {
       _channel_mem->at("CA0")->mem_write(colorsa0.data(), colorsa0.size() * sizeof(uint32_t));
     });
