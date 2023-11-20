@@ -244,8 +244,8 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.phpmyadmin.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/phpmyadmin`)'
-      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
-      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+      # - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+      # - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
       - 'traefik.http.routers.phpmyadmin.priority=100'
       - 'traefik.http.routers.phpmyadmin.entrypoints=web'
       # - 'traefik.http.routers.phpmyadmin.middlewares=X-set-headers, authelia@docker'
