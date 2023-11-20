@@ -57,7 +57,7 @@ else {
 const client = mqtt.connect(options);
 
 const topics = [
-  "controller/in"
+  process.env.TOPIC_PREFIX + "/controller/in"
 ]
 
 client.on('connect', function () {
