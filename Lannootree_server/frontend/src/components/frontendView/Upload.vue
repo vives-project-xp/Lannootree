@@ -55,6 +55,7 @@ import axios from 'axios'
       variant="outlined"
       :show-size="1000"
       :rules="rules.concat(required)"
+      name="file"
     >
       <template v-slot:selection="{ fileNames }">
         <template v-for="(fileName, index) in fileNames" :key="fileName">

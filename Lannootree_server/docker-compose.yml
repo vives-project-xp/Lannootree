@@ -215,20 +215,20 @@ services:
     networks:
       - lannootree
   
-  # uploader-api:
-  #   build:
-  #     context: ./uploader-api
-  #   env_file:
-  #     - ../.env
-  #   environment:
-  #     - PRODUCTION_SERVER=true
-  #   restart: always
-  #   volumes:
-  #     - "../certs/ca/ca.crt:/app/ca.crt:ro"
-  #     - "../certs/client/client.crt:/app/client.crt:ro"
-  #     - "../certs/client/client.key:/app/client.key:ro"
-  #   networks:
-  #     - lannootree
+  uploader-api:
+    build:
+      context: ./uploader-api
+    env_file:
+      - ../.env
+    environment:
+      - PRODUCTION_SERVER=true
+    restart: always
+    volumes:
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
+    networks:
+      - lannootree
 
   mysql:
     image: mysql

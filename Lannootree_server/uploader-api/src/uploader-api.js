@@ -7,9 +7,11 @@ const { json } = require('express');
 
 dotenv.config({ path: '../../.env' });
 
-var caFile = fs.readFileSync("ca.crt");
-var clientcrt = fs.readFileSync("client.crt");
-var clientkey = fs.readFileSync("client.key");
+if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+  var caFile = fs.readFileSync("ca.crt");
+  var clientcrt = fs.readFileSync("client.crt");
+  var clientkey = fs.readFileSync("client.key");
+}
 
 const handleError = (err, res) => {
   res
@@ -17,10 +19,8 @@ const handleError = (err, res) => {
     .contentType("text/plain")
     .end("Oops! Something went wrong!");
 };
-
-var caFile = fs.readFileSync("ca.crt");
 var options={
-  clientId:"clientapi" + Math.random().toString(16).substring(2, 8),
+  clientId:"uploader-api_" + Math.random().toString(16).substring(2, 8),
   protocol: process.env.MQTT_BROKER_PROTOCOL,
     will: {
         topic: process.env.TOPIC_PREFIX + "/status/uploader-api",
@@ -50,11 +50,14 @@ var mqtt_connected = false;
 
 const client = mqtt.connect(options);
 const app = express();
-var mqtt_connected = false;
 app.use(bodyParser.json());
 
 client.on('connect', () => {
-    logging("[INFO] mqtt connected")
+  if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+    logging("[INFO] mqtt connected to external broker") }
+    else { 
+      logging("[INFO] mqtt connected to local broker")
+    }
     client.publish(process.env.TOPIC_PREFIX + '/status/uploader-api', 'Online', {retain: true});
 
     client.subscribe(process.env.TOPIC_PREFIX + '/voronoi/in');
@@ -65,6 +68,7 @@ client.on('connect', () => {
 app.use(express.static('public'));
 
 app.post("/upload/post", function(req, res) {
+  console.log("Received POST request:", req.body);
   if(mqtt_connected){
     test1 = JSON.stringify(req.files)
     client.publish(process.env.TOPIC_PREFIX + '/uploads', test1, options);
