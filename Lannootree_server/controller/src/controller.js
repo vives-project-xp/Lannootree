@@ -126,7 +126,7 @@ client.on('message', function (topic, message) {
 
 // CONTROLLER______________________________________________________________
 
-var on_time = '08:00-18:00';                                                // default ontime
+var on_time = process.env.ON_TIME;                                                // default ontime
 var ledpanelOn = false;                                                     // if false, most of the LedPanel control functions will be blocked
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();                           // when starting, check if current time is between on_time, if so... turn on the LedPanel
 else sendColorLedPanel(0,0,0);                                              // if not, send offcolor to LedPanel
