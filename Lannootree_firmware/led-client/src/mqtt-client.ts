@@ -43,9 +43,9 @@ class LannooTreeMqttClient {
   private driverSocket: net.Socket = new net.Socket();
 
   private client: mqtt.Client;
-  private caCert: Buffer = fs.readFileSync('./ca.crt');
-  private clientcrt = fs.readFileSync("client.crt");
-  private clientkey = fs.readFileSync("client.key");
+  private caCert: Buffer | undefined;
+  private clientcrt: Buffer | undefined;
+  private clientkey: Buffer | undefined;
 
   private subscribeTopics = [
     process.env.TOPIC_PREFIX + '/ledpanel/control',
@@ -69,6 +69,12 @@ class LannooTreeMqttClient {
   ]);
 
   constructor() {
+    if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+      this.caCert = fs.readFileSync('./ca.crt');
+      this.clientcrt = fs.readFileSync("client.crt");
+      this.clientkey = fs.readFileSync("client.key");
+    }
+    
     this.client = mqtt.connect(mqttOptions);
     this.client.on('connect', this.connectCallback);
     

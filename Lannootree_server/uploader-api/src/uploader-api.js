@@ -31,19 +31,19 @@ var options={
 
 if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
   if (process.env.NO_CREDENTIALS === 'false') {
-   mqttOptions.password = process.env.MQTT_BROKER_PASSWORD;
-   mqttOptions.user = process.env.MQTT_BROKER_USER;
+   options.password = process.env.MQTT_BROKER_PASSWORD;
+   options.user = process.env.MQTT_BROKER_USER;
   }
- mqttOptions.port = process.env.MQTT_BROKER_PORT;
- mqttOptions.host = process.env.MQTT_BROKER_URL;
+ options.port = process.env.MQTT_BROKER_PORT;
+ options.host = process.env.MQTT_BROKER_URL;
 } 
 else {
- mqttOptions.port = process.env.MQTT_BROKER_LOCAL_PORT;
- mqttOptions.host = process.env.MQTT_BROKER_LOCAL_URL;
- mqttOptions.rejectUnauthorized = false;
- mqttOptions.ca = caFile;
- mqttOptions.cert = clientcrt;
- mqttOptions.key = clientkey;
+ options.port = process.env.MQTT_BROKER_LOCAL_PORT;
+ options.host = process.env.MQTT_BROKER_LOCAL_URL;
+ options.rejectUnauthorized = false;
+ options.ca = caFile;
+ options.cert = clientcrt;
+ options.key = clientkey;
 }
 
 var mqtt_connected = false;
@@ -70,7 +70,7 @@ app.post("/upload/post", function(req, res) {
     client.publish(process.env.TOPIC_PREFIX + '/uploads', test1, options);
     console.log(req.files);
 
-    res.send('Image is send.')
+    res.send('Image is sent.')
     // logging("[INFO] image is uploaded to mqtt.")
   }
 });
