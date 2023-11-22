@@ -1,6 +1,9 @@
 # Environment file
 .env
 
+# config file firmware
+config.json
+
 # Logs
 logs
 *.log
