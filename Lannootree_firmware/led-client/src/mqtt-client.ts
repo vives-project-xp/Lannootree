@@ -8,6 +8,33 @@ import * as handel from './mqtt-handles.js'
 import { ledDriver } from './driver-connection.js'
 dotenv.config({ path: '../../.env' });
 
+const mqttOptions: mqtt.IClientOptions = {
+  clientId: `led-client_${Math.random().toString().substring(2, 8)}`,
+  protocol: process.env.MQTT_BROKER_PROTOCOL as mqtt.IClientOptions['protocol'] || 'mqtt', // Default to 'mqtt' if protocol is not defined or invalid
+  will: {
+    qos: 2,
+    topic: 'status/led-client',
+    payload: 'Offline',
+    retain: true
+  }
+};
+
+if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+  if (process.env.NO_CREDENTIALS === 'false') {
+    mqttOptions.password = process.env.MQTT_BROKER_PASSWORD;
+    mqttOptions.username = process.env.MQTT_BROKER_USER;
+  }
+  mqttOptions.port = Number(process.env.MQTT_BROKER_PORT);
+  mqttOptions.host = process.env.MQTT_BROKER_URL;
+} else {
+  mqttOptions.port = Number(process.env.MQTT_BROKER_LOCAL_PORT);
+  mqttOptions.host = process.env.MQTT_BROKER_LOCAL_URL;
+  mqttOptions.rejectUnauthorized = false;
+  mqttOptions.ca = fs.readFileSync('./ca.crt');
+  mqttOptions.cert = fs.readFileSync('client.crt');
+  mqttOptions.key = fs.readFileSync('client.key');
+}
+
 class LannooTreeMqttClient {
 
   private redis_client;
@@ -16,35 +43,18 @@ class LannooTreeMqttClient {
   private driverSocket: net.Socket = new net.Socket();
 
   private client: mqtt.Client;
-  private caCert: Buffer = fs.readFileSync('./ca.crt');
-  private clientcrt = fs.readFileSync("client.crt");
-  private clientkey = fs.readFileSync("client.key");
-
-  private mqttOptions: mqtt.IClientOptions = {
-    clientId: `led-client_${Math.random().toString().substring(2, 8)}`,
-    port: Number(process.env.MQTT_BROKER_PORT),
-    host: process.env.MQTT_BROKER_URL,
-    protocol: 'mqtts',
-    rejectUnauthorized: true,
-    ca: this.caCert,
-    cert: this.clientcrt,
-    key: this.clientkey,
-    will: {
-      qos: 2,
-      topic: 'status/led-client',
-      payload: 'Offline',
-      retain: true
-    }
-  };
+  private caCert: Buffer | undefined;
+  private clientcrt: Buffer | undefined;
+  private clientkey: Buffer | undefined;
 
   private subscribeTopics = [
-    'ledpanel/control',
-    'controller/config'
+    process.env.TOPIC_PREFIX + '/ledpanel/control',
+    process.env.TOPIC_PREFIX + '/controller/config'
   ];
 
   private messageTopicMap: Map<string, Map<string, (data: any) => void>> = new Map([
     [ // Topics
-      "ledpanel/control",
+    process.env.TOPIC_PREFIX + "/ledpanel/control",
       new Map( 
       [ // Commands for ledpanel/controll topic
         ["color", handel.set_color],
@@ -59,7 +69,13 @@ class LannooTreeMqttClient {
   ]);
 
   constructor() {
-    this.client = mqtt.connect(this.mqttOptions);
+    if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+      this.caCert = fs.readFileSync('./ca.crt');
+      this.clientcrt = fs.readFileSync("client.crt");
+      this.clientkey = fs.readFileSync("client.key");
+    }
+    
+    this.client = mqtt.connect(mqttOptions);
     this.client.on('connect', this.connectCallback);
     
     this.redis_client = createClient({
@@ -74,7 +90,7 @@ class LannooTreeMqttClient {
   }
 
   log = (message: string, debug: boolean = false) => {
-    if (!debug) this.client.publish('logs/led-client', message); 
+    if (!debug) this.client.publish(process.env.TOPIC_PREFIX + '/logs/led-client', message); 
     console.log(message);
   };
 
@@ -86,19 +102,19 @@ class LannooTreeMqttClient {
     this.log('[INFO] connected to mqtt');
     
     process.on('SIGTERM', () => {
-      this.client.publish('status/led-driver', 'Offline', { retain: true });
+      this.client.publish(process.env.TOPIC_PREFIX + '/status/led-driver', 'Offline', { retain: true });
     });
 
     this.driverSocket = net.createConnection('/var/run/logging.socket');
 
     this.driverSocket.on('connect', () => {
       this.log("[INFO] Connected to led-driver");
-      this.client.publish('status/led-driver', 'Online', { retain: true });
+      this.client.publish(process.env.TOPIC_PREFIX + '/status/led-driver', 'Online', { retain: true });
     });
 
     this.driverSocket.on('end', () => {
       this.log("[INFO] Connection to led-driver-log ended");
-      this.client.publish('status/led-driver', 'Offline', { retain: true });
+      this.client.publish(process.env.TOPIC_PREFIX + '/status/led-driver', 'Offline', { retain: true });
     });
 
     this.driverSocket.on('data', (data) => {
@@ -106,7 +122,7 @@ class LannooTreeMqttClient {
       let dataStrings = dataString.split('\n');
 
       dataStrings.forEach((msg) => {
-        this.client.publish('logs/led-driver', msg);
+        this.client.publish(process.env.TOPIC_PREFIX + '/logs/led-driver', msg);
       });
     });
 
@@ -116,7 +132,7 @@ class LannooTreeMqttClient {
 
     this.subscribeToTopics();
 
-    this.client.publish('status/led-client', 'Online', { retain: true });
+    this.client.publish(process.env.TOPIC_PREFIX + '/status/led-client', 'Online', { retain: true });
     this.client.on('error', this.errorCallback);
     this.client.on('message', this.messageCallback);
   };
@@ -128,7 +144,7 @@ class LannooTreeMqttClient {
   private messageCallback = (topic: string, message: Buffer) => {
     let data = JSON.parse(message.toString());
         
-    if (topic.match(/^ledpanel\/stream\/.*/)) {
+    if (topic.match(new RegExp(`^${process.env.TOPIC_PREFIX}/ledpanel/stream/.*`))) {
       ledDriver.frame_to_ledcontroller(data.frame);
     }
 
@@ -148,7 +164,7 @@ class LannooTreeMqttClient {
         
         else {
           // if (this.currentStreamId != null) {
-          //   this.client.unsubscribe(`ledpanel/stream/${this.currentStreamId}`)
+          //   this.client.unsubscribe(process.env.TOPIC_PREFIX + `/ledpanel/stream/${this.currentStreamId}`)
           //   this.currentStreamId = null;
           // }
 
@@ -157,7 +173,7 @@ class LannooTreeMqttClient {
         }
       }
 
-      else if (topic == 'controller/config') {
+      else if (topic == `${process.env.TOPIC_PREFIX}/controller/config`) {
         let command = topicMap?.get('config');
         if (command !== undefined) command(data);
       }

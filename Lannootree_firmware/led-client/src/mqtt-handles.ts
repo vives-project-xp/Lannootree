@@ -39,13 +39,13 @@ export function change_config(data: any) {
 
 export function play_stream(mqtt_client: mqtt.Client, currentStreamID: string | null, data: any) {
   if (currentStreamID != null) {
-    mqtt_client.unsubscribe(`ledpanel/stream/${currentStreamID}`)
+    mqtt_client.unsubscribe(process.env.TOPIC_PREFIX + `/ledpanel/stream/${currentStreamID}`)
     currentStreamID = null;
   }
 
   currentStreamID = data.stream;
   console.log(`Listening on stream: ${currentStreamID}`)
-  mqtt_client.subscribe(`ledpanel/stream/${currentStreamID}`);
+  mqtt_client.subscribe(process.env.TOPIC_PREFIX + `/ledpanel/stream/${currentStreamID}`);
 
   streamPlayer.start();
 }

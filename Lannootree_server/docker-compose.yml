@@ -85,7 +85,7 @@ services:
       - 'traefik.http.routers.nodered.priority=100'
       - 'traefik.http.services.nodered.loadbalancer.server.port=1880'
       - 'traefik.http.routers.nodered.entrypoints=web'
-      - 'traefik.http.routers.nodered.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.nodered.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
 
@@ -114,7 +114,7 @@ services:
       - 'traefik.http.routers.whoami.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/whoami`)'
       - 'traefik.http.routers.whoami.priority=100'
       - 'traefik.http.routers.whoami.entrypoints=web'
-      - 'traefik.http.routers.whoami.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.whoami.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
 
@@ -122,8 +122,9 @@ services:
     build:
       context: ./frontend
       args:
-          VITE_LOGOUT_URL: "https://auth.${APP_WEB_URL}/logout"
-          VITE_FRONTEND_WEBSOCKET: "wss://${APP_WEB_URL}/wss"
+          APP_WEB_URL: ${APP_WEB_URL}
+          LOGOUT_URL: "https://auth.${APP_WEB_URL}/logout"
+          APP_URL: "wss://${APP_WEB_URL}/wss"
     restart: always
     env_file:
       - ../.env
@@ -132,7 +133,7 @@ services:
       - 'traefik.http.routers.frontend.rule=Host(`${APP_WEB_URL}`)'
       - 'traefik.http.routers.frontend.priority=1'
       - 'traefik.http.routers.frontend.entrypoints=web'
-      - 'traefik.http.routers.frontend.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.frontend.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
 
@@ -154,7 +155,7 @@ services:
       - 'traefik.http.routers.client-api.priority=100'
       - 'traefik.http.services.client-api.loadbalancer.server.port=3001'
       - 'traefik.http.routers.client-api.entrypoints=web'
-      - 'traefik.http.routers.client-api.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.client-api.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
 
@@ -177,7 +178,7 @@ services:
       - 'traefik.http.routers.admin-api.priority=100'
       - 'traefik.http.services.admin-api.loadbalancer.server.port=3000'
       - 'traefik.http.routers.admin-api.entrypoints=web'
-      - 'traefik.http.routers.admin-api.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.admin-api.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
 
@@ -213,6 +214,21 @@ services:
       - "../certs/client/client.key:/app/client.key:ro"
     networks:
       - lannootree
+  
+  uploader-api:
+    build:
+      context: ./uploader-api
+    env_file:
+      - ../.env
+    environment:
+      - PRODUCTION_SERVER=true
+    restart: always
+    volumes:
+      - "../certs/ca/ca.crt:/app/ca.crt:ro"
+      - "../certs/client/client.crt:/app/client.crt:ro"
+      - "../certs/client/client.key:/app/client.key:ro"
+    networks:
+      - lannootree
 
   mysql:
     image: mysql
@@ -243,11 +259,11 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.phpmyadmin.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/phpmyadmin`)'
-      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
-      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+      # - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+      # - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
       - 'traefik.http.routers.phpmyadmin.priority=100'
       - 'traefik.http.routers.phpmyadmin.entrypoints=web'
-      - 'traefik.http.routers.phpmyadmin.middlewares=X-set-headers, authelia@docker'
+      # - 'traefik.http.routers.phpmyadmin.middlewares=X-set-headers, authelia@docker'
 
 #  githook:
 #    restart: unless-stopped    
