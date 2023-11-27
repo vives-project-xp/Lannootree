@@ -16,16 +16,15 @@ import axios from 'axios'
     }),
     methods: {
       post (files) {
-        if (!this.form) return
+        if (!this.form || !this.files.length) return
         this.loading = true
         setTimeout(() => (this.loading = false), 3000)
         let formData = new FormData();
         formData.append("name", this.name)
         formData.append("description", this.description)
-        this.files.forEach(file => {
-          formData.append("file", file)
+        formData.append("file", this.files[0])
           
-        });
+        
         
         return axios.post('upload/post', formData, {
           headers: {
@@ -51,7 +50,6 @@ import axios from 'axios'
       color="#00BD7E"
       counter
       label="Upload media"
-      multiple
       placeholder="Select images, gifs and video's"
       prepend-icon="mdi-camera"
       variant="outlined"

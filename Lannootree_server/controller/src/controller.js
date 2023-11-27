@@ -22,45 +22,63 @@ const devCheck = new DevCheck(production_server, developement_time);
 
 // MQTT______________________________________________________________
 
-var caFile = fs.readFileSync("./ca.crt");
-var clientcrt = fs.readFileSync("./client.crt");
-var clientkey = fs.readFileSync("./client.key");
+if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
+  var caFile = fs.readFileSync("ca.crt");
+  var clientcrt = fs.readFileSync("client.crt");
+  var clientkey = fs.readFileSync("client.key");
+}
 var options = {
   clientId:"controller_" + Math.random().toString(16).substring(2, 8),
-  port: process.env.MQTT_BROKER_LOCAL_PORT,
-  host: process.env.MQTT_BROKER_LOCAL_URL,
-  protocol:'mqtts',
-  rejectUnauthorized : false,
-  ca:caFile,
-  cert: clientcrt,
-  key: clientkey,
+  protocol: process.env.MQTT_BROKER_PROTOCOL,
   will: {
-      topic: "status/" + instanceName,
+      topic: process.env.TOPIC_PREFIX + "/status/" + instanceName,
       payload: "Offline",
       retain: true
   }
 };
+
+if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+  if (process.env.NO_CREDENTIALS === 'false') {
+    options.password = process.env.MQTT_BROKER_PASSWORD;
+    options.user = process.env.MQTT_BROKER_USER;
+  }
+  options.port = process.env.MQTT_BROKER_PORT;
+  options.host = process.env.MQTT_BROKER_URL;
+} 
+else {
+  options.port = process.env.MQTT_BROKER_LOCAL_PORT;
+  options.host = process.env.MQTT_BROKER_LOCAL_URL;
+  options.rejectUnauthorized = false;
+  options.ca = caFile;
+  options.cert = clientcrt;
+  options.key = clientkey;
+}
+
 const client = mqtt.connect(options);
 
 const topics = [
-  "controller/in"
+  process.env.TOPIC_PREFIX + "/controller/in"
 ]
 
 client.on('connect', function () {
-  logging("[INFO] mqtt connected");
-  client.subscribe("status/controller-dev");
+  if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
+    logging("[INFO] mqtt connected to external broker") }
+    else { 
+      logging("[INFO] mqtt connected to local broker")
+    }
+  client.subscribe(process.env.TOPIC_PREFIX + "/status/controller-dev");
   
   devCheck.on('startup', () => {
     topics.forEach(topic => {
       client.subscribe(topic);
     });
-    client.publish("status/" + instanceName, 'Online', {retain: true});
+    client.publish(process.env.TOPIC_PREFIX + "/status/" + instanceName, 'Online', {retain: true});
     logging("[INFO] controller started")
     sendStatus();
   });
   
   devCheck.on('sleep', () => {
-    client.publish("status/" + instanceName, 'Sleep', {retain: true});
+    client.publish(process.env.TOPIC_PREFIX + "/status/" + instanceName, 'Sleep', {retain: true});
     topics.forEach(topic => {
       client.unsubscribe(topic);
     });
@@ -68,7 +86,7 @@ client.on('connect', function () {
   });
   
   devCheck.on('timer', () => {
-    client.publish("status/" + instanceName, 'Starting', {retain: true});
+    client.publish(process.env.TOPIC_PREFIX + "/status/" + instanceName, 'Starting', {retain: true});
     logging(`[INFO] dev controller went offline, starting in ${developement_time} seconds`)
   });
 
@@ -88,7 +106,7 @@ client.on('message', function (topic, message) {
   }
   
   switch (topic) {
-    case "controller/in":
+    case process.env.TOPIC_PREFIX + "/controller/in":
       switch(data.command) {
         case "ontime": set_ontime(data.ontime); break;
         case "media": update_media(data.media); break;
@@ -99,21 +117,21 @@ client.on('message', function (topic, message) {
         case "play_media": ask_play_media(data.media_id); break;
         case "acceptstream": play_media(data.stream, data.id); break;
       }
-    case "status/controller-dev": devCheck.Update(data); break;
+    case process.env.TOPIC_PREFIX + "/status/controller-dev": devCheck.Update(data); break;
   }
-  if (topic == "status/" + instanceName  && message == "restart") {
+  if (topic == process.env.TOPIC_PREFIX + "status/" + instanceName  && message == "restart") {
     crashApp("restarted via mqtt command");
   }
 });
 
 // CONTROLLER______________________________________________________________
 
-var on_time = '08:00-18:00';                                                // default ontime
+var on_time = process.env.ON_TIME;                                                // default ontime
 var ledpanelOn = false;                                                     // if false, most of the LedPanel control functions will be blocked
 if(checkTimeBetweenSetpoints()) turnOnLedPanel();                           // when starting, check if current time is between on_time, if so... turn on the LedPanel
 else sendColorLedPanel(0,0,0);                                              // if not, send offcolor to LedPanel
-client.publish('storage/in', JSON.stringify({"command": "send_media"}));    // On startup: ask storage to send current available media
-client.publish('storage/in', JSON.stringify({"command": "stop_current"}));  // On startup: ask starge to stop currently playing media
+client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "send_media"}));    // On startup: ask storage to send current available media
+client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "stop_current"}));  // On startup: ask starge to stop currently playing media
 
 var status = "stop";            // Default status is stopped
 var paused = true;              // Controller is paused
@@ -133,7 +151,7 @@ setInterval(() => {   // Interval that executes every 20 seconds
   else if(!checkTimeBetweenSetpoints() && ledpanelOn) turnOffLedPanel();
 
   // The controller asks the storage to send its stored media. It will send it back to the controller under the controller/in topic with the command "media"
-  client.publish('storage/in', JSON.stringify({"command": "send_media"}));
+  client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "send_media"}));
 
   // The status of the variables and the stored media get sent every 20 seconds to the frontend (makes sure the frontend is up-to-date)
   sendStatus();
@@ -203,7 +221,7 @@ function turnOffLedPanel() {
 // Function to pause the LedPanel
 function pause_leds() {
   if(ledpanelOn) {  // Can only be executed when ledpanelOn is true (if the time is between on_time)
-    client.publish('storage/in', JSON.stringify({"command": "pause_current"})); // Ask the storage to pause the current stream
+    client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "pause_current"})); // Ask the storage to pause the current stream
     status = "pause";
     paused = true;
     sendStatus();
@@ -215,7 +233,7 @@ function pause_leds() {
 // When paused, this function can resume the LedPanel again
 function play_leds() {
   if(ledpanelOn) {
-    client.publish('storage/in', JSON.stringify({"command": "play_current"})); // Ask the storage to resume the current stream
+    client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "play_current"})); // Ask the storage to resume the current stream
     status = "playing";
     paused = false;
     sendStatus();
@@ -227,14 +245,14 @@ function play_leds() {
 // This function sends 5 times a static color to the LedPanel (just to be sure :) )
 function sendColorLedPanel(r,g,b) {
   for(let i = 0; i<5; i++) {
-    client.publish('ledpanel/control', JSON.stringify({"command": "color", "red": r, "green": g, "blue": b}));
+    client.publish(process.env.TOPIC_PREFIX + '/ledpanel/control', JSON.stringify({"command": "color", "red": r, "green": g, "blue": b}));
   }
 }
 
 // This function stops the LedPanel
 function stop_leds() {
   if(ledpanelOn) {
-    client.publish('storage/in', JSON.stringify({"command": "stop_current"}));  // Ask the storage to stop the current stream
+    client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "stop_current"}));  // Ask the storage to stop the current stream
     sendColorLedPanel(0,0,0); // Send color black to the LedPanel, it won't be lit up anymore
     status = "stop";
     paused = true;
@@ -266,7 +284,7 @@ function ask_play_media(media_id) {
       logging(`[INFO] MEDIA ${media_id} IS ALREADY PLAYING`);
     } else {
       let streamID = generateStreamID();  // This generated a steamID (goes from 000 to 999)
-      client.publish('storage/in', JSON.stringify({"command": "play", "id": media_id, "streamtopic": `stream_${streamID}`})); // Ask storage to play media_id ... on streamtopic ...
+      client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify({"command": "play", "id": media_id, "streamtopic": `stream_${streamID}`})); // Ask storage to play media_id ... on streamtopic ...
     }
   }
   else logging(`[WARNING] CANT PLAY MEDIA, LedPanel is OFF (ontime-schedule)`);
@@ -275,7 +293,7 @@ function ask_play_media(media_id) {
 // If the storage accepted the request (see 'ask_play_media'), it will return the topic and media_id that the 'ask_play_media' function gave.
 // At this point, the storage is already streaming the media with media_id ... under that topic 
 function play_media(topic, id) {
-  client.publish('ledpanel/control', JSON.stringify({"command": "stream", "stream": topic})); // Let the LedPanel listen on that streamtopic
+  client.publish(process.env.TOPIC_PREFIX + '/ledpanel/control', JSON.stringify({"command": "stream", "stream": topic})); // Let the LedPanel listen on that streamtopic
   current_media_id = id;
   activeStream = topic;
   status = "playing";
@@ -305,14 +323,14 @@ function sendStatus() {
     current_media_id,
     media
   );
-  client.publish('controller/status', JSON.stringify(obj));
+  client.publish(process.env.TOPIC_PREFIX + '/controller/status', JSON.stringify(obj));
 }
 
 // general__________________________________________________________________
 function logging(message, msgdebug = false) {
   if (!msgdebug) {
     console.log(message);
-    client.publish('logs/' + instanceName, message);
+    client.publish(process.env.TOPIC_PREFIX + '/logs/' + instanceName, message);
   }
   else if(msgdebug && debug) {
     console.log(message);
@@ -321,7 +339,7 @@ function logging(message, msgdebug = false) {
 
 function crashApp(message) {
   logging('[FATAL] ' + message);
-  client.publish('logs/' + instanceName, 'FATAL: ' + message, (error) => {
+  client.publish(process.env.TOPIC_PREFIX + '/logs/' + instanceName, 'FATAL: ' + message, (error) => {
     process.exit(1);
   })
 }

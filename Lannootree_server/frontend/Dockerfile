@@ -6,9 +6,11 @@ COPY package*.json ./
 
 RUN npm install
 
-ARG VITE_LOGOUT_URL
+ARG LOGOUT_URL
+ARG APP_URL
 
 COPY ./ ./
+
 RUN npm run build
 
 FROM nginx:alpine

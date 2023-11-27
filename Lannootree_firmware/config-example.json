@@ -1,16 +1,16 @@
 {
-  "panelCount": 4,
+  "panelCount": 12,
   "totalLeds": 0,
   "dimentions": {
-    "col": 2,
-    "row": 2
+    "col": 4,
+    "row": 3
   },
   "inUseChannels": [
     "CA0"
   ],
   "channels": {
     "CA0": {
-      "ledCount": 288,
+      "ledCount": 864,
       "head": "247366252607",
       "cells": [
         {
