@@ -4,6 +4,8 @@
 #include <chrono>
 #include <future>
 
+int led_count = 864;
+
 namespace { // Used for signal handeling
   std::mutex mtx;
   std::condition_variable shutdown_request;
@@ -45,7 +47,7 @@ namespace Lannootree {
     LedDriverThread led_driver(&_channel_mem, &_controllers);
     led_driver.start();
 
-    UnixSocket lannootree_socket("./dev/lannootree.socket", 288 * 3, socket_callback, &_channel_mem);
+    UnixSocket lannootree_socket("./dev/lannootree.socket", led_count * 3, socket_callback, &_channel_mem);
     lannootree_socket.start();
 
     // Wait for shutdown signal
@@ -107,7 +109,7 @@ namespace Lannootree {
 
     // This can be a constant buffer 
     std::vector<uint32_t> colorsa0;
-    for (int i = 0; i < 288; i++) {
+    for (int i = 0; i < led_count; i++) {
       Color c;
       c.data[0] = data[(3 * i) + 2];  // blue
       c.data[1] = data[(3 * i) + 1];  // green
