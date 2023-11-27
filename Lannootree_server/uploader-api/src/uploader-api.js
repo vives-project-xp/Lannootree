@@ -85,8 +85,8 @@ const upload = multer({ storage: storage });
 
 // Use the upload middleware to handle file uploads
 app.post("/upload/post", upload.single('file'), function(req, res) {
-  console.log("Received POST request:", req.body);
-  console.log("Uploaded file:", req.file);
+  logging("[INFO] Received POST request:", req.body);
+  logging("[INFO] Uploaded file:", req.file);
 
   if (mqtt_connected) {
     client.publish(process.env.TOPIC_PREFIX + '/uploads', JSON.stringify(req.file), options);
@@ -99,8 +99,6 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
         console.error(`Error executing the command: ${error}`);
         return;
       }
-      console.log(`Python command executed: ${stdout}`);
-      
       if (stdout.includes("Done... saving data")) {
         const jsonFilePath = path.join(__dirname, `../uploads/processed_json/`, `${file}.json`);
         fs.readFile(jsonFilePath, 'utf8', (err, data) => {
@@ -118,7 +116,7 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
           };
 
           // Publish payload to MQTT topic
-          logging(`[INFO] publishing payload ${req.body.name}, ${req.body.description} to ${process.env.TOPIC_PREFIX}/storage/in`);
+          logging(`[INFO] publishing payload name:${req.body.name} desc:${req.body.description} to ${process.env.TOPIC_PREFIX}/storage/in`);
           client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify(payload));
         });
       }
@@ -126,7 +124,6 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
   }
 
   const directoryPath = path.join(__dirname, '../uploads');
-  console.log("File uploaded to:", directoryPath);
   res.send('File is uploaded.');
 });
 
