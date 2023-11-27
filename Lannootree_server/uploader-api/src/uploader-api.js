@@ -85,10 +85,9 @@ const upload = multer({ storage: storage });
 
 // Use the upload middleware to handle file uploads
 app.post("/upload/post", upload.single('file'), function(req, res) {
-  logging("[INFO] Received POST request:", req.body);
-  logging("[INFO] Uploaded file:", req.file);
-
+  
   if (mqtt_connected) {
+    logging("[INFO] Received POST request:", req.body);
     client.publish(process.env.TOPIC_PREFIX + '/uploads', JSON.stringify(req.file), options);
 
     const file = req.file.filename;
@@ -133,7 +132,7 @@ function logging(message, msgdebug = false){
       console.log(message);
       client.publish(process.env.TOPIC_PREFIX + '/logs/uploader-api', message);
     }
-    else if(msgdebug && debug) {
+    else if(msgdebug && typeof debug !== 'undefined') {
       console.log(message);
     }
 }
