@@ -83,56 +83,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-let assetProcessingQueue = [];
-let isProcessing = false;
-
-function processNextFile() {
-  if (!isProcessing && assetProcessingQueue.length > 0) {
-    isProcessing = true;
-    const fileToProcess = assetProcessingQueue.shift();
-
-    const command = `python3 ./src/voronoizer.py -c config -i ./uploads/${fileToProcess}`;
-    const pythonProcess = exec(command, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Error executing the command: ${error}`);
-        isProcessing = false;
-        processNextFile(); // Process next file in queue
-        return;
-      }
-      console.log(`Python command executed: ${stdout}`);
-
-      const jsonFilePath = path.join(__dirname, `../uploads/processed_json/`, `${fileToProcess}.json`);
-      fs.readFile(jsonFilePath, 'utf8', (err, data) => {
-        if (err) {
-          console.error(`Error reading JSON file: ${err}`);
-          isProcessing = false;
-          processNextFile(); // Process next file in queue
-          return;
-        }
-
-        const jsonContent = JSON.parse(data);
-        const fileDetails = {
-          name: req.body.name, // Associating name and description with each file being processed
-          description: req.body.description,
-        };
-
-        const payload = {
-          command: 'add_file',
-          json: jsonContent,
-          ...fileDetails, // Spread the fileDetails object to include name and description
-          category: 'gif',
-        };
-
-        logging(`[INFO] publishing payload to ${process.env.TOPIC_PREFIX}/storage/in`);
-        client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify(payload), () => {
-          isProcessing = false;
-          processNextFile(); // Process next file in queue
-        });
-      });
-    });
-  }
-}
-
+// Use the upload middleware to handle file uploads
 app.post("/upload/post", upload.single('file'), function(req, res) {
   console.log("Received POST request:", req.body);
   console.log("Uploaded file:", req.file);
@@ -141,11 +92,37 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
     client.publish(process.env.TOPIC_PREFIX + '/uploads', JSON.stringify(req.file), options);
 
     const file = req.file.filename;
-    assetProcessingQueue.push(file);
+    
+    const command = `python3 ./src/voronoizer.py -c config -i ./uploads/${file}`;
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing the command: ${error}`);
+        return;
+      }
+      console.log(`Python command executed: ${stdout}`);
+      
+      if (stdout.includes("Done... saving data")) {
+        const jsonFilePath = path.join(__dirname, `../uploads/processed_json/`, `${file}.json`);
+        fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+          if (err) {
+            console.error(`Error reading Json file: ${err}`);
+            return;
+          }
+          const jsonContent = JSON.parse(data);
+          const payload = {
+            command: 'add_file',
+            json: jsonContent,
+            name: req.body.name,
+            category: 'gif',
+            description: req.body.description,
+          };
 
-    if (!isProcessing) {
-      processNextFile(); // Start processing if no files are being processed
-    }
+          // Publish payload to MQTT topic
+          logging(`[INFO] publishing payload ${req.body.name}, ${req.body.description} to ${process.env.TOPIC_PREFIX}/storage/in`);
+          client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify(payload));
+        });
+      }
+    });
   }
 
   const directoryPath = path.join(__dirname, '../uploads');
