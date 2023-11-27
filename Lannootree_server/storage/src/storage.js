@@ -57,7 +57,6 @@ client.on('connect', function () {
 
 client.on('message', async function (topic, message) {
   let data = message;
-  console.log(data)
   try {
     data = JSON.parse(message.toString());
   } catch (error) {
