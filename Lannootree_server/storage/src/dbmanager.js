@@ -41,6 +41,7 @@ export default class DBManager {
 
   // This function is called when the storage wants to add a new file to the FS and DB, here its getting added to the DB with all the necessary parameters:
   async addFile(name, category, description, config_hash) {
+    console.log("[DBMANAGER] adding file to db")
     const insertQuery = `INSERT INTO media (name,category,description,config_hash) VALUES ('${name}','${category}','${description}','${config_hash}')`;
     await this.DBquery(insertQuery);
     const selectQuery = `SELECT id FROM media WHERE name = '${name}' AND category = '${category}' AND description = '${description}' AND config_hash = '${config_hash}'`;

@@ -4,6 +4,9 @@ const express = require('express');
 const fs = require('fs');
 const bodyParser = require('body-parser');
 const { json } = require('express');
+const multer = require('multer');
+const path = require('path');
+const { exec } = require('child_process');
 
 dotenv.config({ path: '../../.env' });
 
@@ -67,17 +70,89 @@ client.on('connect', () => {
 
 app.use(express.static('public'));
 
-app.post("/upload/post", function(req, res) {
-  console.log("Received POST request:", req.body);
-  if(mqtt_connected){
-    test1 = JSON.stringify(req.files)
-    client.publish(process.env.TOPIC_PREFIX + '/uploads', test1, options);
-    console.log(req.files);
 
-    res.send('Image is sent.')
-    // logging("[INFO] image is uploaded to mqtt.")
+// Define storage for uploaded files using multer
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'uploads/') // Set the destination folder where files will be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname) // Set the file name in the destination folder
   }
 });
+
+const upload = multer({ storage: storage });
+
+let assetProcessingQueue = [];
+let isProcessing = false;
+
+function processNextFile() {
+  if (!isProcessing && assetProcessingQueue.length > 0) {
+    isProcessing = true;
+    const fileToProcess = assetProcessingQueue.shift();
+
+    const command = `python3 ./src/voronoizer.py -c config -i ./uploads/${fileToProcess}`;
+    const pythonProcess = exec(command, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing the command: ${error}`);
+        isProcessing = false;
+        processNextFile(); // Process next file in queue
+        return;
+      }
+      console.log(`Python command executed: ${stdout}`);
+
+      const jsonFilePath = path.join(__dirname, `../uploads/processed_json/`, `${fileToProcess}.json`);
+      fs.readFile(jsonFilePath, 'utf8', (err, data) => {
+        if (err) {
+          console.error(`Error reading JSON file: ${err}`);
+          isProcessing = false;
+          processNextFile(); // Process next file in queue
+          return;
+        }
+
+        const jsonContent = JSON.parse(data);
+        const fileDetails = {
+          name: req.body.name, // Associating name and description with each file being processed
+          description: req.body.description,
+        };
+
+        const payload = {
+          command: 'add_file',
+          json: jsonContent,
+          ...fileDetails, // Spread the fileDetails object to include name and description
+          category: 'gif',
+        };
+
+        logging(`[INFO] publishing payload to ${process.env.TOPIC_PREFIX}/storage/in`);
+        client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify(payload), () => {
+          isProcessing = false;
+          processNextFile(); // Process next file in queue
+        });
+      });
+    });
+  }
+}
+
+app.post("/upload/post", upload.single('file'), function(req, res) {
+  console.log("Received POST request:", req.body);
+  console.log("Uploaded file:", req.file);
+
+  if (mqtt_connected) {
+    client.publish(process.env.TOPIC_PREFIX + '/uploads', JSON.stringify(req.file), options);
+
+    const file = req.file.filename;
+    assetProcessingQueue.push(file);
+
+    if (!isProcessing) {
+      processNextFile(); // Start processing if no files are being processed
+    }
+  }
+
+  const directoryPath = path.join(__dirname, '../uploads');
+  console.log("File uploaded to:", directoryPath);
+  res.send('File is uploaded.');
+});
+
 
 function logging(message, msgdebug = false){
     if (!msgdebug) {
@@ -90,6 +165,6 @@ function logging(message, msgdebug = false){
 }
 
 
-app.listen(3000, () =>
-  logging(`[INFO] listening internal on port 3000`),
+app.listen(3002, () =>
+  logging(`[INFO] listening internal on port 3002`),
 );

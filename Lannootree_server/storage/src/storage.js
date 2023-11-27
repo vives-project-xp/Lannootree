@@ -57,6 +57,7 @@ client.on('connect', function () {
 
 client.on('message', async function (topic, message) {
   let data = message;
+  console.log(data)
   try {
     data = JSON.parse(message.toString());
   } catch (error) {
@@ -81,7 +82,7 @@ const dbmanager = new DBManager("mysql","root","storage","storage");   // host, 
 async function add_file(json, name, category, description) {
   let media_id = await dbmanager.addFile(name, category, description, CONFIGHASH);  // The media_id gets returned if succesful (used in filename)
   if (media_id != null) {
-    fs.writeFile(`./db/${media_id}.json`, json, (err) => {
+    fs.writeFile(`./db/${media_id}.json`, JSON.stringify(json), (err) => {
       if (!err) {
         logging(`[INFO] ADDED ${name} TO DB AND FILESYSTEM`)
       } else {

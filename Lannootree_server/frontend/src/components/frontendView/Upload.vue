@@ -1,42 +1,56 @@
 <script>
 import axios from 'axios'
 
-  export default {
-    data: () => ({
-      form: false,
-      name: null,
-      description: null,
-      loading: false,
-      files: [],
-      rules: [
-        value => {
-          return !value || !value.length || value[0].size < 2000000000 || 'Avatar size should be less than 2 GB!'
-        },
-      ],
-    }),
-    methods: {
-      post (files) {
-        if (!this.form || !this.files.length) return
-        this.loading = true
-        setTimeout(() => (this.loading = false), 3000)
-        let formData = new FormData();
-        formData.append("name", this.name)
-        formData.append("description", this.description)
-        formData.append("file", this.files[0])
-          
-        
-        
-        return axios.post('upload/post', formData, {
+export default {
+  data: () => ({
+    form: false,
+    name: null,
+    description: null,
+    loading: false,
+    files: [],
+    rules: [
+      value => {
+        return !value || !value.length || value[0].size < 2000000000 || 'Avatar size should be less than 2 GB!'
+      },
+    ],
+  }),
+  methods: {
+    async post() {
+      if (!this.form || !this.files.length || !this.name || !this.description) {
+        // Validate form fields
+        console.error('Form data is incomplete');
+        return;
+      }
+      
+      this.loading = true;
+
+      try {
+        const formData = new FormData();
+        formData.append("name", this.name);
+        formData.append("description", this.description);
+        formData.append("file", this.files[0]);
+
+        const response = await axios.post('upload/post', formData, {
           headers: {
-            "content-Type": "multipart/form-data",
+            "Content-Type": "multipart/form-data",
           }
-        })
-      },
-      required (v) {
-        return !!v || 'Field is required'
-      },
+        });
+
+        console.log('Upload response:', response.data);
+        this.name = null;
+        this.description = null;
+        this.files = [];
+      } catch (error) {
+        console.error('Error uploading file:', error);
+      } finally {
+        this.loading = false;
+      }
     },
-  }
+    required(v) {
+      return !!v || 'Field is required';
+    },
+  },
+}
 </script>
 
 <template>
@@ -46,11 +60,11 @@ import axios from 'axios'
       >
     <v-file-input
       v-model="files"
-      accept="image/png, image/jpeg, image/gif, image/bmp, video/mp4, video/quicktime"
+      accept="image/gif"
       color="#00BD7E"
       counter
       label="Upload media"
-      placeholder="Select images, gifs and video's"
+      placeholder="Select gifs"
       prepend-icon="mdi-camera"
       variant="outlined"
       :show-size="1000"

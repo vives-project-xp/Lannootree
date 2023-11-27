@@ -224,9 +224,19 @@ services:
       - PRODUCTION_SERVER=true
     restart: always
     volumes:
+      - ./uploader-api/uploads/:/app/uploads
       - "../certs/ca/ca.crt:/app/ca.crt:ro"
       - "../certs/client/client.crt:/app/client.crt:ro"
       - "../certs/client/client.key:/app/client.key:ro"
+    ports:
+      - 3002:3002
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.uploader-api.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/upload/post`)'
+      - 'traefik.http.routers.uploader-api.entrypoints=web'
+      - 'traefik.http.routers.uploader-api.priority=100'
+      # - 'traefik.http.services.uploader-api.loadbalancer.server.port=3002'
+      # - 'traefik.http.routers.uploader-api.middlewares=X-set-headers, authelia@docker'
     networks:
       - lannootree
 
@@ -259,8 +269,8 @@ services:
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.phpmyadmin.rule=Host(`${APP_WEB_URL}`) && PathPrefix(`/phpmyadmin`)'
-      # - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
-      # - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
+      - "traefik.http.routers.phpmyadmin.middlewares=phpmyadmin-stripprefix"
+      - "traefik.http.middlewares.phpmyadmin-stripprefix.stripprefix.prefixes=/phpmyadmin"
       - 'traefik.http.routers.phpmyadmin.priority=100'
       - 'traefik.http.routers.phpmyadmin.entrypoints=web'
       # - 'traefik.http.routers.phpmyadmin.middlewares=X-set-headers, authelia@docker'
