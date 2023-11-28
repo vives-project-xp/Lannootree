@@ -92,7 +92,7 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
     
     const file = req.file.filename;
     
-    const command = `python3 ./src/voronoizer.py -c config -i ./uploads/${file}`;
+    const command = `python3 ./src/voronoizer.py -c config -i './uploads/${file}'`;
     exec(command, (error, stdout, stderr) => {
       if (error) {
         console.error(`Error executing the command: ${error}`);
