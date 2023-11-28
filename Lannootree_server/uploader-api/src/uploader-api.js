@@ -89,7 +89,7 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
   if (mqtt_connected) {
     logging("[INFO] Received POST request:", req.body);
     client.publish(process.env.TOPIC_PREFIX + '/uploads', JSON.stringify(req.file), options);
-
+    
     const file = req.file.filename;
     
     const command = `python3 ./src/voronoizer.py -c config -i ./uploads/${file}`;
@@ -115,7 +115,7 @@ app.post("/upload/post", upload.single('file'), function(req, res) {
           };
 
           // Publish payload to MQTT topic
-          logging(`[INFO] publishing payload name:${req.body.name} desc:${req.body.description} to ${process.env.TOPIC_PREFIX}/storage/in`);
+          logging(`[INFO] publishing payload ${req.body.name}:${req.body.description} to ${process.env.TOPIC_PREFIX}/storage/in`);
           client.publish(process.env.TOPIC_PREFIX + '/storage/in', JSON.stringify(payload));
         });
       }
