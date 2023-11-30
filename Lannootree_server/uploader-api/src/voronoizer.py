@@ -16,12 +16,33 @@ import argparse
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
+from dotenv import load_dotenv
+import paho.mqtt.client as mqtt
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--image', type=str, required=True, help='Path to image file')
 parser.add_argument('-c', '--config', type=str, required=True, help='Path to config.json file (Currently not implemented)')
 
 args = parser.parse_args()
+
+load_dotenv('../../.env')
+
+broker_url = os.getenv('MQTT_BROKER_URL')
+broker_port = int(os.getenv('MQTT_BROKER_PORT'))
+
+def on_connect(client, userdata, flags, rc):
+  if rc == 0:
+    print("Connected to MQTT Broker!")
+  else:
+    print("Failed to connect, return code %d\n", rc)
+
+def on_disconnect(client, userdata, rc):
+  print("Disconnected from MQTT Broker!")
+client = mqtt.Client()
+client.on_connect = on_connect
+client.on_disconnect = on_disconnect
+client.connect(broker_url, broker_port)
+
 
 images = []
 
@@ -174,6 +195,7 @@ np_processed = [[] for i in range(len(frames))]
 
 for i, frame in enumerate(frames):
   print(f'processing frame [{i + 1}/{len(frames)}]')
+  client.publish(os.getenv('TOPIC_PREFIX') + "/logs/uploader-api", f"[RENDER] frame {i + 1}/{len(frames)}")
 
 # FIXME: add pixeladder instead of GRAY2BGR conversion
   if frame.shape[2] == 1:
@@ -214,3 +236,5 @@ imageio.mimsave(os.path.join(upload_dir, f'img_processed/processed_{img_file}'),
 
 with open(os.path.join(upload_dir, f"processed_json/{img_file}.json"), "w") as f:
     json.dump(processed, f, indent=2)
+    
+client.disconnect()
