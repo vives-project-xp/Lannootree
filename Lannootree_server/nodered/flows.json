@@ -23,32 +23,19 @@
         "env": []
     },
     {
-        "id": "8a3120f371607926",
-        "type": "tls-config",
-        "name": "",
-        "cert": "/app/clientcert/client.crt",
-        "key": "/app/clientcert/client.key",
-        "ca": "/app/ca.crt",
-        "certname": "",
-        "keyname": "",
-        "caname": "",
-        "servername": "lannootree.devbitapp.be",
-        "verifyservercert": false,
-        "alpnprotocol": ""
-    },
-    {
         "id": "9aeebefbe8d4f9da",
         "type": "mqtt-broker",
         "name": "",
-        "broker": "mqtt",
-        "port": "8883",
-        "tls": "8a3120f371607926",
+        "broker": "mqtt.devbit.be",
+        "port": "1883",
+        "tls": "",
         "clientid": "",
         "autoConnect": true,
-        "usetls": true,
+        "usetls": false,
         "protocolVersion": "4",
         "keepalive": "60",
         "cleansession": true,
+        "autoUnsubscribe": true,
         "birthTopic": "",
         "birthQos": "0",
         "birthPayload": "",
@@ -73,7 +60,7 @@
         "fieldType": "msg",
         "format": "json",
         "syntax": "mustache",
-        "template": "[\n2,\n14,\n15,\n21\n]",
+        "template": "[\n12,\n12,\n7,\n6,\n9,\n9,\n9,\n7,\n6,\n8,\n8,\n7,\n6\n]",
         "output": "json",
         "x": 360,
         "y": 100,
@@ -94,7 +81,7 @@
                 "p": "payload"
             }
         ],
-        "repeat": "3",
+        "repeat": "15",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -104,7 +91,9 @@
         "x": 120,
         "y": 100,
         "wires": [
-            []
+            [
+                "0de2ac351c337b97"
+            ]
         ]
     },
     {
@@ -156,7 +145,8 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "payload",
+        "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
         "x": 560,
@@ -899,8 +889,9 @@
         "type": "function",
         "z": "b34b3e285b1aaded",
         "name": "parse",
-        "func": "var active_id = global.get(\"active_id\");\nvar collection = msg.payload;\nif (isNaN(active_id)) active_id = 1;\n\nmsg.payload = { \"command\": \"play_media\", \"media_id\": collection[active_id] };\nmsg.topic = \"controller/in\";\n\nactive_id ++;\nactive_id = (active_id % collection.length);\nglobal.set(\"active_id\", active_id);\nreturn msg;",
+        "func": "var active_id = global.get(\"active_id\");\nvar collection = msg.payload;\nif (isNaN(active_id)) active_id = 1;\n\nmsg.payload = { \"command\": \"play_media\", \"media_id\": collection[active_id] };\nmsg.topic = \"PM/lt1/project/controller/in\";\n\nactive_id ++;\nactive_id = (active_id % collection.length);\nglobal.set(\"active_id\", active_id);\nreturn msg;",
         "outputs": 1,
+        "timeout": "",
         "noerr": 0,
         "initialize": "",
         "finalize": "",
@@ -939,7 +930,7 @@
         "type": "mqtt out",
         "z": "b34b3e285b1aaded",
         "name": "logs",
-        "topic": "logs/nodered",
+        "topic": "PM/lt1/project/logs/nodered",
         "qos": "",
         "retain": "",
         "respTopic": "",

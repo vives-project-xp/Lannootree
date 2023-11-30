@@ -112,13 +112,15 @@ websocket.on('connection', (ws, req) => {
       case process.env.TOPIC_PREFIX + '/logs/uploader-api':
         const renderMessage = message.toString();
         if (renderMessage.startsWith('[RENDER]')) {
-          const [prefix, frameInfo] = renderMessage.split(' ');
-          const [frame, totalFrames] = frameInfo.split('/');
+          const numbers = renderMessage.match(/\d+/g);
+          const frame = parseInt(numbers[0]);
+          const totalFrames = parseInt(numbers[1]);
 
           const renderStatusJSON = {
-            frame: parseInt(frame.split(' ')[1]), // Extracting the numeric value from 'Frame n'
-            totalFrames: parseInt(totalFrames), // Converting totalframes to a number
+            frame,
+            totalFrames
           };
+          // logging(JSON.stringify(renderStatusJSON))
 
           ws.send(JSON.stringify(renderStatusJSON));
         }
