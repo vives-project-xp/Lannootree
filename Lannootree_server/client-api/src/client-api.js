@@ -49,11 +49,12 @@ client.on('connect', function () {
 
     client.subscribe(process.env.TOPIC_PREFIX + '/controller/#');
     client.subscribe(process.env.TOPIC_PREFIX + '/lannootree/out');
+    client.subscribe(process.env.TOPIC_PREFIX + '/logs/uploader-api');
 });
 
 // msg buffer___________________________________________________________________________________________
 var statusJSON;
-var contentJSON;
+var renderStatusJSON;
 
 // websocket _________________________________________________________________________________
 const websocket = new WebSocketServer({ port: 3001 });
@@ -104,12 +105,27 @@ websocket.on('connection', (ws, req) => {
         }
           break;
         
-        case process.env.TOPIC_PREFIX + '/lannootree/out':
-          ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
-          break;
-                
-        default:
-          break;
+      case process.env.TOPIC_PREFIX + '/lannootree/out':
+        ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
+        break;
+
+      case process.env.TOPIC_PREFIX + '/logs/uploader-api':
+        const renderMessage = message.toString();
+        if (renderMessage.startsWith('[RENDER]')) {
+          const [prefix, frameInfo] = renderMessage.split(' ');
+          const [frame, totalFrames] = frameInfo.split('/');
+
+          const renderStatusJSON = {
+            frame: parseInt(frame.split(' ')[1]), // Extracting the numeric value from 'Frame n'
+            totalFrames: parseInt(totalFrames), // Converting totalframes to a number
+          };
+
+          ws.send(JSON.stringify(renderStatusJSON));
+        }
+        break;
+
+      default:
+        break;
     }
   })
 });

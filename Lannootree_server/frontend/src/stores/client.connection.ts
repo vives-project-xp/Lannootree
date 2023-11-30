@@ -1,4 +1,4 @@
-import { ref, type Ref } from 'vue';
+import { ref, render, type Ref } from 'vue';
 import { defineStore } from 'pinia';
 import type MqttStatus from '@/assets/frontendView/mqtt.status.interface';
 
@@ -17,6 +17,7 @@ const status_json: Ref<MqttStatus> = ref({
   media: []
 });
   
+const render_status_json = ref<string | null>(null);
 
   const websocketactive = ref(false);
   const ws = new WebSocket(import.meta.env.VITE_FRONTEND_WEBSOCKET);
@@ -36,6 +37,11 @@ const status_json: Ref<MqttStatus> = ref({
         status_json.value = data;
         console.log(data);
       }    
+
+      if(data.hasOwnProperty('renderStatusJSON')) {
+        render_status_json.value = data.renderStatusJSON;
+        console.log('Render status JSON: ', render_status_json.value);
+      }
     
     };
   }
@@ -83,6 +89,7 @@ const status_json: Ref<MqttStatus> = ref({
 
   return {
     status_json,
+    render_status_json,
     
     websocketClient,
     Pause,
