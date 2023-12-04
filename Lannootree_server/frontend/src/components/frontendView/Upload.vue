@@ -11,19 +11,8 @@ export default {
       const frame = clientStore.render_status_json.frame || 0;
       const totalFrames = clientStore.render_status_json.totalFrames || 1; // Prevent division by zero
       if (frame === totalFrames) {
-        if ('Notification' in window) {
-          Notification.requestPermission().then(function (permission) {
-            if (permission === 'granted') {
-              new Notification('Lannootree', {
-                body: 'Your file has been succesfully rendered!',
-                
-              });
-            }
-          });
-        } else {
-          console.log('This browser does not support notifications.');
-        }
-        }
+        alert("Your file has been succesfully uploaded to the server!")
+      }
       return Math.ceil((frame / totalFrames) * 100);
     };
 
