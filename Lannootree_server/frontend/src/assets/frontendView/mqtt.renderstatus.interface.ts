@@ -1,4 +1,4 @@
 export default interface MqttRenderStatus {
-    frame: any;
-    totalFrames: any;
+    frame: number;
+    totalFrames: number;
   }

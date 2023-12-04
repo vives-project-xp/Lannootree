@@ -1,7 +1,47 @@
 <script>
 import axios from 'axios'
+import { useClientAPIStore } from '@/stores/client.connection';
+import { computed } from 'vue';
 
 export default {
+  setup() {
+    const clientStore = useClientAPIStore();
+
+    const calculateProgress = () => {
+      const frame = clientStore.render_status_json.frame || 0;
+      const totalFrames = clientStore.render_status_json.totalFrames || 1; // Prevent division by zero
+      if (frame === totalFrames) {
+        if ('Notification' in window) {
+          Notification.requestPermission().then(function (permission) {
+            if (permission === 'granted') {
+              new Notification('Lannootree', {
+                body: 'Your file has been succesfully rendered!',
+                
+              });
+            }
+          });
+        } else {
+          console.log('This browser does not support notifications.');
+        }
+        }
+      return Math.ceil((frame / totalFrames) * 100);
+    };
+
+    const renderStatus = computed(() => {
+      const frame = clientStore.render_status_json.frame;
+      const totalFrames = clientStore.render_status_json.totalFrames;
+      if (totalFrames === 0) {
+        return "";
+      }
+      return `${frame}/${totalFrames}`;
+    });
+    
+
+    return {
+      calculateProgress,
+      renderStatus
+    };
+  },
   data: () => ({
     form: false,
     name: null,
@@ -50,6 +90,11 @@ export default {
       return !!v || 'Field is required';
     },
   },
+  computed: {
+    progressColor() {
+      return this.calculateProgress() === 100 ? 'light-green-darken-4' : 'blue-darken-4' ;
+    }
+  }
 }
 </script>
 
@@ -104,6 +149,14 @@ export default {
     ></v-btn>
   </v-row>
 </v-form>
+    <v-progress-linear
+      :model-value="calculateProgress()"
+      :color="progressColor"
+      height="20"
+      striped
+    ><template v-slot:default="{ value }">
+        <strong>{{ renderStatus }}</strong>
+      </template></v-progress-linear>
   </template>
 
 <style>
