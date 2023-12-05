@@ -15,9 +15,9 @@ export default {
       const totalFrames = clientStore.render_status_json.totalFrames || 1; // Prevent division by zero
       if (frame === totalFrames) {
         toastComponent.value.show({
-        message: "Congratulations! Your file has been successfully uploaded to the server.",
+        message: `Congratulations! Your file has been successfully uploaded to the server.`,
         color: 'green-accent-3', 
-        timer: 30000,
+        timer: -1,
         icon: 'mdi-check'
       });
       }

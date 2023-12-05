@@ -40,16 +40,11 @@ const render_status_json: Ref<MqttRenderStatus> = ref({
         if(data.hasOwnProperty('status')){
           status_json.value = data;
           console.log(data);
-        } else {
-          console.log('no status received');
-        }   
+        }
 
         if ('frame' in data && 'totalFrames' in data) {
           render_status_json.value = data;
-          console.log('Render status JSON: ', render_status_json.value);
-        } else {
-          console.log('no renderstatus received');
-          console.log('Data received:', data);
+          console.log(data);
         }
     
     };
