@@ -1,19 +1,27 @@
 <script>
 import axios from 'axios'
 import { useClientAPIStore } from '@/stores/client.connection';
-import { computed } from 'vue';
+import { ref, computed } from 'vue';
+import Vtoast from '@/components/frontendView/Vtoast.vue'
+
 
 export default {
   setup() {
     const clientStore = useClientAPIStore();
+    const toastComponent = ref(null);
 
     const calculateProgress = () => {
       const frame = clientStore.render_status_json.frame || 0;
       const totalFrames = clientStore.render_status_json.totalFrames || 1; // Prevent division by zero
       if (frame === totalFrames) {
-        alert("Your file has been succesfully uploaded to the server!")
+        toastComponent.value.show({
+        message: "Congratulations! Your file has been successfully uploaded to the server.",
+        color: 'green-accent-3', 
+        timer: 30000,
+        icon: 'mdi-check'
+      });
       }
-      return Math.ceil((frame / totalFrames) * 100);
+      return (frame / totalFrames) * 100;
     };
 
     const renderStatus = computed(() => {
@@ -28,7 +36,8 @@ export default {
 
     return {
       calculateProgress,
-      renderStatus
+      renderStatus,
+      toastComponent
     };
   },
   data: () => ({
@@ -81,8 +90,11 @@ export default {
   },
   computed: {
     progressColor() {
-      return this.calculateProgress() === 100 ? 'light-green-darken-4' : 'blue-darken-4' ;
+      return this.calculateProgress() === 100 ? 'green-darken-4' : 'blue-darken-4' ;
     }
+  },
+  components: {
+    Vtoast,
   }
 }
 </script>
@@ -139,13 +151,16 @@ export default {
   </v-row>
 </v-form>
     <v-progress-linear
-      :model-value="calculateProgress()"
+      :model-value="Math.ceil(calculateProgress())"
       :color="progressColor"
       height="20"
       striped
+      rounded
     ><template v-slot:default="{ value }">
         <strong>{{ renderStatus }}</strong>
       </template></v-progress-linear>
+
+      <Vtoast ref="toastComponent" />
   </template>
 
 <style>
