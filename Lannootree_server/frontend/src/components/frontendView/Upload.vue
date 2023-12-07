@@ -2,26 +2,39 @@
 import axios from 'axios'
 import { useClientAPIStore } from '@/stores/client.connection';
 import { ref, computed } from 'vue';
-import Vtoast from '@/components/frontendView/Vtoast.vue'
+import { useToast } from "vue-toastification";
+import { useToastStore } from '@/stores/ToastStore';
+
 
 
 export default {
   setup() {
     const clientStore = useClientAPIStore();
-    const toastComponent = ref(null);
+    const toastStore = useToastStore();
+    const toast = useToast();
+  
 
     const calculateProgress = () => {
       const frame = clientStore.render_status_json.frame || 0;
       const totalFrames = clientStore.render_status_json.totalFrames || 1; // Prevent division by zero
-      if (frame === totalFrames) {
-        toastComponent.value.show({
-        message: `Congratulations! Your file has been successfully uploaded to the server.`,
-        color: 'green-accent-3', 
-        timer: -1,
-        icon: 'mdi-check'
-      });
+      const progress = (frame / totalFrames) * 100;
+      if (frame == 1) {
+        // when more than 1 frame has been done, reset shownstate so that notifications for following uploads can be shown.
+        toastStore.setSuccessToastShown(false);        
       }
-      return (frame / totalFrames) * 100;
+      if (frame == 1 && !toastStore.getUploadToastShown()) {
+        toastStore.setUploadToastShown(true);
+        toast.info("File uploaded, rendering!", {
+          timeout: 8000
+        });
+      }
+
+      if (progress >= 100 && !toastStore.getSuccessToastShown()) {
+        toast.success("Congratulations! Your file has been successfully uploaded to the server.");
+        toastStore.setSuccessToastShown(true);
+        toastStore.setUploadToastShown(false);
+      }
+      return progress;
     };
 
     const renderStatus = computed(() => {
@@ -32,12 +45,11 @@ export default {
       }
       return `${frame}/${totalFrames}`;
     });
-    
 
     return {
       calculateProgress,
       renderStatus,
-      toastComponent
+      toast
     };
   },
   data: () => ({
@@ -73,6 +85,9 @@ export default {
             "Content-Type": "multipart/form-data",
           }
         });
+        this.toast.info("Your file has been sent, ready for processing", {
+          timeout: 10000
+        });
 
         console.log('Upload response:', response.data);
         this.name = null;
@@ -93,9 +108,6 @@ export default {
       return this.calculateProgress() === 100 ? 'green-darken-4' : 'blue-darken-4' ;
     }
   },
-  components: {
-    Vtoast,
-  }
 }
 </script>
 
@@ -159,8 +171,6 @@ export default {
     ><template v-slot:default="{ value }">
         <strong>{{ renderStatus }}</strong>
       </template></v-progress-linear>
-
-      <Vtoast ref="toastComponent" />
   </template>
 
 <style>
