@@ -18,6 +18,7 @@ from PIL import Image
 from matplotlib import pyplot as plt
 from dotenv import load_dotenv
 import paho.mqtt.client as mqtt
+import ssl
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--image', type=str, required=True, help='Path to image file')
@@ -27,8 +28,10 @@ args = parser.parse_args()
 
 load_dotenv('../../.env')
 
-broker_url = os.getenv('MQTT_BROKER_URL')
-broker_port = int(os.getenv('MQTT_BROKER_PORT'))
+
+def handle_error(err, res):
+   res.status(500).contentType("text/plain").end("Oops! Something went wrong!")
+   
 
 def on_connect(client, userdata, flags, rc):
   if rc == 0:
@@ -41,7 +44,34 @@ def on_disconnect(client, userdata, rc):
 client = mqtt.Client()
 client.on_connect = on_connect
 client.on_disconnect = on_disconnect
-client.connect(broker_url, broker_port)
+
+options = {}
+
+if os.getenv('MQTT_BROKER_EXTERNAL') == 'true':
+    options['port'] = int(os.getenv('MQTT_BROKER_PORT'))
+    options['host'] = os.getenv('MQTT_BROKER_URL')
+
+    if os.getenv('NO_CREDENTIALS') == 'false':
+        options['password'] = os.getenv('MQTT_BROKER_PASSWORD')
+        options['username'] = os.getenv('MQTT_BROKER_USER')
+        client.username_pw_set(options['username'], password=options['password'])
+
+    client.connect(options['host'], options['port'])
+    
+else:
+    options['port'] = int(os.getenv('MQTT_BROKER_LOCAL_PORT'))
+    options['host'] = os.getenv('MQTT_BROKER_LOCAL_URL')
+    ca_file = open("ca.crt", 'rb').read()
+    client_cert = open("client.crt", 'rb').read()
+    client_key = open("client.key", 'rb').read()
+    options['tls'] = {
+        'cert_reqs': ssl.CERT_NONE,
+        'ca_certs': ca_file,
+        'certfile': client_cert,
+        'keyfile': client_key
+    }
+    client.tls_set(**options['tls'])
+    client.connect(options['host'], options['port'])
 
 
 images = []
