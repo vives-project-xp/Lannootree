@@ -25,7 +25,7 @@ export default {
       if (frame == 1 && !toastStore.getUploadToastShown()) {
         toastStore.setUploadToastShown(true);
         toast.info("File uploaded, rendering!", {
-          timeout: 5000
+          timeout: 8000
         });
       }
 

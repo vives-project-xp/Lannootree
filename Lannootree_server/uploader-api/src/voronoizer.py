@@ -195,7 +195,7 @@ np_processed = [[] for i in range(len(frames))]
 
 for i, frame in enumerate(frames):
   print(f'processing frame [{i + 1}/{len(frames)}]')
-  client.publish(os.getenv('TOPIC_PREFIX') + "/logs/uploader-api", f"[RENDER] frame {i + 1}/{len(frames)}")
+  client.publish(os.getenv('TOPIC_PREFIX') + "/logs/voronoizer", f"[RENDER] frame {i + 1}/{len(frames)}")
 
 # FIXME: add pixeladder instead of GRAY2BGR conversion
   if frame.shape[2] == 1:

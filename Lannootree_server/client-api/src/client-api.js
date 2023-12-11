@@ -49,7 +49,7 @@ client.on('connect', function () {
 
     client.subscribe(process.env.TOPIC_PREFIX + '/controller/#');
     client.subscribe(process.env.TOPIC_PREFIX + '/lannootree/out');
-    client.subscribe(process.env.TOPIC_PREFIX + '/logs/uploader-api');
+    client.subscribe(process.env.TOPIC_PREFIX + '/logs/voronoizer');
 });
 
 // msg buffer___________________________________________________________________________________________
@@ -109,7 +109,7 @@ websocket.on('connection', (ws, req) => {
         ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
         break;
 
-      case process.env.TOPIC_PREFIX + '/logs/uploader-api':
+      case process.env.TOPIC_PREFIX + '/logs/voronoizer':
         const renderMessage = message.toString();
         if (renderMessage.startsWith('[RENDER]')) {
           const numbers = renderMessage.match(/\d+/g);
