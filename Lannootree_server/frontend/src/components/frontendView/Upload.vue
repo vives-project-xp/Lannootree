@@ -85,8 +85,8 @@ export default {
             "Content-Type": "multipart/form-data",
           }
         });
-        this.toast.info("Your file has been sent, ready for processing", {
-          timeout: 10000
+        this.toast.info("File sent", {
+          timeout: 2000
         });
 
         console.log('Upload response:', response.data);
