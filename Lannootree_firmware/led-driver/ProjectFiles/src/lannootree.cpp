@@ -47,11 +47,7 @@ namespace Lannootree {
     LedDriverThread led_driver(&_channel_mem, &_controllers);
     led_driver.start();
 
-<<<<<<< HEAD
     UnixSocket lannootree_socket("./dev/lannootree.socket", led_count * 3, socket_callback, &_channel_mem);
-=======
-    UnixSocket lannootree_socket("./dev/lannootree.socket", 864 * 3, socket_callback, &_channel_mem); //288*3
->>>>>>> c100b64458a36ced54681620999d33f1e71c95b4
     lannootree_socket.start();
 
     // Wait for shutdown signal
