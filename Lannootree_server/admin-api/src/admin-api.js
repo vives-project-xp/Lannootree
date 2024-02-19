@@ -15,33 +15,33 @@ if (process.env.MQTT_BROKER_EXTERNAL === 'false') {
   var clientcrt = fs.readFileSync("client.crt");
   var clientkey = fs.readFileSync("client.key");
 }
-var mqttOptions={
+var options={
   clientId:"admin-api_" + Math.random().toString(16).substring(2, 8),
   protocol: process.env.MQTT_BROKER_PROTOCOL,
-    will: {
-        topic: process.env.TOPIC_PREFIX + "/status/admin-api",
-        payload: "Offline",
-        retain: true
-    }
-}
+  will: {
+      topic: process.env.TOPIC_PREFIX + "/status/admin-api",
+      payload: "Offline",
+      retain: true
+  },
+  rejectUnauthorized: false
+};
 
 if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
   if (process.env.NO_CREDENTIALS === 'false') {
-   mqttOptions.password = process.env.MQTT_BROKER_PASSWORD;
-   mqttOptions.user = process.env.MQTT_BROKER_USER;
+    options.password = process.env.MQTT_BROKER_PASSWORD;
+    options.username = process.env.MQTT_BROKER_USER;
   }
- mqttOptions.port = process.env.MQTT_BROKER_PORT;
- mqttOptions.host = process.env.MQTT_BROKER_URL;
+  options.port = process.env.MQTT_BROKER_PORT;
+  options.host = process.env.MQTT_BROKER_URL;
 } 
 else {
- mqttOptions.port = process.env.MQTT_BROKER_LOCAL_PORT;
- mqttOptions.host = process.env.MQTT_BROKER_LOCAL_URL;
- mqttOptions.rejectUnauthorized = false;
- mqttOptions.ca = caFile;
- mqttOptions.cert = clientcrt;
- mqttOptions.key = clientkey;
+  options.port = process.env.MQTT_BROKER_LOCAL_PORT;
+  options.host = process.env.MQTT_BROKER_LOCAL_URL;
+  options.ca = caFile;
+  options.cert = clientcrt;
+  options.key = clientkey;
 }
-const client = mqtt.connect(mqttOptions);
+const client = mqtt.connect(options);
 
 client.on('connect', function () {
   if (process.env.MQTT_BROKER_EXTERNAL === 'true') {

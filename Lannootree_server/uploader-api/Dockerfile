@@ -11,13 +11,13 @@ RUN apt-get update && \
     apt-get install -y \
         python3 \
         python3-pip \
-        python3-dotenv \
-    && pip3 install \
+        python3-dotenv
+RUN pip3 install \
         opencv-python-headless \
         imageio \
         matplotlib \
-        paho-mqtt 
-        # --break-system-packages
+        paho-mqtt \
+        --break-system-packages
         
 # Uncomment the following RUN command for a server environment along with --break-system-packages above
     # RUN apt-get install -y \

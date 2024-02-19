@@ -34,13 +34,14 @@ var options = {
       topic: process.env.TOPIC_PREFIX + "/status/" + instanceName,
       payload: "Offline",
       retain: true
-  }
+  },
+  rejectUnauthorized: false
 };
 
 if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
   if (process.env.NO_CREDENTIALS === 'false') {
     options.password = process.env.MQTT_BROKER_PASSWORD;
-    options.user = process.env.MQTT_BROKER_USER;
+    options.username = process.env.MQTT_BROKER_USER;
   }
   options.port = process.env.MQTT_BROKER_PORT;
   options.host = process.env.MQTT_BROKER_URL;
@@ -48,7 +49,6 @@ if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
 else {
   options.port = process.env.MQTT_BROKER_LOCAL_PORT;
   options.host = process.env.MQTT_BROKER_LOCAL_URL;
-  options.rejectUnauthorized = false;
   options.ca = caFile;
   options.cert = clientcrt;
   options.key = clientkey;
