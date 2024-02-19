@@ -109,11 +109,7 @@ namespace Lannootree {
 
     // This can be a constant buffer
     std::vector<uint32_t> colorsa0;
-<<<<<<< HEAD
     for (int i = 0; i < led_count; i++) {
-=======
-    for (int i = 0; i < 864; i++) {
->>>>>>> c100b64458a36ced54681620999d33f1e71c95b4
       Color c;
       c.data[0] = data[(3 * i) + 2];  // blue
       c.data[1] = data[(3 * i) + 1];  // green
