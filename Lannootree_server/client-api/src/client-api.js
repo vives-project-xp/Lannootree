@@ -49,11 +49,12 @@ client.on('connect', function () {
 
     client.subscribe(process.env.TOPIC_PREFIX + '/controller/#');
     client.subscribe(process.env.TOPIC_PREFIX + '/lannootree/out');
+    client.subscribe(process.env.TOPIC_PREFIX + '/logs/voronoizer');
 });
 
 // msg buffer___________________________________________________________________________________________
 var statusJSON;
-var contentJSON;
+var renderStatusJSON;
 
 // websocket _________________________________________________________________________________
 const websocket = new WebSocketServer({ port: 3001 });
@@ -104,12 +105,29 @@ websocket.on('connection', (ws, req) => {
         }
           break;
         
-        case process.env.TOPIC_PREFIX + '/lannootree/out':
-          ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
-          break;
-                
-        default:
-          break;
+      case process.env.TOPIC_PREFIX + '/lannootree/out':
+        ws.send(JSON.stringify({matrix: JSON.parse(message.toString())}));
+        break;
+
+      case process.env.TOPIC_PREFIX + '/logs/voronoizer':
+        const renderMessage = message.toString();
+        if (renderMessage.startsWith('[RENDER]')) {
+          const numbers = renderMessage.match(/\d+/g);
+          const frame = parseInt(numbers[0]);
+          const totalFrames = parseInt(numbers[1]);
+
+          const renderStatusJSON = {
+            frame,
+            totalFrames
+          };
+          // logging(JSON.stringify(renderStatusJSON))
+
+          ws.send(JSON.stringify(renderStatusJSON));
+        }
+        break;
+
+      default:
+        break;
     }
   })
 });
