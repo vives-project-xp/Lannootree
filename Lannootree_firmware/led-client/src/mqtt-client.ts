@@ -13,10 +13,11 @@ const mqttOptions: mqtt.IClientOptions = {
   protocol: process.env.MQTT_BROKER_PROTOCOL as mqtt.IClientOptions['protocol'] || 'mqtt', // Default to 'mqtt' if protocol is not defined or invalid
   will: {
     qos: 2,
-    topic: 'status/led-client',
+    topic: process.env.TOPIC_PREFIX + '/status/led-client',
     payload: 'Offline',
     retain: true
-  }
+  },
+  rejectUnauthorized: false
 };
 
 if (process.env.MQTT_BROKER_EXTERNAL === 'true') {
